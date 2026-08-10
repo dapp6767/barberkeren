@@ -1,0 +1,12 @@
+# Credentials & Local Config
+autologin-gsuite/akungsuite.txt
+autologin-gsuite/config.json
+autologin-gsuite/profiles/
+autologin-gsuite/__pycache__/
+autologin-gsuite/.backup-sync-*/
+autologin-gsuite/.backup-manual-*/
+
+# OS & Logs
+.DS_Store
+Thumbs.db
+*.log

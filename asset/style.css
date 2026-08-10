@@ -1,0 +1,552 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ============================================================
+   MODERN DARK NEON DESIGN SYSTEM - BARBERSHOP QUEUE SYSTEM
+   ============================================================ */
+
+:root {
+    --bg-main: #12100E;
+    --bg-panel: #1E1B18;
+    --bg-panel-hover: #292420;
+    --border-color: #332B22;
+    --border-light: rgba(255, 255, 255, 0.08);
+    
+    --neon-green: #F59E0B;
+    --neon-green-glow: rgba(245, 158, 11, 0.2);
+    --neon-green-dark: #D97706;
+    
+    --text-main: #F9FAFB;
+    --text-muted: #D4D4D8;
+    --text-dark: #12100E;
+    
+    --font-main: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-main);
+}
+
+body {
+    background: #12100E;
+    background-image: radial-gradient(circle at 50% 0%, #1a1612 0%, #12100e 70%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout Container */
+.aero-container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+}
+
+/* Panel / Card Base */
+.aero-panel {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel-heading {
+    color: var(--text-main);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Sidebar Styling */
+.aero-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.brand-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 25px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.brand-logo {
+    width: 48px;
+    height: 48px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neon-green);
+    font-size: 24px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.brand-title h2 {
+    font-size: 22px;
+    color: var(--text-main);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.brand-title span {
+    font-size: 11px;
+    color: var(--neon-green);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.aero-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+}
+
+.aero-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.aero-nav-item:hover {
+    color: var(--text-main);
+    background: var(--bg-panel);
+    border-color: var(--border-color);
+}
+
+.aero-nav-item.active {
+    background: var(--bg-panel);
+    color: var(--neon-green);
+    border-color: var(--border-color);
+    box-shadow: inset 3px 0 0 var(--neon-green);
+}
+
+.aero-nav-item.nav-logout {
+    margin-top: auto;
+    color: #ff4757;
+}
+.aero-nav-item.nav-logout:hover {
+    background: rgba(255, 71, 87, 0.1);
+    border-color: rgba(255, 71, 87, 0.2);
+}
+
+/* Main Content Area */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-width: 0;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.page-title h1 {
+    font-size: 32px;
+    color: var(--text-main);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+}
+
+.sub-title {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Neon Pill Buttons */
+.btn-aero {
+    background: var(--neon-green);
+    color: var(--text-dark);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--neon-green-glow);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-aero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--neon-green-glow);
+    background: #f59e0b;
+}
+
+.btn-aero-blue {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-light);
+    box-shadow: none;
+}
+
+.btn-aero-blue:hover {
+    border-color: var(--text-main);
+    background: var(--bg-panel-hover);
+    box-shadow: none;
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Live Queue Status Cards */
+.queue-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.queue-serving-box {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--neon-green);
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.queue-serving-box .panel-heading {
+    justify-content: center;
+    color: var(--neon-green);
+    letter-spacing: 2px;
+    font-size: 14px;
+}
+
+.queue-number-huge {
+    font-size: 80px;
+    font-weight: 800;
+    color: var(--neon-green);
+    text-shadow: 0 0 20px var(--neon-green-glow);
+    letter-spacing: -2px;
+    margin: 15px 0;
+    line-height: 1;
+}
+
+.serving-customer {
+    font-weight: 500;
+    color: var(--text-main);
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* Forms & Inputs */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background: #0f0f0f;
+    color: var(--text-main);
+    outline: none;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 0 1px var(--neon-green);
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background: #1a1a1a !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+}
+
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23999999%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: 10px auto;
+}
+
+/* Tables */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.aero-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.aero-table th {
+    padding: 16px;
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-light);
+    font-weight: 600;
+}
+
+.aero-table td {
+    padding: 15px 16px;
+    background: transparent;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 14px;
+}
+
+.aero-table tr:last-child td {
+    border-bottom: none;
+}
+
+.aero-table tr:hover td {
+    background: var(--bg-panel-hover);
+}
+
+.text-center-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px !important;
+}
+
+/* Status Badges */
+.badge-aero {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.badge-serving {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--neon-green);
+    border: 1px solid var(--neon-green);
+}
+
+.badge-waiting {
+    background: rgba(255, 171, 0, 0.1);
+    color: #ffab00;
+    border: 1px solid #ffab00;
+}
+
+.badge-success {
+    background: rgba(0, 200, 83, 0.1);
+    color: #00c853;
+    border: 1px solid #00c853;
+}
+
+/* Auth Pages */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg-main);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    background: var(--bg-panel);
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* Alerts */
+.aero-alert {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.flash-success {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+}
+
+.flash-danger {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid #ff4757;
+    color: #ff4757;
+}
+
+.flash-warning {
+    background: rgba(255, 171, 0, 0.1);
+    border: 1px solid #ffab00;
+    color: #ffab00;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .aero-container {
+        grid-template-columns: 1fr;
+    }
+
+    .queue-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .aero-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .brand-header {
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+        padding-right: 15px;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+    
+    .aero-nav {
+        flex-direction: row;
+    }
+}
+
+/* ============================================================
+   EXECUTIVE OBSIDIAN GOLD DESIGN SYSTEM OVERRIDES
+   ============================================================ */
+
+/* Executive Table Row Vertical Padding (12px 16px) */
+table th,
+table td,
+.tabulator-cell,
+.tabulator-col-content {
+    padding: 12px 16px !important;
+}
+
+/* Executive Status Badges */
+.badge-status-success {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+.badge-status-waiting {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #F59E0B !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+/* Executive Active Sidebar Link */
+.sidebar-link-active,
+#sidebar nav a.active-link,
+#sidebar nav a.bg-adminlte-primary {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #F59E0B !important;
+    border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.sidebar-link-active i,
+#sidebar nav a.active-link i,
+#sidebar nav a.bg-adminlte-primary i {
+    color: #F59E0B !important;
+}
+
+/* ============================================================
+   ULTRA-MODERN MOBILE GLASSMORPHISM & TOUCH FEEDBACK
+   ============================================================ */
+@media (max-width: 768px) {
+    /* Mobile Barbershop Dark Gold Glassmorphic Cards */
+    .mobile-glass-card,
+    .bg-adminlte-card,
+    .aero-panel {
+        background: linear-gradient(135deg, rgba(30, 22, 14, 0.95) 0%, rgba(18, 13, 8, 0.98) 100%) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(245, 158, 11, 0.2) !important;
+        border-radius: 18px !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    /* Mobile Container Spacing */
+    main {
+        padding: 16px !important;
+    }
+
+    /* Active Touch Scale Feedback */
+    button:active,
+    .btn-touch:active,
+    a.btn:active,
+    .service-card:active {
+        transform: scale(0.98) !important;
+        transition: transform 0.1s ease !important;
+    }
+}
