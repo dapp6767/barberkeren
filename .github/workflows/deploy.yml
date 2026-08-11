@@ -20,4 +20,6 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /elitebarber.web.id/htdocs/
+          protocol: ftp
+          port: 21
+          server-dir: elitebarber.web.id/htdocs/
