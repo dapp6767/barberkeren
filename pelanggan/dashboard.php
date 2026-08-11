@@ -72,6 +72,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         redirect('dashboard.php');
         exit;
     }
+    if ($_POST['action'] === 'cancel_my_ticket') {
+        $antrian_id = (int)($_POST['antrian_id'] ?? 0);
+        $cust_id = $_SESSION['user_id'] ?? 0;
+        if ($antrian_id > 0 && $cust_id > 0) {
+            try {
+                $pdo->beginTransaction();
+                try { $pdo->prepare("DELETE FROM ulasan WHERE antrian_id = ?")->execute([$antrian_id]); } catch (Exception $e) {}
+                try { $pdo->prepare("DELETE FROM transaksi WHERE antrian_id = ?")->execute([$antrian_id]); } catch (Exception $e) {}
+                $stmt_c = $pdo->prepare("DELETE FROM antrian WHERE id = ? AND pelanggan_id = ?");
+                $stmt_c->execute([$antrian_id, $cust_id]);
+                $pdo->commit();
+                set_flash('warning', 'Antrean Anda berhasil dibatalkan.');
+            } catch (Exception $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                set_flash('danger', 'Gagal membatalkan antrean: ' . $e->getMessage());
+            }
+        }
+        redirect('dashboard.php');
+        exit;
+    }
     if ($_POST['action'] === 'pay_ticket') {
         $antrian_id = (int)$_POST['antrian_id'];
         $metode = $_POST['metode_pembayaran'];
@@ -1083,7 +1103,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                     </div>
                                     <?php endif; ?>
                                 </div>
-                                <p class="text-xs text-zinc-400 mt-4 max-w-md mx-auto">
+                                <form method="POST" action="" class="mt-4" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan antrean Anda?');">
+                                    <input type="hidden" name="action" value="cancel_my_ticket">
+                                    <input type="hidden" name="antrian_id" value="<?= $my_queue['id'] ?>">
+                                    <button type="submit" class="px-4 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs font-semibold transition-all inline-flex items-center gap-1.5 shadow-md">
+                                        <i data-lucide="x-circle" class="w-4 h-4 text-rose-400"></i> Batalkan / Hapus Antrean Saya
+                                    </button>
+                                </form>
+                                <p class="text-xs text-zinc-400 mt-3 max-w-md mx-auto">
                                     Silakan tunggu giliran Anda dipanggil. Tiket baru dapat diambil kembali setelah giliran Anda selesai.
                                 </p>
                             </div>

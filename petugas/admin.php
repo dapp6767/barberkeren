@@ -113,6 +113,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 set_flash('danger', 'ID Barber tidak valid!');
             }
         }
+        elseif ($type === 'delete_antrian') {
+            $antrian_id = (int)($_POST['antrian_id'] ?? 0);
+            if ($antrian_id > 0) {
+                try {
+                    $pdo->beginTransaction();
+                    try { $pdo->prepare("DELETE FROM ulasan WHERE antrian_id = ?")->execute([$antrian_id]); } catch (Exception $e) {}
+                    try { $pdo->prepare("DELETE FROM transaksi WHERE antrian_id = ?")->execute([$antrian_id]); } catch (Exception $e) {}
+                    $stmt_del = $pdo->prepare("DELETE FROM antrian WHERE id = ?");
+                    $stmt_del->execute([$antrian_id]);
+                    $pdo->commit();
+                    set_flash('warning', 'Data antrean berhasil dihapus dari sistem!');
+                } catch (Exception $e) {
+                    if ($pdo->inTransaction()) $pdo->rollBack();
+                    set_flash('danger', 'Gagal menghapus antrean: ' . $e->getMessage());
+                }
+            }
+        }
         elseif ($type === 'add_user') {
             $fullname = trim($_POST['fullname'] ?? '');
             $username = trim($_POST['username']);
@@ -1784,12 +1801,13 @@ if ($page === 'barber') {
                                 <th class="px-6 py-4 font-semibold">Barber</th>
                                 <th class="px-6 py-4 font-semibold">Status</th>
                                 <th class="px-6 py-4 font-semibold">Est. Tunggu</th>
+                                <th class="px-6 py-4 font-semibold text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             <?php if (empty($active_queues)): ?>
                                 <tr>
-                                    <td colspan="6" class="px-6 py-8 text-center text-zinc-400 text-sm">Belum ada antrean aktif saat ini.</td>
+                                    <td colspan="7" class="px-6 py-8 text-center text-zinc-400 text-sm">Belum ada antrean aktif saat ini.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($active_queues as $q): ?>
@@ -1830,6 +1848,15 @@ if ($page === 'barber') {
                                         </td>
                                         <td class="px-6 py-4 text-zinc-400 text-sm font-mono">
                                             <?= (int)$q['estimated_wait_min'] ?> Menit
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <form method="POST" action="" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus/membatalkan antrean ini?');">
+                                                <input type="hidden" name="form_type" value="delete_antrian">
+                                                <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                                                <button type="submit" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs font-medium transition-all flex items-center gap-1 mx-auto" title="Hapus Antrean">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-400"></i> Hapus
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
