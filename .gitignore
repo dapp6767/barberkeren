@@ -10,3 +10,6 @@ autologin-gsuite/.backup-manual-*/
 .DS_Store
 Thumbs.db
 *.log
+
+db/*.sql
+*.sql
