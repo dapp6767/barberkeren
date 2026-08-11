@@ -182,12 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div id="rule_sym" class="flex items-center gap-1.5 transition-colors">
                             <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Memiliki Simbol (@, #, !, dll)
                         </div>
-                    </div>
                 </div>
-
-                <p class="text-[11px] text-zinc-500 italic">
-                    * Nama & Username tidak boleh mengandung unsur SARA dan tidak boleh sama dengan akun lain yang sudah terdaftar.
-                </p>
 
                 <button type="submit"
                         class="w-full h-12 rounded-full bg-gold text-zinc-950 font-bold text-sm tracking-wide shadow-lg hover:bg-[#e8c84a] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 mt-2">
