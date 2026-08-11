@@ -30,6 +30,10 @@ try {
     if (!$chkUserCol || $chkUserCol->rowCount() === 0) {
         $pdo->exec("ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP");
     }
+    $chkBarberKursi = $pdo->query("SHOW COLUMNS FROM barber LIKE 'kursi'");
+    if (!$chkBarberKursi || $chkBarberKursi->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE barber ADD COLUMN kursi VARCHAR(20) DEFAULT 'Kursi A'");
+    }
 } catch (Exception $e) {}
 
 // Handle AJAX Notification Endpoint
@@ -84,6 +88,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->commit();
             
             set_flash('success', 'Data Barber berhasil ditambahkan!');
+        }
+        elseif ($type === 'toggle_barber_status') {
+            $barber_id = (int)($_POST['barber_id'] ?? 0);
+            $new_status = trim($_POST['new_status'] ?? 'Aktif');
+            
+            if ($barber_id > 0) {
+                $stmt_b_info = $pdo->prepare("SELECT nama, kursi FROM barber WHERE id = ?");
+                $stmt_b_info->execute([$barber_id]);
+                $b_info = $stmt_b_info->fetch(PDO::FETCH_ASSOC);
+                
+                $stmt_tog = $pdo->prepare("UPDATE barber SET status = ? WHERE id = ?");
+                $stmt_tog->execute([$new_status, $barber_id]);
+                
+                $b_nama = $b_info['nama'] ?? 'Barber';
+                $b_kursi = $b_info['kursi'] ?? 'Kursi';
+                
+                if (strtolower($new_status) === 'aktif') {
+                    set_flash('success', "Status Barber <b>{$b_nama}</b> ({$b_kursi}) berhasil DIKEMBALIKAN AKTIF! Layanan kursi kembali tersedia.");
+                } else {
+                    set_flash('warning', "Status Barber <b>{$b_nama}</b> ({$b_kursi}) berhasil DINONAKTIFKAN! Layanan pada {$b_kursi} dinonaktifkan sementara.");
+                }
+            } else {
+                set_flash('danger', 'ID Barber tidak valid!');
+            }
         }
         elseif ($type === 'add_user') {
             $fullname = trim($_POST['fullname'] ?? '');
@@ -1235,15 +1263,37 @@ if ($page === 'barber') {
                                 <tr class="border-b border-zinc-800 text-zinc-400 bg-[#100b07]">
                                     <th class="p-2.5 rounded-l-lg">Nama Barber</th>
                                     <th class="p-2.5">Kursi Layanan</th>
-                                    <th class="p-2.5 text-center rounded-r-lg">Status</th>
+                                    <th class="p-2.5 text-center">Status</th>
+                                    <th class="p-2.5 text-center rounded-r-lg">Aksi Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-800/50">
-                                <?php foreach($modal_barbers_detail as $mb): ?>
+                                <?php foreach($modal_barbers_detail as $mb): 
+                                    $is_active = in_array(strtolower($mb['status']), ['aktif']);
+                                    $status_badge_class = $is_active 
+                                        ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/50' 
+                                        : 'bg-rose-950/60 text-rose-400 border border-rose-800/50';
+                                ?>
                                 <tr class="hover:bg-amber-950/20 transition-colors">
                                     <td class="p-2.5 font-medium text-white"><?= htmlspecialchars($mb['nama']) ?></td>
                                     <td class="p-2.5"><span class="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/30 font-semibold text-[11px]"><?= htmlspecialchars($mb['kursi'] ?? 'Kursi A') ?></span></td>
-                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/50 text-[11px] capitalize"><?= htmlspecialchars($mb['status']) ?></span></td>
+                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded <?= $status_badge_class ?> text-[11px] capitalize"><?= htmlspecialchars($mb['status']) ?></span></td>
+                                    <td class="p-2.5 text-center">
+                                        <form method="POST" action="" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin mengubah status keaktifan barber <?= htmlspecialchars(addslashes($mb['nama'])) ?>?');">
+                                            <input type="hidden" name="form_type" value="toggle_barber_status">
+                                            <input type="hidden" name="barber_id" value="<?= $mb['id'] ?>">
+                                            <input type="hidden" name="new_status" value="<?= $is_active ? 'Nonaktif' : 'Aktif' ?>">
+                                            <?php if ($is_active): ?>
+                                                <button type="submit" class="px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-300 hover:bg-rose-500/25 border border-rose-500/30 text-[11px] font-medium transition-all flex items-center gap-1 mx-auto">
+                                                    <i data-lucide="power" class="w-3 h-3 text-rose-400"></i> Nonaktifkan
+                                                </button>
+                                            <?php else: ?>
+                                                <button type="submit" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 border border-emerald-500/30 text-[11px] font-medium transition-all flex items-center gap-1 mx-auto">
+                                                    <i data-lucide="power" class="w-3 h-3 text-emerald-400"></i> Aktifkan
+                                                </button>
+                                            <?php endif; ?>
+                                        </form>
+                                    </td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>

@@ -21,15 +21,20 @@ function get_db_connection() {
 function determine_queue_letter($barber_id) {
     $pdo = get_db_connection();
     
-    // Map barber ID to Queue Letter (Assuming IDs 1st active is A, 2nd is B, 3rd is C)
-    // To make it dynamic, let's get active barbers and assign A, B, C based on their order.
-    $stmt = $pdo->query("SELECT id FROM barber WHERE status = 'aktif' OR status = 'Aktif' ORDER BY id ASC");
-    $barbers = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    // Map barber ID to Queue Letter based on assigned Kursi (e.g., Kursi A -> A, Kursi B -> B, Kursi C -> C)
+    $stmt = $pdo->query("SELECT id, kursi FROM barber WHERE status = 'aktif' OR status = 'Aktif' ORDER BY id ASC");
+    $barbers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     $map = [];
     $letters = ['A', 'B', 'C', 'D', 'E'];
-    foreach ($barbers as $index => $id) {
-        $map[$id] = $letters[$index] ?? 'Z';
+    foreach ($barbers as $index => $b) {
+        $id = $b['id'];
+        $kursi_str = strtoupper($b['kursi'] ?? '');
+        if (preg_match('/KURSI\s*([A-Z])/', $kursi_str, $m)) {
+            $map[$id] = $m[1];
+        } else {
+            $map[$id] = $letters[$index] ?? 'Z';
+        }
     }
 
     if (!empty($barber_id) && isset($map[$barber_id])) {
