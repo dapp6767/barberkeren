@@ -168,7 +168,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-zinc-300 mb-1.5">Password</label>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label for="password" class="text-sm font-medium text-zinc-300">Password</label>
+                        <a href="forgot_password.php" class="text-xs text-gold hover:text-gold-light transition-colors">Lupa password?</a>
+                    </div>
                     <input type="password"
                            id="password"
                            name="password"
