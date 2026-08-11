@@ -38,22 +38,114 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $username = trim($_POST['username'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $phone = trim($_POST['phone'] ?? '');
+
+            $old_password = $_POST['old_password'] ?? '';
             $new_password = $_POST['new_password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
+
+            $stmt_cur = $pdo->prepare("SELECT * FROM users WHERE id_user = ? LIMIT 1");
+            $stmt_cur->execute([$user_id]);
+            $user_data = $stmt_cur->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user_data) {
+                set_flash('danger', 'Akun tidak ditemukan!');
+                redirect('barber.php?page=profil');
+                exit;
+            }
+
+            if (function_exists('contains_sara_words')) {
+                if (contains_sara_words($fullname)) {
+                    set_flash('danger', 'Nama Lengkap mengandung kata/unsur SARA!');
+                    redirect('barber.php?page=profil');
+                    exit;
+                }
+                if (contains_sara_words($username)) {
+                    set_flash('danger', 'Username mengandung kata/unsur SARA!');
+                    redirect('barber.php?page=profil');
+                    exit;
+                }
+            }
+
+            $stmt_dup = $pdo->prepare("SELECT id_user FROM users WHERE (LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?))) AND id_user != ? LIMIT 1");
+            $stmt_dup->execute([$username, $email, $user_id]);
+            if ($stmt_dup->fetch()) {
+                set_flash('danger', 'Username atau Email sudah terdaftar pada akun lain!');
+                redirect('barber.php?page=profil');
+                exit;
+            }
+
+            $update_password_hash = null;
+
+            if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
+                if (empty($old_password)) {
+                    set_flash('danger', 'Silakan masukkan Password Lama Anda untuk mengonfirmasi perubahan password!');
+                    redirect('barber.php?page=profil');
+                    exit;
+                }
+
+                $password_correct = false;
+                if (password_verify($old_password, $user_data['password'])) {
+                    $password_correct = true;
+                } elseif ($old_password === $user_data['password']) {
+                    $password_correct = true;
+                }
+
+                if (!$password_correct) {
+                    set_flash('danger', 'Password Lama Anda salah! Verifikasi pemilik akun gagal.');
+                    redirect('barber.php?page=profil');
+                    exit;
+                }
+
+                if (empty($new_password) || empty($confirm_password)) {
+                    set_flash('danger', 'Password Baru dan Konfirmasi Password wajib diisi!');
+                    redirect('barber.php?page=profil');
+                    exit;
+                }
+
+                if ($new_password !== $confirm_password) {
+                    set_flash('danger', 'Konfirmasi Password Baru tidak cocok dengan Password Baru!');
+                    redirect('barber.php?page=profil');
+                    exit;
+                }
+
+                if (function_exists('validate_account_creation')) {
+                    $val_p = validate_account_creation($fullname, $username, $new_password, $email, $user_id);
+                    if (!$val_p['status'] && str_contains(strtolower($val_p['message']), 'password')) {
+                        set_flash('danger', $val_p['message']);
+                        redirect('barber.php?page=profil');
+                        exit;
+                    }
+                } else {
+                    if (strlen($new_password) < 6) {
+                        set_flash('danger', 'Password minimal harus 6-8 karakter!');
+                        redirect('barber.php?page=profil');
+                        exit;
+                    }
+                    if (!preg_match('/[A-Z]/', $new_password) || !preg_match('/[a-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[\W_]/', $new_password)) {
+                        set_flash('danger', 'Password baru wajib kombinasi Huruf Besar (A-Z), Huruf Kecil (a-z), Angka (0-9), dan Simbol Khusus (@, #, !, dll)!');
+                        redirect('barber.php?page=profil');
+                        exit;
+                    }
+                }
+
+                $update_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+            }
 
             if (!empty($fullname)) {
                 $_SESSION['fullname'] = $fullname;
             }
 
-            if (!empty($new_password)) {
-                $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+            if ($update_password_hash) {
                 $stmt = $pdo->prepare("UPDATE users SET fullname = ?, username = ?, email = ?, phone = ?, password = ? WHERE id_user = ?");
-                $stmt->execute([$fullname, $username, $email, $phone, $hashed, $user_id]);
+                $stmt->execute([$fullname, $username, $email, $phone, $update_password_hash, $user_id]);
             } else {
                 $stmt = $pdo->prepare("UPDATE users SET fullname = ?, username = ?, email = ?, phone = ? WHERE id_user = ?");
                 $stmt->execute([$fullname, $username, $email, $phone, $user_id]);
             }
 
-            // Handle Profile Photo Upload (supports both foto_profil & profile_photo)
+            $stmt_b_up = $pdo->prepare("UPDATE barber SET nama = ? WHERE user_id = ?");
+            $stmt_b_up->execute([$fullname, $user_id]);
+
             $file_key = isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] === UPLOAD_ERR_OK ? 'foto_profil' : 'profile_photo';
             if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
                 $tmp_name = $_FILES[$file_key]['tmp_name'];
@@ -641,9 +733,44 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                                     </div>
                                 </div>
 
-                                <div class="pt-4 border-t border-zinc-700/80">
-                                    <label class="block text-sm font-medium text-zinc-400 mb-2">Ubah Password Baru (Kosongkan jika tidak diubah)</label>
-                                    <input type="password" name="new_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-amber-500" placeholder="Ketik password baru...">
+                                <div class="border-t border-zinc-700/80 pt-6">
+                                    <h4 class="text-sm font-medium text-white mb-4 flex items-center gap-2">
+                                        <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i> Keamanan Akun & Ubah Password
+                                    </h4>
+                                    
+                                    <div class="space-y-4 max-w-xl">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Lama Saat Ini</label>
+                                            <div class="relative">
+                                                <input type="password" id="barber_old_pass" name="old_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Masukkan password lama Anda">
+                                                <button type="button" onclick="togglePass('barber_old_pass', 'b_eye_old')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                    <i data-lucide="eye" id="b_eye_old" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <p class="text-[11px] text-zinc-500 mt-1">* Wajib diisi untuk memverifikasi bahwa Anda adalah pemilik sah akun ini.</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Baru</label>
+                                                <div class="relative">
+                                                    <input type="password" id="barber_new_pass" name="new_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Min. 6-8 karakter">
+                                                    <button type="button" onclick="togglePass('barber_new_pass', 'b_eye_new')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="b_eye_new" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
+                                                <div class="relative">
+                                                    <input type="password" id="barber_conf_pass" name="confirm_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Ulangi password baru">
+                                                    <button type="button" onclick="togglePass('barber_conf_pass', 'b_eye_conf')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="b_eye_conf" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="flex justify-end pt-2">

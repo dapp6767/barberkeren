@@ -141,19 +141,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $username = trim($_POST['username'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $password = $_POST['password'] ?? '';
+        
+        $old_password = $_POST['old_password'] ?? '';
+        $new_password = $_POST['new_password'] ?? ($_POST['password'] ?? '');
+        $confirm_password = $_POST['confirm_password'] ?? '';
         
         try {
-            if (!empty($password)) {
-                $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $stmt_cur = $pdo->prepare("SELECT * FROM users WHERE id_user = ? LIMIT 1");
+            $stmt_cur->execute([$user_id]);
+            $user_data = $stmt_cur->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user_data) {
+                set_flash('danger', 'Akun tidak ditemukan!');
+                redirect('dashboard.php?tab=profil');
+                exit;
+            }
+
+            if (function_exists('contains_sara_words')) {
+                if (contains_sara_words($fullname)) {
+                    set_flash('danger', 'Nama Lengkap mengandung kata/unsur SARA yang dilarang!');
+                    redirect('dashboard.php?tab=profil');
+                    exit;
+                }
+                if (contains_sara_words($username)) {
+                    set_flash('danger', 'Username mengandung kata/unsur SARA yang dilarang!');
+                    redirect('dashboard.php?tab=profil');
+                    exit;
+                }
+            }
+
+            $stmt_dup = $pdo->prepare("SELECT id_user FROM users WHERE (LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?))) AND id_user != ? LIMIT 1");
+            $stmt_dup->execute([$username, $email, $user_id]);
+            if ($stmt_dup->fetch()) {
+                set_flash('danger', 'Username atau Email sudah terdaftar pada akun lain!');
+                redirect('dashboard.php?tab=profil');
+                exit;
+            }
+
+            $update_password_hash = null;
+
+            if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
+                if (empty($old_password)) {
+                    set_flash('danger', 'Silakan masukkan Password Lama Anda untuk mengonfirmasi perubahan password!');
+                    redirect('dashboard.php?tab=profil');
+                    exit;
+                }
+
+                $password_correct = false;
+                if (password_verify($old_password, $user_data['password'])) {
+                    $password_correct = true;
+                } elseif ($old_password === $user_data['password']) {
+                    $password_correct = true;
+                }
+
+                if (!$password_correct) {
+                    set_flash('danger', 'Password Lama Anda salah! Verifikasi pemilik akun gagal.');
+                    redirect('dashboard.php?tab=profil');
+                    exit;
+                }
+
+                if (empty($new_password) || empty($confirm_password)) {
+                    set_flash('danger', 'Password Baru dan Konfirmasi Password wajib diisi!');
+                    redirect('dashboard.php?tab=profil');
+                    exit;
+                }
+
+                if ($new_password !== $confirm_password) {
+                    set_flash('danger', 'Konfirmasi Password Baru tidak cocok dengan Password Baru!');
+                    redirect('dashboard.php?tab=profil');
+                    exit;
+                }
+
+                if (function_exists('validate_account_creation')) {
+                    $val_p = validate_account_creation($fullname, $username, $new_password, $email, $user_id);
+                    if (!$val_p['status'] && str_contains(strtolower($val_p['message']), 'password')) {
+                        set_flash('danger', $val_p['message']);
+                        redirect('dashboard.php?tab=profil');
+                        exit;
+                    }
+                } else {
+                    if (strlen($new_password) < 6) {
+                        set_flash('danger', 'Password minimal harus 6-8 karakter!');
+                        redirect('dashboard.php?tab=profil');
+                        exit;
+                    }
+                    if (!preg_match('/[A-Z]/', $new_password) || !preg_match('/[a-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[\W_]/', $new_password)) {
+                        set_flash('danger', 'Password baru wajib kombinasi Huruf Besar (A-Z), Huruf Kecil (a-z), Angka (0-9), dan Simbol Khusus (@, #, !, dll)!');
+                        redirect('dashboard.php?tab=profil');
+                        exit;
+                    }
+                }
+
+                $update_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+            }
+
+            if ($update_password_hash) {
                 $stmt = $pdo->prepare("UPDATE users SET fullname=?, username=?, email=?, phone=?, password=? WHERE id_user=?");
-                $stmt->execute([$fullname, $username, $email, $phone, $hashed, $user_id]);
+                $stmt->execute([$fullname, $username, $email, $phone, $update_password_hash, $user_id]);
+                set_flash('success', 'Profil dan Password Anda berhasil diperbarui!');
             } else {
                 $stmt = $pdo->prepare("UPDATE users SET fullname=?, username=?, email=?, phone=? WHERE id_user=?");
                 $stmt->execute([$fullname, $username, $email, $phone, $user_id]);
+                set_flash('success', 'Informasi profil berhasil diperbarui!');
             }
 
-            // Handle Profile Image Upload
             if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] === UPLOAD_ERR_OK) {
                 $allowed = ['jpg', 'jpeg', 'png', 'gif'];
                 $ext = strtolower(pathinfo($_FILES['foto_profil']['name'], PATHINFO_EXTENSION));
@@ -161,7 +252,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $upload_dir = __DIR__ . '/../asset/image/';
                     if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
                     
-                    // Hapus gambar lama jika ada
                     $old_files = glob($upload_dir . "profile_{$user_id}.*");
                     foreach ($old_files as $of) unlink($of);
                     
@@ -170,17 +260,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
 
-            // Update session vars
             $_SESSION['username'] = $username;
             $_SESSION['fullname'] = $fullname;
             set_flash('success', 'Profil berhasil diperbarui!');
+            redirect('dashboard.php?tab=profil');
+            exit;
         } catch (PDOException $e) {
-            set_flash('danger', 'Gagal memperbarui profil: Username/Email mungkin sudah digunakan.');
+            set_flash('danger', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            redirect('dashboard.php?tab=profil');
+            exit;
         }
-        
-        $redirect_page = $_POST['current_page'] ?? 'profil';
-        redirect("dashboard.php?page=$redirect_page");
-        exit;
     }
 }
 ?>
@@ -536,13 +625,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                     </div>
                                 </div>
 
-                                <div class="border-t border-zinc-700 pt-6 mb-6">
+                                <div class="border-t border-zinc-700/80 pt-6 mb-6">
                                     <h4 class="text-sm font-medium text-white mb-4 flex items-center gap-2">
-                                        <i data-lucide="lock" class="w-4 h-4 text-amber-400"></i> Keamanan
+                                        <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i> Keamanan Akun & Ubah Password
                                     </h4>
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-400 mb-2">Password Baru <span class="text-xs text-zinc-500 font-normal">(Kosongkan jika tidak ingin mengubah)</span></label>
-                                        <input type="password" name="password" class="w-full md:w-1/2 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 transition-all" placeholder="••••••••">
+                                    
+                                    <div class="space-y-4 max-w-xl">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Lama Saat Ini</label>
+                                            <div class="relative">
+                                                <input type="password" id="old_pass_input" name="old_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Masukkan password lama Anda">
+                                                <button type="button" onclick="togglePass('old_pass_input', 'eye_old')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                    <i data-lucide="eye" id="eye_old" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <p class="text-[11px] text-zinc-500 mt-1">* Wajib diisi untuk memverifikasi bahwa Anda adalah pemilik sah akun ini.</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Baru</label>
+                                                <div class="relative">
+                                                    <input type="password" id="new_pass_input" name="new_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Min. 6-8 karakter">
+                                                    <button type="button" onclick="togglePass('new_pass_input', 'eye_new')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="eye_new" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
+                                                <div class="relative">
+                                                    <input type="password" id="confirm_pass_input" name="confirm_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Ulangi password baru">
+                                                    <button type="button" onclick="togglePass('confirm_pass_input', 'eye_conf')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="eye_conf" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Password Strength Checklist Box -->
+                                        <div class="bg-black/40 border border-white/10 rounded-xl p-3.5 space-y-2 text-xs">
+                                            <p class="text-amber-200 font-semibold text-[11px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                                                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i> Ketentuan Kombinasi Password Baru:
+                                            </p>
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-zinc-400">
+                                                <div id="prof_rule_len" class="flex items-center gap-1.5 transition-colors">
+                                                    <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Minimal 6-8 Karakter
+                                                </div>
+                                                <div id="prof_rule_case" class="flex items-center gap-1.5 transition-colors">
+                                                    <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Huruf Besar (A-Z) & Kecil (a-z)
+                                                </div>
+                                                <div id="prof_rule_num" class="flex items-center gap-1.5 transition-colors">
+                                                    <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Memiliki Angka (0-9)
+                                                </div>
+                                                <div id="prof_rule_sym" class="flex items-center gap-1.5 transition-colors">
+                                                    <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Memiliki Simbol (@, #, !, dll)
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1544,6 +1684,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             const navLink = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
             if (navLink) switchTab(tabId, navLink);
         };
+
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.setAttribute('data-lucide', 'eye-off');
+                } else {
+                    input.type = 'password';
+                    icon.setAttribute('data-lucide', 'eye');
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        const profPassInput = document.getElementById('new_pass_input');
+        if (profPassInput) {
+            profPassInput.addEventListener('input', function() {
+                const val = this.value;
+                const rLen = document.getElementById('prof_rule_len');
+                const rCase = document.getElementById('prof_rule_case');
+                const rNum = document.getElementById('prof_rule_num');
+                const rSym = document.getElementById('prof_rule_sym');
+
+                if (rLen) rLen.className = val.length >= 6 ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+                if (rCase) rCase.className = (/[A-Z]/.test(val) && /[a-z]/.test(val)) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+                if (rNum) rNum.className = /[0-9]/.test(val) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+                if (rSym) rSym.className = /[\W_]/.test(val) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+            });
+        }
     </script>
 </body>
 </html>

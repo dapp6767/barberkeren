@@ -280,11 +280,102 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = trim($_POST['username']);
             $email = trim($_POST['email'] ?? '');
             $phone = trim($_POST['phone'] ?? '');
-            $password = $_POST['password'];
 
-            if (!empty($password)) {
+            $old_password = $_POST['old_password'] ?? '';
+            $new_password = $_POST['new_password'] ?? ($_POST['password'] ?? '');
+            $confirm_password = $_POST['confirm_password'] ?? '';
+
+            $stmt_cur = $pdo->prepare("SELECT * FROM users WHERE id_user = ? LIMIT 1");
+            $stmt_cur->execute([$id]);
+            $user_data = $stmt_cur->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user_data) {
+                set_flash('danger', 'Akun tidak ditemukan!');
+                redirect('admin.php?page=profil');
+                exit;
+            }
+
+            if (function_exists('contains_sara_words')) {
+                if (contains_sara_words($fullname)) {
+                    set_flash('danger', 'Nama Lengkap mengandung kata/unsur SARA!');
+                    redirect('admin.php?page=profil');
+                    exit;
+                }
+                if (contains_sara_words($username)) {
+                    set_flash('danger', 'Username mengandung kata/unsur SARA!');
+                    redirect('admin.php?page=profil');
+                    exit;
+                }
+            }
+
+            $stmt_dup = $pdo->prepare("SELECT id_user FROM users WHERE (LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?))) AND id_user != ? LIMIT 1");
+            $stmt_dup->execute([$username, $email, $id]);
+            if ($stmt_dup->fetch()) {
+                set_flash('danger', 'Username atau Email sudah terdaftar pada akun lain!');
+                redirect('admin.php?page=profil');
+                exit;
+            }
+
+            $update_password_hash = null;
+
+            if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
+                if (empty($old_password)) {
+                    set_flash('danger', 'Silakan masukkan Password Lama Anda untuk mengonfirmasi perubahan password!');
+                    redirect('admin.php?page=profil');
+                    exit;
+                }
+
+                $password_correct = false;
+                if (password_verify($old_password, $user_data['password'])) {
+                    $password_correct = true;
+                } elseif ($old_password === $user_data['password']) {
+                    $password_correct = true;
+                }
+
+                if (!$password_correct) {
+                    set_flash('danger', 'Password Lama Anda salah! Verifikasi pemilik akun gagal.');
+                    redirect('admin.php?page=profil');
+                    exit;
+                }
+
+                if (empty($new_password) || empty($confirm_password)) {
+                    set_flash('danger', 'Password Baru dan Konfirmasi Password wajib diisi!');
+                    redirect('admin.php?page=profil');
+                    exit;
+                }
+
+                if ($new_password !== $confirm_password) {
+                    set_flash('danger', 'Konfirmasi Password Baru tidak cocok dengan Password Baru!');
+                    redirect('admin.php?page=profil');
+                    exit;
+                }
+
+                if (function_exists('validate_account_creation')) {
+                    $val_p = validate_account_creation($fullname, $username, $new_password, $email, $id);
+                    if (!$val_p['status'] && str_contains(strtolower($val_p['message']), 'password')) {
+                        set_flash('danger', $val_p['message']);
+                        redirect('admin.php?page=profil');
+                        exit;
+                    }
+                } else {
+                    if (strlen($new_password) < 6) {
+                        set_flash('danger', 'Password minimal harus 6-8 karakter!');
+                        redirect('admin.php?page=profil');
+                        exit;
+                    }
+                    if (!preg_match('/[A-Z]/', $new_password) || !preg_match('/[a-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[\W_]/', $new_password)) {
+                        set_flash('danger', 'Password baru wajib kombinasi Huruf Besar (A-Z), Huruf Kecil (a-z), Angka (0-9), dan Simbol Khusus (@, #, !, dll)!');
+                        redirect('admin.php?page=profil');
+                        exit;
+                    }
+                }
+
+                $update_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+            }
+
+            if ($update_password_hash) {
                 $stmt = $pdo->prepare("UPDATE users SET fullname = ?, username = ?, email = ?, phone = ?, password = ? WHERE id_user = ?");
-                $stmt->execute([$fullname, $username, $email, $phone, $password, $id]);
+                $stmt->execute([$fullname, $username, $email, $phone, $update_password_hash, $id]);
             } else {
                 $stmt = $pdo->prepare("UPDATE users SET fullname = ?, username = ?, email = ?, phone = ? WHERE id_user = ?");
                 $stmt->execute([$fullname, $username, $email, $phone, $id]);
@@ -298,7 +389,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 move_uploaded_file($_FILES['foto_profil']['tmp_name'], $dest);
             }
             $_SESSION['username'] = $username;
+            $_SESSION['fullname'] = $fullname;
             set_flash('success', 'Profil berhasil diperbarui!');
+            redirect('admin.php?page=profil');
+            exit;
         }
         // ================= BARBER ACTIONS =================
         elseif ($type === 'call') {
@@ -3310,11 +3404,41 @@ if ($page === 'barber') {
 
                                 <div class="border-t border-zinc-700/50 pt-6 mb-6">
                                     <h4 class="text-sm font-medium text-white mb-4 flex items-center gap-2">
-                                        <i data-lucide="lock" class="w-4 h-4 text-zinc-400"></i> Keamanan
+                                        <i data-lucide="shield-check" class="w-4 h-4 text-adminlte-primary"></i> Keamanan Akun & Ubah Password
                                     </h4>
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-400 mb-2">Password Baru <span class="text-xs text-zinc-500 font-normal">(Kosongkan jika tidak ingin mengubah)</span></label>
-                                        <input type="password" name="password" class="w-full md:w-1/2 bg-zinc-950/50 border border-zinc-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-adminlte-primary focus:ring-1 focus:ring-adminlte-primary transition-all" placeholder="••••••••">
+                                    
+                                    <div class="space-y-4 max-w-xl">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Lama Saat Ini</label>
+                                            <div class="relative">
+                                                <input type="password" id="admin_old_pass" name="old_password" class="w-full bg-zinc-950/50 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-adminlte-primary focus:ring-1 focus:ring-adminlte-primary transition-all text-sm" placeholder="Masukkan password lama Anda">
+                                                <button type="button" onclick="togglePass('admin_old_pass', 'a_eye_old')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                    <i data-lucide="eye" id="a_eye_old" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <p class="text-[11px] text-zinc-500 mt-1">* Wajib diisi untuk memverifikasi bahwa Anda adalah pemilik sah akun ini.</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Baru</label>
+                                                <div class="relative">
+                                                    <input type="password" id="admin_new_pass" name="new_password" class="w-full bg-zinc-950/50 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-adminlte-primary focus:ring-1 focus:ring-adminlte-primary transition-all text-sm" placeholder="Min. 6-8 karakter">
+                                                    <button type="button" onclick="togglePass('admin_new_pass', 'a_eye_new')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="a_eye_new" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
+                                                <div class="relative">
+                                                    <input type="password" id="admin_conf_pass" name="confirm_password" class="w-full bg-zinc-950/50 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-adminlte-primary focus:ring-1 focus:ring-adminlte-primary transition-all text-sm" placeholder="Ulangi password baru">
+                                                    <button type="button" onclick="togglePass('admin_conf_pass', 'a_eye_conf')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="a_eye_conf" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
