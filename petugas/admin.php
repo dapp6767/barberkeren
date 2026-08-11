@@ -1948,6 +1948,7 @@ if ($page === 'barber') {
                                 <button class="tabulator-btn" onclick="exportData('table-layanan', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
                                 <button class="tabulator-btn" onclick="exportData('table-layanan', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
                             </div>
+                            <input type="text" class="tabulator-search" id="search-layanan" placeholder="Filter rows...">
                         </div>
                         <table id="table-layanan" class="w-full text-left border-collapse display">
                             <thead>
