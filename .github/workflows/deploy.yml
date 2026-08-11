@@ -17,9 +17,9 @@ jobs:
       - name: 📁 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ftpupload.net
+          username: if0_42597730
+          password: inigwdaffa2009
           protocol: ftp
           port: 21
           server-dir: elitebarber.web.id/htdocs/
