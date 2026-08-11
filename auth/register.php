@@ -146,13 +146,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-zinc-300 mb-1.5">Password</label>
-                        <input type="password" name="password" class="auth-input" placeholder="Min. 6 karakter" required>
+                        <div class="relative">
+                            <input type="password" id="password_input" name="password" class="auth-input pr-10" placeholder="Min. 6-8 karakter" required>
+                            <button type="button" onclick="togglePass('password_input', 'eye_1')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                <i data-lucide="eye" id="eye_1" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-zinc-300 mb-1.5">Konfirmasi Password</label>
-                        <input type="password" name="confirm_password" class="auth-input" placeholder="Ulangi password" required>
+                        <div class="relative">
+                            <input type="password" id="confirm_password_input" name="confirm_password" class="auth-input pr-10" placeholder="Ulangi password" required>
+                            <button type="button" onclick="togglePass('confirm_password_input', 'eye_2')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                <i data-lucide="eye" id="eye_2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Password Strength Checklist Box -->
+                <div class="bg-black/50 border border-white/10 rounded-xl p-3.5 space-y-2 text-xs">
+                    <p class="text-amber-200 font-semibold text-[11px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i> Ketentuan Kombinasi Password:
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-zinc-400">
+                        <div id="rule_len" class="flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Minimal 6-8 Karakter
+                        </div>
+                        <div id="rule_case" class="flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Huruf Besar (A-Z) & Kecil (a-z)
+                        </div>
+                        <div id="rule_num" class="flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Memiliki Angka (0-9)
+                        </div>
+                        <div id="rule_sym" class="flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Memiliki Simbol (@, #, !, dll)
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-zinc-500 italic">
+                    * Nama & Username tidak boleh mengandung unsur SARA dan tidak boleh sama dengan akun lain yang sudah terdaftar.
+                </p>
 
                 <button type="submit"
                         class="w-full h-12 rounded-full bg-gold text-zinc-950 font-bold text-sm tracking-wide shadow-lg hover:bg-[#e8c84a] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 mt-2">
@@ -181,6 +216,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     </div>
 
-    <script>lucide.createIcons();</script>
+    <script>
+        lucide.createIcons();
+
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        const passInput = document.getElementById('password_input');
+        if (passInput) {
+            passInput.addEventListener('input', function() {
+                const val = this.value;
+                
+                // Length check
+                const ruleLen = document.getElementById('rule_len');
+                if (val.length >= 6) {
+                    ruleLen.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+                } else {
+                    ruleLen.className = 'flex items-center gap-1.5 text-zinc-400';
+                }
+
+                // Case check (A-Z and a-z)
+                const ruleCase = document.getElementById('rule_case');
+                if (/[A-Z]/.test(val) && /[a-z]/.test(val)) {
+                    ruleCase.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+                } else {
+                    ruleCase.className = 'flex items-center gap-1.5 text-zinc-400';
+                }
+
+                // Number check
+                const ruleNum = document.getElementById('rule_num');
+                if (/[0-9]/.test(val)) {
+                    ruleNum.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+                } else {
+                    ruleNum.className = 'flex items-center gap-1.5 text-zinc-400';
+                }
+
+                // Symbol check
+                const ruleSym = document.getElementById('rule_sym');
+                if (/[\W_]/.test(val)) {
+                    ruleSym.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+                } else {
+                    ruleSym.className = 'flex items-center gap-1.5 text-zinc-400';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

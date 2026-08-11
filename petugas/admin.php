@@ -78,9 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = trim($_POST['username']);
             $password = trim($_POST['password']);
             
+            if (function_exists('validate_account_creation')) {
+                $val = validate_account_creation($nama, $username, $password);
+                if (!$val['status']) {
+                    set_flash('danger', $val['message']);
+                    redirect('admin.php?page=akun');
+                    exit;
+                }
+            }
+            
             $pdo->beginTransaction();
             $stmt_u = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, 'barber')");
-            $stmt_u->execute([$username, $password]);
+            $stmt_u->execute([$username, password_hash($password, PASSWORD_DEFAULT)]);
             $user_id = $pdo->lastInsertId();
             
             $stmt = $pdo->prepare("INSERT INTO barber (user_id, nama, kursi, status) VALUES (?, ?, ?, 'aktif')");
@@ -137,6 +146,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $phone = trim($_POST['phone'] ?? '');
             $password = trim($_POST['password']);
             $role = trim($_POST['role']);
+            
+            if (function_exists('validate_account_creation')) {
+                $val = validate_account_creation($fullname, $username, $password, $email);
+                if (!$val['status']) {
+                    set_flash('danger', $val['message']);
+                    redirect('admin.php?page=akun');
+                    exit;
+                }
+            }
             
             // Hash password untuk keamanan dan agar sama dengan sistem registrasi
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
