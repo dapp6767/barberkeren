@@ -100,6 +100,9 @@ if ($my_user_id) {
             }
         };
     </script>
+    <!-- FontAwesome 6 & Lucide Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- jQuery & DataTables CDN -->
@@ -337,25 +340,25 @@ if ($my_user_id) {
                 $is_qris = ($current_page_param === 'qris');
                 ?>
                 <a href="javascript:void(0)" onclick="navigateToTab('tab-dashboard')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-4 <?= $is_dashboard ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <i data-lucide="layout-dashboard" class="fa-solid fa-house w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Beranda</span>
                 </a>
                 <a href="javascript:void(0)" onclick="navigateToTab('tab-layanan')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_layanan ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="scissors" class="w-5 h-5"></i>
+                    <i data-lucide="scissors" class="fa-solid fa-scissors w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Layanan</span>
                 </a>
                 <a href="javascript:void(0)" onclick="navigateToTab('tab-riwayat')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_riwayat ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="history" class="w-5 h-5"></i>
+                    <i data-lucide="history" class="fa-solid fa-clock-rotate-left w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Riwayat Cukur</span>
                 </a>
                 <a href="javascript:void(0)" onclick="navigateToTab('tab-profil')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_profil ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="user-circle" class="w-5 h-5"></i>
+                    <i data-lucide="user-circle" class="fa-solid fa-user-gear w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Profil Saya</span>
                 </a>
                 
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Lainnya</p>
                 <a href="../auth/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-400/10 hover:text-red-300 transition-colors mt-1">
-                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <i data-lucide="log-out" class="fa-solid fa-right-from-bracket w-5 h-5 text-red-400 shrink-0"></i>
                     <span>Logout</span>
                 </a>
             </nav>

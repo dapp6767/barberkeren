@@ -175,6 +175,9 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             }
         }
     </script>
+    <!-- FontAwesome 6 & Lucide Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* SPA Transitions */
