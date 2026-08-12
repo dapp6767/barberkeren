@@ -982,8 +982,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     lucide.createIcons();
                 }
 
+                function onMainServiceChange(selectEl) {
+                    const btn = document.getElementById('btn_submit_antrean');
+                    if (btn) {
+                        if (selectEl && selectEl.value) {
+                            btn.removeAttribute('disabled');
+                        } else {
+                            btn.setAttribute('disabled', 'disabled');
+                        }
+                    }
+                }
+
                 // Expose globally
                 window.selectLayanan = selectLayanan;
+                window.onMainServiceChange = onMainServiceChange;
 
                 // Search filter
                 document.addEventListener('DOMContentLoaded', function() {
@@ -1272,23 +1284,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                         <input type="text" value="<?= htmlspecialchars($_SESSION['fullname'] ?? $_SESSION['username']) ?>" readonly class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-300 font-medium cursor-not-allowed text-base">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Layanan Terpilih</label>
-                                        <select name="service_id" id="main_service_select" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white font-semibold focus:outline-none pointer-events-none appearance-none cursor-not-allowed text-base" required tabindex="-1">
-                                            <option value="" disabled <?= empty($_GET['service_id']) ? 'selected' : '' ?>>-- Pilih dari Menu Layanan --</option>
-                                            <?php foreach ($services as $s): 
-                                                $s_id = $s['id'] ?? $s['id_service'];
-                                                $is_selected = (isset($_GET['service_id']) && $_GET['service_id'] == $s_id) ? 'selected' : '';
-                                            ?>
-                                                <option value="<?= $s_id ?>" <?= $is_selected ?>>
-                                                    <?= htmlspecialchars($s['service_name']) ?> - Rp <?= number_format($s['price'], 0, ',', '.') ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <p class="text-[11px] text-amber-400/80 mt-1 flex items-center gap-1">
-                                            <i data-lucide="info" class="w-3.5 h-3.5"></i> Pilih layanan melalui menu <a href="javascript:void(0)" onclick="navigateToTab('tab-layanan')" class="underline hover:text-amber-300">Layanan</a>
-                                        </p>
+                                        <div class="flex items-center justify-between mb-1.5">
+                                            <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Layanan Terpilih</label>
+                                            <a href="javascript:void(0)" onclick="navigateToTab('tab-layanan')" class="text-[11px] text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1">
+                                                <i data-lucide="grid" class="w-3 h-3"></i> Lihat Katalog Foto
+                                            </a>
+                                        </div>
+                                        <div class="relative">
+                                            <select name="service_id" id="main_service_select" onchange="onMainServiceChange(this)" class="w-full bg-zinc-900 border border-amber-500/30 hover:border-amber-400/60 focus:border-amber-400 rounded-xl px-4 py-3.5 pr-10 text-white font-semibold focus:outline-none transition-all cursor-pointer text-base appearance-none shadow-md" required>
+                                                <option value="" disabled <?= empty($_GET['service_id']) ? 'selected' : '' ?>>-- Klik di Sini untuk Pilih Layanan --</option>
+                                                <?php foreach ($services as $s): 
+                                                    $s_id = $s['id'] ?? $s['id_service'];
+                                                    $is_selected = (isset($_GET['service_id']) && $_GET['service_id'] == $s_id) ? 'selected' : '';
+                                                ?>
+                                                    <option value="<?= $s_id ?>" <?= $is_selected ?> class="bg-zinc-900 text-white py-2">
+                                                        <?= htmlspecialchars($s['service_name']) ?> - Rp <?= number_format($s['price'], 0, ',', '.') ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <div class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-amber-400">
+                                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <button type="submit" <?= empty($_GET['service_id']) ? 'disabled' : '' ?> class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg border border-amber-400/30 flex items-center justify-center gap-2 min-h-[48px] text-base active:scale-98 mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-amber-500">
+                                    <button type="submit" id="btn_submit_antrean" <?= empty($_GET['service_id']) ? 'disabled' : '' ?> class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg border border-amber-400/30 flex items-center justify-center gap-2 min-h-[48px] text-base active:scale-98 mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-amber-500">
                                         <i data-lucide="scissors" class="w-5 h-5"></i> AMBIL TIKET ANTREAN
                                     </button>
                                 </form>
