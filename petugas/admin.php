@@ -1734,8 +1734,8 @@ if ($page === 'barber') {
                 $bulanNama2 = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
                 $highlightIdx = array_search(max($revByMonth), $revByMonth);
             ?>
-            <!-- Stats row -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-8 mb-6">
+            <!-- Stats row (Pendapatan Bulanan) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6" style="margin-top: 56px; padding-top: 12px;">
                 <div class="rounded-2xl p-5 border" style="background:linear-gradient(135deg,#1e1408,#120e06);border-color:#4a3020;">
                     <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#8a6030;">Total Pendapatan <?= $selectedTahun ?></p>
                     <p class="text-3xl font-bold" style="color:#e8d5a3;">Rp <?= number_format($totalRevYear, 0, ',', '.') ?></p>
