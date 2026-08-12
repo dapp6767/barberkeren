@@ -513,12 +513,13 @@ if ($sales_yesterday > 0) {
     $day_ratio = round((($sales_today_val - $sales_yesterday) / $sales_yesterday) * 100);
 }
 
-// Visits Metrics Connected to Database
+// Visits & Daily Revenue Metrics Connected to Database
 $total_visits = (int)$pdo->query("SELECT COUNT(*) FROM kunjungan_website")->fetchColumn();
 $today_visits = (int)$pdo->query("SELECT COUNT(*) FROM kunjungan_website WHERE DATE(waktu_kunjungan) = CURDATE()")->fetchColumn();
 if ($today_visits == 0) {
     $today_visits = (int)$pdo->query("SELECT COUNT(*) FROM kunjungan_website WHERE DATE(waktu_kunjungan) = (SELECT MAX(DATE(waktu_kunjungan)) FROM kunjungan_website)")->fetchColumn();
 }
+$avg_daily_revenue = (float)$pdo->query("SELECT COALESCE(AVG(daily_total), 0) FROM (SELECT SUM(total_harga) as daily_total FROM transaksi WHERE status_pembayaran = 'lunas' GROUP BY DATE(waktu_bayar)) t")->fetchColumn();
 
 // Transaksi & Conversion Connected to Database
 $total_transaksi_lunas = (int)$pdo->query("SELECT COUNT(*) FROM transaksi WHERE status_pembayaran = 'lunas'")->fetchColumn();
@@ -550,6 +551,7 @@ $trx_bars_data = $pdo->query("
 $modal_pay_methods = $pdo->query("SELECT COALESCE(NULLIF(metode_pembayaran, ''), 'Cash') as metode, COUNT(*) as count_trx, SUM(total_harga) as total_rev FROM transaksi WHERE status_pembayaran = 'lunas' GROUP BY metode ORDER BY total_rev DESC")->fetchAll(PDO::FETCH_ASSOC);
 $modal_top_layanan = $pdo->query("SELECT l.nama_layanan, l.harga, COUNT(t.id) as count_trx, SUM(t.total_harga) as total_rev FROM transaksi t JOIN antrian a ON t.antrian_id = a.id JOIN layanan l ON a.layanan_id = l.id WHERE t.status_pembayaran = 'lunas' GROUP BY l.id ORDER BY total_rev DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
 $modal_visits_daily = $pdo->query("SELECT DATE(waktu_kunjungan) as tgl, COUNT(*) as jml FROM kunjungan_website GROUP BY DATE(waktu_kunjungan) ORDER BY tgl DESC LIMIT 7")->fetchAll(PDO::FETCH_ASSOC);
+$modal_revenue_daily = $pdo->query("SELECT DATE(waktu_bayar) as tgl, SUM(total_harga) as total FROM transaksi WHERE status_pembayaran = 'lunas' GROUP BY DATE(waktu_bayar) ORDER BY tgl DESC LIMIT 7")->fetchAll(PDO::FETCH_ASSOC);
 $modal_queue_status = $pdo->query("SELECT status_antrean, COUNT(*) as jml FROM antrian GROUP BY status_antrean")->fetchAll(PDO::FETCH_KEY_PAIR);
 $modal_barbers_detail = $pdo->query("SELECT b.*, u.username FROM barber b LEFT JOIN users u ON b.user_id = u.id_user ORDER BY b.id ASC")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1040,17 +1042,17 @@ if ($page === 'barber') {
                     </div>
                 </div>
 
-                <!-- Card 2: Visits -->
+                <!-- Card 2: Pendapatan Perhari -->
                 <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
                     <div class="relative z-10">
                         <!-- Header -->
                         <div class="flex items-center justify-between text-zinc-300 mb-1">
-                            <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Visits</span>
-                            <button type="button" onclick="openCardModal('visitsModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Visits">i</button>
+                            <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Pendapatan Perhari</span>
+                            <button type="button" onclick="openCardModal('dailyRevenueModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Pendapatan Perhari">i</button>
                         </div>
                         <!-- Big Metric Value -->
                         <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
-                            <?= number_format($total_visits) ?>
+                            Rp <?= number_format($sales_today_val, 0, ',', '.') ?>
                         </div>
                         <!-- Multi-layer Organic Gold/Amber Wave Chart SVG -->
                         <div class="h-14 w-full relative overflow-hidden flex items-end my-1">
@@ -1081,7 +1083,7 @@ if ($page === 'barber') {
                     <div class="relative z-10">
                         <div class="w-full h-[1px] bg-white/10 my-3"></div>
                         <div class="text-center text-xs text-zinc-300 font-medium">
-                            Day visits <?= number_format($today_visits) ?>
+                            Rata-rata Harian Rp <?= number_format($avg_daily_revenue, 0, ',', '.') ?>
                         </div>
                     </div>
                 </div>
@@ -1246,16 +1248,16 @@ if ($page === 'barber') {
                     </div>
                 </div>
 
-                <!-- 2. Visits Modal -->
-                <div id="visitsModal" class="card-modal-content hidden bg-[#18120c] border border-cyan-600/40 rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative text-white my-auto">
-                    <div class="flex items-center justify-between border-b border-cyan-900/40 pb-4 mb-4">
+                <!-- 2. Daily Revenue Modal -->
+                <div id="dailyRevenueModal" class="card-modal-content hidden bg-[#18120c] border border-amber-600/40 rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative text-white my-auto">
+                    <div class="flex items-center justify-between border-b border-amber-900/40 pb-4 mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                                <i data-lucide="trending-up" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-cyan-100">Detail Kunjungan Website (Visits)</h3>
-                                <p class="text-xs text-zinc-400">Statistik pengunjung & lalu lintas pengunjung website</p>
+                                <h3 class="text-lg font-bold text-amber-100">Detail Pendapatan Perhari</h3>
+                                <p class="text-xs text-zinc-400">Statistik dan rincian omset harian barbershop</p>
                             </div>
                         </div>
                         <button type="button" onclick="closeCardModal()" class="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800 transition-colors">
@@ -1264,37 +1266,33 @@ if ($page === 'barber') {
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                        <div class="bg-[#100b07] border border-cyan-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Total Kunjungan</p>
-                            <p class="text-base font-bold text-cyan-300"><?= number_format($total_visits) ?></p>
+                        <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
+                            <p class="text-xs text-zinc-400 mb-1">Pendapatan Hari Ini</p>
+                            <p class="text-base font-bold text-emerald-400">Rp <?= number_format($sales_today_val, 0, ',', '.') ?></p>
                         </div>
-                        <div class="bg-[#100b07] border border-cyan-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Kunjungan Hari Ini</p>
-                            <p class="text-base font-bold text-emerald-400"><?= number_format($today_visits) ?></p>
+                        <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
+                            <p class="text-xs text-zinc-400 mb-1">Pendapatan Kemarin</p>
+                            <p class="text-base font-bold text-amber-300">Rp <?= number_format($sales_yesterday, 0, ',', '.') ?></p>
                         </div>
-                        <div class="bg-[#100b07] border border-cyan-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Rata-rata 7 Hari</p>
-                            <?php 
-                            $sum_7d = array_sum(array_column($modal_visits_daily, 'jml'));
-                            $avg_7d = count($modal_visits_daily) > 0 ? round($sum_7d / count($modal_visits_daily)) : 0;
-                            ?>
-                            <p class="text-base font-bold text-amber-400"><?= number_format($avg_7d) ?> / hari</p>
+                        <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
+                            <p class="text-xs text-zinc-400 mb-1">Rata-rata Harian</p>
+                            <p class="text-base font-bold text-amber-400">Rp <?= number_format($avg_daily_revenue, 0, ',', '.') ?></p>
                         </div>
                     </div>
 
-                    <h4 class="text-xs font-semibold text-cyan-200 uppercase tracking-wider mb-2">Riwayat Kunjungan 7 Hari Terakhir</h4>
+                    <h4 class="text-xs font-semibold text-amber-200 uppercase tracking-wider mb-2">Riwayat Pendapatan Harian (7 Hari Terakhir)</h4>
                     <div class="space-y-2 mb-4">
                         <?php 
-                        $max_visit_day = !empty($modal_visits_daily) ? max(array_column($modal_visits_daily, 'jml')) : 1;
-                        foreach($modal_visits_daily as $vd):
-                            $pct_v = round(($vd['jml'] / max(1, $max_visit_day)) * 100);
+                        $max_rev_day = !empty($modal_revenue_daily) ? max(array_column($modal_revenue_daily, 'total')) : 1;
+                        foreach($modal_revenue_daily as $rd):
+                            $pct_r = round(($rd['total'] / max(1, $max_rev_day)) * 100);
                         ?>
                         <div class="bg-[#100b07] border border-zinc-800/80 rounded-lg p-2.5 flex items-center justify-between text-xs gap-3">
-                            <span class="text-zinc-400 w-24 shrink-0"><?= date('d M Y', strtotime($vd['tgl'])) ?></span>
+                            <span class="text-zinc-400 w-24 shrink-0"><?= date('d M Y', strtotime($rd['tgl'])) ?></span>
                             <div class="flex-1 bg-zinc-900 h-2 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full" style="width: <?= $pct_v ?>%;"></div>
+                                <div class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full" style="width: <?= $pct_r ?>%;"></div>
                             </div>
-                            <span class="text-cyan-300 font-bold w-12 text-right"><?= number_format($vd['jml']) ?></span>
+                            <span class="text-amber-300 font-bold text-right shrink-0">Rp <?= number_format($rd['total'], 0, ',', '.') ?></span>
                         </div>
                         <?php endforeach; ?>
                     </div>
