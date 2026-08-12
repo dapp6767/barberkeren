@@ -617,34 +617,53 @@ if ($page === 'barber') {
                     </div>
                 </div>
 
-                <!-- Card 3: Payments -->
+                <!-- Card 3: Top Layanan Terlaris -->
                 <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
                     <div class="relative z-10">
                         <!-- Header -->
                         <div class="flex items-center justify-between text-zinc-300 mb-1">
-                            <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Payments</span>
-                            <button type="button" onclick="openCardModal('paymentsModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Payments">i</button>
+                            <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Top Layanan Terlaris</span>
+                            <button type="button" onclick="openCardModal('topLayananModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Top Layanan">i</button>
                         </div>
-                        <!-- Big Metric Value -->
-                        <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-3">
-                            <?= number_format($total_transaksi_lunas) ?>
+                        <?php 
+                        $top_single = $modal_top_layanan[0] ?? null;
+                        $top_name = $top_single['nama_layanan'] ?? 'Gentleman Cut';
+                        $top_count = (int)($top_single['count_trx'] ?? 0);
+                        ?>
+                        <!-- Big Metric Value: Nama Layanan Terfavorit -->
+                        <div class="text-lg lg:text-xl font-bold text-amber-300 tracking-tight truncate my-1" title="<?= htmlspecialchars($top_name) ?>">
+                            <?= htmlspecialchars($top_name) ?>
                         </div>
-                        <!-- Vertical Amber Bar Chart Sparkline -->
-                        <div class="h-12 w-full flex items-end justify-between gap-2 px-1">
+                        <div class="text-xs text-zinc-400 mb-2 flex items-center gap-1">
+                            <span class="font-bold text-emerald-400"><?= number_format($top_count) ?>x</span> dipesan oleh pelanggan
+                        </div>
+                        
+                        <!-- Top 3 Layanan Mini Progress Bar -->
+                        <div class="space-y-1.5 pt-2 border-t border-white/5">
                             <?php 
-                            $bar_heights = [45, 95, 80, 50, 75];
-                            if (!empty($trx_bars_data)) {
-                                $max_val = max(array_column($trx_bars_data, 'total'));
-                                if ($max_val > 0) {
-                                    $bar_heights = array_map(function($item) use ($max_val) {
-                                        return max(30, round(($item['total'] / $max_val) * 95));
-                                    }, $trx_bars_data);
-                                }
-                            }
-                            foreach($bar_heights as $idx => $h): 
+                            $top_3_items = array_slice($modal_top_layanan, 0, 3);
+                            $max_cnt = !empty($top_3_items) ? max(array_column($top_3_items, 'count_trx')) : 1;
+                            if (empty($top_3_items)):
                             ?>
-                            <div class="flex-1 bg-gradient-to-t from-amber-700 via-amber-500 to-amber-400 rounded-sm hover:brightness-125 transition-all duration-200 shadow-sm" style="height: <?= $h ?>%;"></div>
-                            <?php endforeach; ?>
+                                <div class="text-[11px] text-zinc-500 italic">Belum ada data transaksi</div>
+                            <?php 
+                            else:
+                                foreach ($top_3_items as $titem): 
+                                    $pct = $max_cnt > 0 ? round(($titem['count_trx'] / $max_cnt) * 100) : 0;
+                            ?>
+                                <div class="flex flex-col gap-0.5">
+                                    <div class="flex justify-between items-center text-[11px] text-zinc-300">
+                                        <span class="truncate max-w-[140px]"><?= htmlspecialchars($titem['nama_layanan']) ?></span>
+                                        <span class="text-amber-400 font-semibold text-[10px]"><?= $titem['count_trx'] ?>x</span>
+                                    </div>
+                                    <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                                        <div class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full" style="width: <?= max(10, $pct) ?>%;"></div>
+                                    </div>
+                                </div>
+                            <?php 
+                                endforeach; 
+                            endif;
+                            ?>
                         </div>
                     </div>
                 </div>
