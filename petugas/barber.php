@@ -3,8 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../functions/koneksi.php';
 require_once __DIR__ . '/../functions/helper.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../functions/barber_actions.php';
 
 // Proteksi Multi-Role: Barber & Admin bisa akses
 if (!function_exists('is_logged_in') || !is_logged_in() || !in_array($_SESSION['user_role'], ['admin', 'barber'])) {
@@ -12,6 +14,9 @@ if (!function_exists('is_logged_in') || !is_logged_in() || !in_array($_SESSION['
     redirect('../auth/login.php');
     exit;
 }
+
+// Handle Aksi Antrean & Profil via functions/barber_actions.php
+handle_barber_post_actions();
 
 $user_id = $_SESSION['user_id'];
 
@@ -26,206 +31,6 @@ $stmt_b->execute([$user_id, $user_id]);
 $barber = $stmt_b->fetch(PDO::FETCH_ASSOC);
 
 $barber_id = $barber['id'] ?? null;
-
-// Handle Aksi Antrean & Profil
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $action = $_POST['action'];
-    $antrian_id = (int)($_POST['antrian_id'] ?? 0);
-
-    try {
-        if ($action === 'update_profil') {
-            $fullname = trim($_POST['fullname'] ?? '');
-            $username = trim($_POST['username'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
-
-            $old_password = $_POST['old_password'] ?? '';
-            $new_password = $_POST['new_password'] ?? '';
-            $confirm_password = $_POST['confirm_password'] ?? '';
-
-            $stmt_cur = $pdo->prepare("SELECT * FROM users WHERE id_user = ? LIMIT 1");
-            $stmt_cur->execute([$user_id]);
-            $user_data = $stmt_cur->fetch(PDO::FETCH_ASSOC);
-
-            if (!$user_data) {
-                set_flash('danger', 'Akun tidak ditemukan!');
-                redirect('barber.php?page=profil');
-                exit;
-            }
-
-            if (function_exists('contains_sara_words')) {
-                if (contains_sara_words($fullname)) {
-                    set_flash('danger', 'Nama Lengkap mengandung kata/unsur SARA!');
-                    redirect('barber.php?page=profil');
-                    exit;
-                }
-                if (contains_sara_words($username)) {
-                    set_flash('danger', 'Username mengandung kata/unsur SARA!');
-                    redirect('barber.php?page=profil');
-                    exit;
-                }
-            }
-
-            $stmt_dup = $pdo->prepare("SELECT id_user FROM users WHERE (LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?))) AND id_user != ? LIMIT 1");
-            $stmt_dup->execute([$username, $email, $user_id]);
-            if ($stmt_dup->fetch()) {
-                set_flash('danger', 'Username atau Email sudah terdaftar pada akun lain!');
-                redirect('barber.php?page=profil');
-                exit;
-            }
-
-            $update_password_hash = null;
-
-            if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
-                if (empty($old_password)) {
-                    set_flash('danger', 'Silakan masukkan Password Lama Anda untuk mengonfirmasi perubahan password!');
-                    redirect('barber.php?page=profil');
-                    exit;
-                }
-
-                $password_correct = false;
-                if (password_verify($old_password, $user_data['password'])) {
-                    $password_correct = true;
-                } elseif ($old_password === $user_data['password']) {
-                    $password_correct = true;
-                }
-
-                if (!$password_correct) {
-                    set_flash('danger', 'Password Lama Anda salah! Verifikasi pemilik akun gagal.');
-                    redirect('barber.php?page=profil');
-                    exit;
-                }
-
-                if (empty($new_password) || empty($confirm_password)) {
-                    set_flash('danger', 'Password Baru dan Konfirmasi Password wajib diisi!');
-                    redirect('barber.php?page=profil');
-                    exit;
-                }
-
-                if ($new_password !== $confirm_password) {
-                    set_flash('danger', 'Konfirmasi Password Baru tidak cocok dengan Password Baru!');
-                    redirect('barber.php?page=profil');
-                    exit;
-                }
-
-                if (function_exists('validate_account_creation')) {
-                    $val_p = validate_account_creation($fullname, $username, $new_password, $email, $user_id);
-                    if (!$val_p['status'] && str_contains(strtolower($val_p['message']), 'password')) {
-                        set_flash('danger', $val_p['message']);
-                        redirect('barber.php?page=profil');
-                        exit;
-                    }
-                } else {
-                    if (strlen($new_password) < 6) {
-                        set_flash('danger', 'Password minimal harus 6-8 karakter!');
-                        redirect('barber.php?page=profil');
-                        exit;
-                    }
-                    if (!preg_match('/[A-Z]/', $new_password) || !preg_match('/[a-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[\W_]/', $new_password)) {
-                        set_flash('danger', 'Password baru wajib kombinasi Huruf Besar (A-Z), Huruf Kecil (a-z), Angka (0-9), dan Simbol Khusus (@, #, !, dll)!');
-                        redirect('barber.php?page=profil');
-                        exit;
-                    }
-                }
-
-                $update_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-            }
-
-            if (!empty($fullname)) {
-                $_SESSION['fullname'] = $fullname;
-            }
-
-            if ($update_password_hash) {
-                $stmt = $pdo->prepare("UPDATE users SET fullname = ?, username = ?, email = ?, phone = ?, password = ? WHERE id_user = ?");
-                $stmt->execute([$fullname, $username, $email, $phone, $update_password_hash, $user_id]);
-            } else {
-                $stmt = $pdo->prepare("UPDATE users SET fullname = ?, username = ?, email = ?, phone = ? WHERE id_user = ?");
-                $stmt->execute([$fullname, $username, $email, $phone, $user_id]);
-            }
-
-            $stmt_b_up = $pdo->prepare("UPDATE barber SET nama = ? WHERE user_id = ?");
-            $stmt_b_up->execute([$fullname, $user_id]);
-
-            $file_key = isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] === UPLOAD_ERR_OK ? 'foto_profil' : 'profile_photo';
-            if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
-                $tmp_name = $_FILES[$file_key]['tmp_name'];
-                $target_dir = __DIR__ . '/../asset/image/';
-                if (!is_dir($target_dir)) {
-                    mkdir($target_dir, 0777, true);
-                }
-                $target_file = $target_dir . 'profile_' . $user_id . '.jpg';
-                move_uploaded_file($tmp_name, $target_file);
-            }
-
-            set_flash('success', 'Profil Anda berhasil diperbarui!');
-            redirect('barber.php?page=profil');
-            exit;
-        }
-        elseif ($action === 'call' && $antrian_id > 0) {
-            $stmt = $pdo->prepare("UPDATE antrian SET status_antrean = 'serving', barber_id = ?, served_by_user_id = ? WHERE id = ?");
-            $stmt->execute([$barber_id, $user_id, $antrian_id]);
-            set_flash('success', 'Pelanggan berhasil dipanggil!');
-        } 
-        elseif ($action === 'skip' && $antrian_id > 0) {
-            $pdo->beginTransaction();
-            $stmt = $pdo->prepare("UPDATE antrian SET status_antrean = 'skipped' WHERE id = ?");
-            $stmt->execute([$antrian_id]);
-            
-            $stmtNext = $pdo->prepare("SELECT id FROM antrian WHERE status_antrean = 'waiting' AND DATE(waktu_dibuat) = CURDATE() AND (barber_id = ? OR barber_id IS NULL) ORDER BY id ASC LIMIT 1");
-            $stmtNext->execute([$barber_id]);
-            $nextQueue = $stmtNext->fetch(PDO::FETCH_ASSOC);
-            
-            if ($nextQueue) {
-                $stmtCall = $pdo->prepare("UPDATE antrian SET status_antrean = 'serving', barber_id = ?, served_by_user_id = ? WHERE id = ?");
-                $stmtCall->execute([$barber_id, $user_id, $nextQueue['id']]);
-                set_flash('warning', 'Antrean dilewati. Antrean berikutnya otomatis dipanggil.');
-            } else {
-                set_flash('warning', 'Antrean berhasil dilewati (Skip). Tidak ada antrean berikutnya.');
-            }
-            $pdo->commit();
-        }
-        elseif ($action === 'finish_service' && $antrian_id > 0) {
-            $pdo->beginTransaction();
-            $stmt1 = $pdo->prepare("UPDATE antrian SET status_antrean = 'payment' WHERE id = ?");
-            $stmt1->execute([$antrian_id]);
-            $pdo->commit();
-            set_flash('success', 'Layanan selesai! Menunggu pelanggan memilih metode pembayaran.');
-        }
-        elseif ($action === 'confirm_paid' && $antrian_id > 0) {
-            $pdo->beginTransaction();
-            $stmt_cek = $pdo->prepare("SELECT id FROM transaksi WHERE antrian_id = ?");
-            $stmt_cek->execute([$antrian_id]);
-            if (!$stmt_cek->fetch()) {
-                $total_harga = (float)($_POST['total_harga'] ?? 0);
-                $stmt2 = $pdo->prepare("INSERT INTO transaksi (antrian_id, total_harga, status_pembayaran, metode_pembayaran, waktu_bayar) VALUES (?, ?, 'lunas', 'Cash', NOW())");
-                $stmt2->execute([$antrian_id, $total_harga]);
-
-                $stmt_q = $pdo->prepare("SELECT no_antrean FROM antrian WHERE id = ? LIMIT 1");
-                $stmt_q->execute([$antrian_id]);
-                $q_info = $stmt_q->fetch(PDO::FETCH_ASSOC);
-                $no_antrean = $q_info ? $q_info['no_antrean'] : "#$antrian_id";
-
-                if (function_exists('create_admin_notification')) {
-                    create_admin_notification(
-                        'new_transaction',
-                        'Transaksi Baru Barber',
-                        "Pembayaran Cash Rp " . number_format($total_harga, 0, ',', '.') . " untuk antrean {$no_antrean} dikonfirmasi Barber!",
-                        'admin.php?page=transaksi'
-                    );
-                }
-            }
-            $stmt1 = $pdo->prepare("UPDATE antrian SET status_antrean = 'review' WHERE id = ?");
-            $stmt1->execute([$antrian_id]);
-            $pdo->commit();
-            set_flash('success', 'Pembayaran Dikonfirmasi! Struk dapat dicetak, dan pelanggan diminta memberi ulasan.');
-        }
-    } catch (PDOException $e) {
-        if ($pdo->inTransaction()) $pdo->rollBack();
-        set_flash('danger', 'Error: ' . $e->getMessage());
-    }
-    redirect('barber.php');
-    exit;
-}
 
 // Ambil Daftar Antrean Hari Ini
 $today = date('Y-m-d');

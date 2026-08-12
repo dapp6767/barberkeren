@@ -3,14 +3,19 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../functions/koneksi.php';
 require_once __DIR__ . '/../functions/helper.php';
 require_once __DIR__ . '/../functions/queue_functions.php';
+require_once __DIR__ . '/../functions/customer_functions.php';
 
 // 1. PROTEKSI UTAMA: Wajib Login sebelum bisa mengakses Dashboard Antrean
 if (!function_exists('is_logged_in') || !is_logged_in()) {
     redirect('../auth/login.php');
     exit;
 }
+
+// Handle POST Actions via customer_functions.php
+handle_customer_post_actions();
 
 $current_serving = get_current_serving_queue();
 $active_queues   = get_active_queues();
@@ -64,241 +69,6 @@ if ($my_user_id) {
     // Assign current user for profile tab
     $current_user = $user;
 }
-
-// Handle POST Actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'take_ticket') {
-        $cust_name  = $_SESSION['fullname'] ?? $_SESSION['username'] ?? '';
-        $barber_id  = !empty($_POST['barber_id']) ? (int)$_POST['barber_id'] : null;
-        $service_id = !empty($_POST['service_id']) ? (int)$_POST['service_id'] : null;
-        $cust_id    = $_SESSION['user_id'] ?? null;
-
-        if (empty($cust_name)) {
-            set_flash('danger', "Data profil akun Anda belum lengkap.");
-            redirect('dashboard.php');
-            exit;
-        }
-
-        $result = take_queue_ticket($cust_name, $barber_id, $service_id, $cust_id);
-        if ($result['status']) {
-            set_flash('success', "Nomor Tiket Anda: " . $result['ticket_number'] . " berhasil diambil!");
-        } else {
-            set_flash('danger', $result['message']);
-        }
-        redirect('dashboard.php');
-        exit;
-    }
-    if ($_POST['action'] === 'cancel_my_ticket') {
-        $antrian_id = (int)($_POST['antrian_id'] ?? 0);
-        $cust_id = $_SESSION['user_id'] ?? 0;
-        if ($antrian_id > 0 && $cust_id > 0) {
-            try {
-                $pdo->beginTransaction();
-                try { $pdo->prepare("DELETE FROM ulasan WHERE antrian_id = ?")->execute([$antrian_id]); } catch (Exception $e) {}
-                try { $pdo->prepare("DELETE FROM transaksi WHERE antrian_id = ?")->execute([$antrian_id]); } catch (Exception $e) {}
-                $stmt_c = $pdo->prepare("DELETE FROM antrian WHERE id = ? AND pelanggan_id = ?");
-                $stmt_c->execute([$antrian_id, $cust_id]);
-                $pdo->commit();
-                set_flash('warning', 'Antrean Anda berhasil dibatalkan.');
-            } catch (Exception $e) {
-                if ($pdo->inTransaction()) $pdo->rollBack();
-                set_flash('danger', 'Gagal membatalkan antrean: ' . $e->getMessage());
-            }
-        }
-        redirect('dashboard.php');
-        exit;
-    }
-    if ($_POST['action'] === 'pay_ticket') {
-        $antrian_id = (int)$_POST['antrian_id'];
-        $metode = $_POST['metode_pembayaran'];
-        $total = (float)$_POST['total_harga'];
-        $pdo->beginTransaction();
-        $stmt2 = $pdo->prepare("INSERT INTO transaksi (antrian_id, total_harga, status_pembayaran, metode_pembayaran, waktu_bayar) VALUES (?, ?, 'lunas', ?, NOW())");
-        $stmt2->execute([$antrian_id, $total, $metode]);
-        $stmt1 = $pdo->prepare("UPDATE antrian SET status_antrean = 'paid' WHERE id = ?");
-        $stmt1->execute([$antrian_id]);
-        $pdo->commit();
-
-        $stmt_q = $pdo->prepare("SELECT no_antrean FROM antrian WHERE id = ? LIMIT 1");
-        $stmt_q->execute([$antrian_id]);
-        $q_info = $stmt_q->fetch(PDO::FETCH_ASSOC);
-        $no_antrean = $q_info ? $q_info['no_antrean'] : "#$antrian_id";
-
-        if (function_exists('create_admin_notification')) {
-            create_admin_notification(
-                'new_transaction',
-                'Transaksi Baru Diterima',
-                "Pembayaran Rp " . number_format($total, 0, ',', '.') . " ({$metode}) dari antrean {$no_antrean} berhasil!",
-                'admin.php?page=transaksi'
-            );
-        }
-        set_flash('success', 'Pembayaran berhasil! Menunggu Barber mencetak struk.');
-        redirect('dashboard.php');
-        exit;
-    }
-    if ($_POST['action'] === 'submit_review') {
-        $antrian_id = (int)$_POST['antrian_id'];
-        $rating = (int)$_POST['rating'];
-        $komentar = $_POST['komentar'];
-        $cust_id = $_SESSION['user_id'];
-        $pdo->beginTransaction();
-        $stmt2 = $pdo->prepare("INSERT INTO ulasan (antrian_id, pelanggan_id, rating, komentar) VALUES (?, ?, ?, ?)");
-        $stmt2->execute([$antrian_id, $cust_id, $rating, $komentar]);
-        $stmt1 = $pdo->prepare("UPDATE antrian SET status_antrean = 'completed' WHERE id = ?");
-        $stmt1->execute([$antrian_id]);
-        $pdo->commit();
-        set_flash('success', 'Terima kasih atas ulasan Anda!');
-        redirect('dashboard.php');
-        exit;
-    }
-    if ($_POST['action'] === 'update_profil') {
-        $user_id = $_SESSION['user_id'];
-        $fullname = trim($_POST['fullname'] ?? '');
-        $username = trim($_POST['username'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        
-        $old_password = $_POST['old_password'] ?? '';
-        $new_password = $_POST['new_password'] ?? ($_POST['password'] ?? '');
-        $confirm_password = $_POST['confirm_password'] ?? '';
-        
-        try {
-            $stmt_cur = $pdo->prepare("SELECT * FROM users WHERE id_user = ? LIMIT 1");
-            $stmt_cur->execute([$user_id]);
-            $user_data = $stmt_cur->fetch(PDO::FETCH_ASSOC);
-
-            if (!$user_data) {
-                set_flash('danger', 'Akun tidak ditemukan!');
-                redirect('dashboard.php?tab=profil');
-                exit;
-            }
-
-            if (function_exists('contains_sara_words')) {
-                if (contains_sara_words($fullname)) {
-                    set_flash('danger', 'Nama Lengkap mengandung kata/unsur SARA yang dilarang!');
-                    redirect('dashboard.php?tab=profil');
-                    exit;
-                }
-                if (contains_sara_words($username)) {
-                    set_flash('danger', 'Username mengandung kata/unsur SARA yang dilarang!');
-                    redirect('dashboard.php?tab=profil');
-                    exit;
-                }
-            }
-
-            $stmt_dup = $pdo->prepare("SELECT id_user FROM users WHERE (LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?))) AND id_user != ? LIMIT 1");
-            $stmt_dup->execute([$username, $email, $user_id]);
-            if ($stmt_dup->fetch()) {
-                set_flash('danger', 'Username atau Email sudah terdaftar pada akun lain!');
-                redirect('dashboard.php?tab=profil');
-                exit;
-            }
-
-            $update_password_hash = null;
-
-            if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
-                if (empty($old_password)) {
-                    set_flash('danger', 'Silakan masukkan Password Lama Anda untuk mengonfirmasi perubahan password!');
-                    redirect('dashboard.php?tab=profil');
-                    exit;
-                }
-
-                $password_correct = false;
-                if (password_verify($old_password, $user_data['password'])) {
-                    $password_correct = true;
-                } elseif ($old_password === $user_data['password']) {
-                    $password_correct = true;
-                }
-
-                if (!$password_correct) {
-                    set_flash('danger', 'Password Lama Anda salah! Verifikasi pemilik akun gagal.');
-                    redirect('dashboard.php?tab=profil');
-                    exit;
-                }
-
-                if (empty($new_password) || empty($confirm_password)) {
-                    set_flash('danger', 'Password Baru dan Konfirmasi Password wajib diisi!');
-                    redirect('dashboard.php?tab=profil');
-                    exit;
-                }
-
-                if ($new_password !== $confirm_password) {
-                    set_flash('danger', 'Konfirmasi Password Baru tidak cocok dengan Password Baru!');
-                    redirect('dashboard.php?tab=profil');
-                    exit;
-                }
-
-                if (function_exists('validate_account_creation')) {
-                    $val_p = validate_account_creation($fullname, $username, $new_password, $email, $user_id);
-                    if (!$val_p['status'] && str_contains(strtolower($val_p['message']), 'password')) {
-                        set_flash('danger', $val_p['message']);
-                        redirect('dashboard.php?tab=profil');
-                        exit;
-                    }
-                } else {
-                    if (strlen($new_password) < 6) {
-                        set_flash('danger', 'Password minimal harus 6-8 karakter!');
-                        redirect('dashboard.php?tab=profil');
-                        exit;
-                    }
-                    if (!preg_match('/[A-Z]/', $new_password) || !preg_match('/[a-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[\W_]/', $new_password)) {
-                        set_flash('danger', 'Password baru wajib kombinasi Huruf Besar (A-Z), Huruf Kecil (a-z), Angka (0-9), dan Simbol Khusus (@, #, !, dll)!');
-                        redirect('dashboard.php?tab=profil');
-                        exit;
-                    }
-                }
-
-                $update_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-            }
-
-            if ($update_password_hash) {
-                $stmt = $pdo->prepare("UPDATE users SET fullname=?, username=?, email=?, phone=?, password=? WHERE id_user=?");
-                $stmt->execute([$fullname, $username, $email, $phone, $update_password_hash, $user_id]);
-
-                if (function_exists('create_admin_notification')) {
-                    $cust_name = !empty($fullname) ? $fullname : $username;
-                    create_admin_notification(
-                        'security',
-                        'Perubahan Password Pelanggan',
-                        "Pelanggan <b>{$cust_name}</b> (@{$username}) telah berhasil memperbarui password akunnya.",
-                        'admin.php?page=pelanggan'
-                    );
-                }
-
-                set_flash('success', 'Profil dan Password Anda berhasil diperbarui!');
-            } else {
-                $stmt = $pdo->prepare("UPDATE users SET fullname=?, username=?, email=?, phone=? WHERE id_user=?");
-                $stmt->execute([$fullname, $username, $email, $phone, $user_id]);
-                set_flash('success', 'Informasi profil berhasil diperbarui!');
-            }
-
-            if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] === UPLOAD_ERR_OK) {
-                $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-                $ext = strtolower(pathinfo($_FILES['foto_profil']['name'], PATHINFO_EXTENSION));
-                if (in_array($ext, $allowed)) {
-                    $upload_dir = __DIR__ . '/../asset/image/';
-                    if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-                    
-                    $old_files = glob($upload_dir . "profile_{$user_id}.*");
-                    foreach ($old_files as $of) unlink($of);
-                    
-                    $new_filename = "profile_{$user_id}.{$ext}";
-                    move_uploaded_file($_FILES['foto_profil']['tmp_name'], $upload_dir . $new_filename);
-                }
-            }
-
-            $_SESSION['username'] = $username;
-            $_SESSION['fullname'] = $fullname;
-            set_flash('success', 'Profil berhasil diperbarui!');
-            redirect('dashboard.php?tab=profil');
-            exit;
-        } catch (PDOException $e) {
-            set_flash('danger', 'Terjadi kesalahan sistem: ' . $e->getMessage());
-            redirect('dashboard.php?tab=profil');
-            exit;
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="id" class="dark">
@@ -309,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-                        tailwind.config = {
+        tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
@@ -328,15 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     }
                 }
             }
-        }
-                    }
-                }
-            }
-        }
-                    }
-                }
-            }
-        }
+        };
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- jQuery & DataTables CDN -->
@@ -958,31 +721,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     ];
                     
                     foreach($services as $i => $srv): 
-                        $s_id = $srv['id'] ?? $srv['id_service'];
+                        $s_id = $srv['id'] ?? $srv['id_service'] ?? 0;
+                        $s_name = $srv['nama_layanan'] ?? $srv['service_name'] ?? '';
+                        $s_price = (float)($srv['harga'] ?? $srv['price'] ?? 0);
+                        $s_desc = !empty($srv['deskripsi']) ? $srv['deskripsi'] : ($dummy_desc_arr['default'] ?? 'Potong Rambut + Cuci + Styling');
+                        $s_durasi = !empty($srv['durasi']) ? $srv['durasi'] . ' Menit' : '45 Menit';
+
                         $files = glob(__DIR__ . "/../asset/image/layanan_{$s_id}.*");
-                        $nama_lower = strtolower($srv['service_name']);
+                        $nama_lower = strtolower($s_name);
                         $img = !empty($files)
                             ? '../asset/image/' . basename($files[0])
                             : ($default_images_layanan[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
-                        $desc = $dummy_desc_arr['default'];
-                        $est_time = '45 Menit';
-                        if(stripos($srv['service_name'], 'color') !== false || stripos($srv['service_name'], 'light') !== false) {
-                            $desc = $dummy_desc_arr['light'];
-                            $est_time = '90 Menit';
+
+                        if(stripos($s_name, 'color') !== false || stripos($s_name, 'light') !== false) {
+                            $s_desc = $dummy_desc_arr['light'] ?? $s_desc;
+                            $s_durasi = '90 Menit';
                         }
-                        $price_formatted = 'Rp ' . number_format($srv['price'], 0, ',', '.');
+                        $price_formatted = 'Rp ' . number_format($s_price, 0, ',', '.');
                     ?>
                     <!-- Service Card (Desktop Grid Style) -->
                     <div class="service-item group bg-[#1A1612] rounded-2xl border border-white/5 overflow-hidden shadow-lg transition-all duration-200 cursor-pointer hover:border-amber-500/40 hover:-translate-y-0.5 hover:shadow-amber-900/20 select-none"
                          data-id="<?= $s_id ?>"
-                         data-name="<?= htmlspecialchars($srv['service_name']) ?>"
-                         data-price="<?= $srv['price'] ?>"
+                         data-name="<?= htmlspecialchars($s_name) ?>"
+                         data-price="<?= $s_price ?>"
                          data-price-fmt="<?= $price_formatted ?>"
                          onclick="selectLayanan(this)">
 
                         <!-- Image Section -->
                         <div class="relative w-full h-44 overflow-hidden bg-zinc-800">
-                            <img src="<?= $img ?>" alt="<?= htmlspecialchars($srv['service_name']) ?>"
+                            <img src="<?= $img ?>" alt="<?= htmlspecialchars($s_name) ?>"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             <!-- Gradient overlay -->
                             <div class="absolute inset-0 bg-gradient-to-t from-[#1A1612] via-transparent to-transparent"></div>
@@ -1001,11 +768,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <!-- Content Section -->
                         <div class="p-4 flex items-start justify-between gap-3">
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-base font-bold text-white leading-tight truncate"><?= htmlspecialchars($srv['service_name']) ?></h3>
-                                <p class="text-xs text-zinc-400 mt-1 line-clamp-2"><?= $desc ?></p>
+                                <h3 class="text-base font-bold text-white leading-tight truncate"><?= htmlspecialchars($s_name) ?></h3>
+                                <p class="text-xs text-zinc-400 mt-1 line-clamp-2"><?= htmlspecialchars($s_desc) ?></p>
                                 <div class="flex items-center gap-1 text-xs text-zinc-500 mt-2">
                                     <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                    <span><?= $est_time ?></span>
+                                    <span><?= htmlspecialchars($s_durasi) ?></span>
                                 </div>
                             </div>
                             <!-- Selected checkmark (right side) -->
@@ -1740,9 +1507,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             $selected_service_name = '';
                             if (!empty($selected_service_id) && !empty($services)) {
                                 foreach ($services as $s) {
-                                    $s_id = $s['id'] ?? $s['id_service'];
+                                    $s_id = $s['id'] ?? $s['id_service'] ?? 0;
                                     if ($s_id == $selected_service_id) {
-                                        $selected_service_name = $s['service_name'] . ' - Rp ' . number_format($s['price'], 0, ',', '.');
+                                        $s_name = $s['nama_layanan'] ?? $s['service_name'] ?? '';
+                                        $s_price = (float)($s['harga'] ?? $s['price'] ?? 0);
+                                        $selected_service_name = $s_name . ' - Rp ' . number_format($s_price, 0, ',', '.');
                                         break;
                                     }
                                 }
@@ -1835,7 +1604,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                             <?php endif; ?>
                                         </td>
                                         <td class="px-6 py-4 text-sm">
-                                            <div class="text-zinc-200 font-medium"><?= htmlspecialchars($q['service_name'] ?? 'Standard Cut') ?></div>
+                                            <div class="text-zinc-200 font-medium"><?= htmlspecialchars($q['nama_layanan'] ?? $q['service_name'] ?? 'Standard Cut') ?></div>
                                             <?php 
                                                 $base = (float)($q['base_price'] ?? 0);
                                                 echo "<div class='text-emerald-400 mt-0.5 font-semibold text-xs'>Rp " . number_format($base, 0, ',', '.') . "</div>";
@@ -1913,7 +1682,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                 </div>
                                 <div>
                                     <span class="text-[11px] text-zinc-400 uppercase font-medium block">Layanan & Harga</span>
-                                    <span class="font-semibold text-zinc-200"><?= htmlspecialchars($q['service_name'] ?? 'Standard Cut') ?></span>
+                                    <span class="font-semibold text-zinc-200"><?= htmlspecialchars($q['nama_layanan'] ?? $q['service_name'] ?? 'Standard Cut') ?></span>
                                     <span class="text-xs text-emerald-400 font-bold block">Rp <?= number_format((float)($q['base_price'] ?? 0), 0, ',', '.') ?></span>
                                 </div>
                             </div>
@@ -2203,8 +1972,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             });
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+
         // Init DataTables untuk Riwayat Cukur
         $(document).ready(function() {
+            if (window.lucide) lucide.createIcons();
             if ($('#riwayatTable').length) {
                 $('#riwayatTable').DataTable({
                     language: {

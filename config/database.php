@@ -3,7 +3,7 @@
 $httpHost = $_SERVER['HTTP_HOST'] ?? '';
 
 // Cek apakah script berjalan di lokal
-$isLocal = ($httpHost === 'localhost' || $httpHost === '127.0.0.1' || str_contains($httpHost, 'localhost:') || str_contains($httpHost, '127.0.0.1:'));
+$isLocal = (empty($httpHost) || php_sapi_name() === 'cli' || $httpHost === 'localhost' || $httpHost === '127.0.0.1' || str_contains($httpHost, 'localhost:') || str_contains($httpHost, '127.0.0.1:'));
 
 if ($isLocal) {
     // === KONFIGURASI LOKAL (Laragon / XAMPP) ===
