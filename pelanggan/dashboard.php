@@ -310,9 +310,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
         }
-    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- jQuery & DataTables CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
     <style>
+        /* DataTables Custom Dark Amber Theme for Barber Keren */
+        .dataTables_wrapper {
+            color: #d4c4a0 !important;
+            padding: 1rem 1.5rem !important;
+        }
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_processing,
+        .dataTables_wrapper .dataTables_paginate {
+            color: #d4c4a0 !important;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            background-color: #16120c !important;
+            border: 1px solid rgba(245, 158, 11, 0.3) !important;
+            color: #fde68a !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            margin-left: 0.5rem !important;
+            outline: none !important;
+        }
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.2) !important;
+        }
+        .dataTables_wrapper .dataTables_length select {
+            background-color: #16120c !important;
+            border: 1px solid rgba(245, 158, 11, 0.3) !important;
+            color: #fde68a !important;
+            border-radius: 0.5rem !important;
+            padding: 0.25rem 0.5rem !important;
+            outline: none !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #d4c4a0 !important;
+            border-radius: 0.5rem !important;
+            border: 1px solid transparent !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid #f59e0b !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: rgba(245, 158, 11, 0.15) !important;
+            color: #fde68a !important;
+            border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+        table.dataTable tbody tr {
+            background-color: transparent !important;
+        }
+        table.dataTable.no-footer {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
         /* ============ SIDEBAR ============ */
         #sidebar {
             background: linear-gradient(180deg, #0e0a08 0%, #120e06 40%, #0a0603 100%);
@@ -724,8 +787,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <?php else: ?>
 
                 <!-- Desktop Table View (md+) -->
-                <div class="hidden md:block overflow-x-auto custom-scroll">
-                    <table class="w-full text-left border-collapse">
+                <div class="hidden md:block overflow-x-auto custom-scroll p-2">
+                    <table id="riwayatTable" class="w-full text-left border-collapse display">
                         <thead>
                             <tr class="bg-zinc-900/70 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
                                 <th class="px-6 py-4 font-semibold">No. Tiket</th>
@@ -1741,6 +1804,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 if (rSym) rSym.className = /[\W_]/.test(val) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
             });
         }
+
+        // Init DataTables untuk Riwayat Cukur
+        $(document).ready(function() {
+            if ($('#riwayatTable').length) {
+                $('#riwayatTable').DataTable({
+                    language: {
+                        search: "Cari Riwayat:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ riwayat",
+                        infoEmpty: "Belum ada data riwayat",
+                        infoFiltered: "(disaring dari _MAX_ total riwayat)",
+                        zeroRecords: "Tidak ada riwayat yang sesuai",
+                        paginate: {
+                            first: "Awal",
+                            last: "Akhir",
+                            next: "❯",
+                            previous: "❮"
+                        }
+                    },
+                    pageLength: 10,
+                    order: [[3, 'desc']],
+                    responsive: true
+                });
+            }
+        });
     </script>
 </body>
 </html>
