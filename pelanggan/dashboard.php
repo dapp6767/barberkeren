@@ -438,9 +438,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         #sidebar.w-20 nav a { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
         #sidebar.w-20 nav span, #sidebar.w-20 nav p { opacity: 0; max-width: 0; padding: 0; margin: 0; border: none; }
         /* Mobile-First Theme & Responsive Rules */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             background-color: #0F172A !important;
             color: #F8FAFC !important;
+        }
+
+        .page-transition, .tab-content, nav, .barber-card, .service-item {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         /* Touch Friendly Action Buttons (min-height 48px, rounded 12px) */
@@ -1002,11 +1010,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             </div>
 
             <!-- Floating Action Bar — hidden until service is selected -->
-            <div id="layanan-action-bar" class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none">
+            <div id="layanan-action-bar" class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none transform-gpu">
                 <!-- Offset for sidebar on desktop -->
                 <div class="md:pl-64 lg:pl-64 transition-all duration-300" id="fab-inner-wrapper">
-                    <div class="max-w-2xl mx-auto bg-gradient-to-r from-zinc-900 to-[#2a1c0a] border border-amber-500/50 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-[0_8px_30px_rgba(0,0,0,0.7)] relative overflow-hidden">
-                        <div class="absolute inset-0 bg-amber-500/5 backdrop-blur-md"></div>
+                    <div class="max-w-2xl mx-auto bg-[#1a1209]/95 border border-amber-500/50 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-2xl relative overflow-hidden">
                         <div class="relative z-10 flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-500/30 flex items-center justify-center shrink-0">
                                 <i data-lucide="scissors" class="w-5 h-5 text-amber-400"></i>
@@ -1018,7 +1025,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </div>
                         </div>
                         <button id="fab-next-btn" onclick="openBarberStep()"
-                           class="relative z-10 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-[0_0_15px_rgba(245,158,11,0.3)] flex items-center gap-2 whitespace-nowrap">
+                           class="relative z-10 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-lg flex items-center gap-2 whitespace-nowrap active:scale-95">
                             <i data-lucide="user-check" class="w-4 h-4"></i>
                             Pilih Barber
                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -1254,10 +1261,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 </div>
 
                 <!-- Sticky Bottom Action Bar — Submit Form -->
-                <div class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none" id="barber-submit-bar">
+                <div class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none transform-gpu" id="barber-submit-bar">
                     <div class="md:pl-64 lg:pl-64 transition-all duration-300">
-                        <div class="max-w-2xl mx-auto bg-gradient-to-r from-zinc-950 via-[#1e1509] to-zinc-950 border border-amber-500/60 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-[0_12px_40px_rgba(0,0,0,0.9)] relative overflow-hidden backdrop-blur-xl">
-                            <div class="absolute inset-0 bg-amber-500/5 backdrop-blur-md"></div>
+                        <div class="max-w-2xl mx-auto bg-[#18120b]/95 border border-amber-500/60 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-2xl relative overflow-hidden">
                             
                             <!-- Summary Info -->
                             <div class="relative z-10 flex items-center gap-3.5 min-w-0">
@@ -1277,7 +1283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                 <input type="hidden" name="service_id" id="hidden-service-id" value="">
                                 <input type="hidden" name="barber_id" id="hidden-barber-id" value="">
                                 <button type="submit" id="btn-final-submit"
-                                    class="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 active:scale-95 text-amber-950 font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.5)] flex items-center gap-2 whitespace-nowrap border border-amber-300/50">
+                                    class="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 active:scale-95 text-amber-950 font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-lg flex items-center gap-2 whitespace-nowrap border border-amber-300/50">
                                     <span>Ambil Antrean</span>
                                     <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3]"></i>
                                 </button>
@@ -2005,15 +2011,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         .nav-item:not(.active) .profile-img { border-color: #57534e; opacity: 0.8; }
     </style>
 
-    <!-- Mobile Fixed Bottom Navigation Bar — SPA Nav -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-black backdrop-blur-xl border-t border-amber-900/40 flex justify-around items-center shadow-[0_-8px_30px_rgba(0,0,0,0.85)]"
+    <!-- Mobile Fixed Bottom Navigation Bar — Fast SPA Nav (Optimized for Mobile Performance) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 border-t border-amber-900/40 flex justify-around items-center shadow-2xl transform-gpu"
          style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">
 
         <!-- Beranda -->
         <a href="javascript:void(0)" onclick="switchTab('tab-dashboard', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_dashboard ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <!-- Solid (Active) -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
                 <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"/>
                 <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"/>
             </svg>
@@ -2021,7 +2027,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
             </svg>
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#F59E0B] animate-pulse absolute top-1 right-3"></span>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Beranda</span>
         </a>
 
@@ -2029,7 +2035,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <a href="javascript:void(0)" onclick="switchTab('tab-layanan', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_layanan ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <!-- Solid (Active) -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 transform -rotate-45 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 transform -rotate-45 text-amber-400">
                 <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zm-3.64 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0-10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM19 3l-6 6 2 2 7-7V3h-3z"/>
             </svg>
             <!-- Outline (Inactive) -->
@@ -2040,13 +2046,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
                 <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
             </svg>
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#F59E0B] animate-pulse absolute top-1 right-3"></span>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Layanan</span>
         </a>
 
         <!-- Scan QRIS -->
         <a href="javascript:void(0)" onclick="switchTab('tab-qris', this)" class="nav-item <?= $is_qris ? 'active' : '' ?> relative -top-5 flex flex-col items-center group">
-            <div class="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full shadow-[0_4px_15px_rgba(245,158,11,0.5)] border-4 border-[#140f09] transition-transform duration-200 group-hover:scale-105">
+            <div class="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full shadow-lg border-4 border-[#140f09] transition-transform duration-200 active:scale-95">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-7 h-7">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
@@ -2059,7 +2065,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <a href="javascript:void(0)" onclick="switchTab('tab-riwayat', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_riwayat ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <!-- Solid (Active) -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
                 <path fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75-6.75a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clip-rule="evenodd"/>
                 <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z"/>
             </svg>
@@ -2067,7 +2073,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
             </svg>
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#F59E0B] animate-pulse absolute top-1 right-3"></span>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Riwayat</span>
         </a>
 
@@ -2082,7 +2088,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     : "https://ui-avatars.com/api/?name={$bn_avatar_name}&background=3d2b1a&color=F59E0B&size=64&bold=true";
             ?>
             <img src="<?= $bn_profile_url ?>" alt="Foto Profil" class="profile-img w-7 h-7 rounded-full object-cover border-2 transition-all">
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#F59E0B] animate-pulse absolute top-0 right-3"></span>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-0 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Profil</span>
         </a>
     </nav>
@@ -2095,14 +2101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if (currentTab && currentTab.id === targetTabId) return;
 
             updateNavState(navElement);
-
-            if (document.startViewTransition) {
-                document.startViewTransition(() => {
-                    executeDOMSwitch(currentTab, targetTab);
-                });
-            } else {
-                executeFallbackSwitch(currentTab, targetTab);
-            }
+            executeDOMSwitch(currentTab, targetTab);
         }
 
         function executeDOMSwitch(currentTab, targetTab) {
