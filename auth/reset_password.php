@@ -61,6 +61,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_u = $pdo->prepare("UPDATE users SET password = ? WHERE id_user = ?");
             $stmt_u->execute([$hashed_password, $user_id]);
 
+            if (function_exists('create_admin_notification')) {
+                $target_name = !empty($user_info['fullname']) ? $user_info['fullname'] : $user_info['username'];
+                create_admin_notification(
+                    'security',
+                    'Reset Password Akun',
+                    "Pengguna <b>{$target_name}</b> (@{$user_info['username']}) telah mereset password akunnya.",
+                    'admin.php?page=pelanggan'
+                );
+            }
+
             unset($_SESSION['reset_user_id']);
 
             if (function_exists('set_flash')) {

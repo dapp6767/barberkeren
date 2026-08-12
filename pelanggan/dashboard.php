@@ -254,6 +254,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if ($update_password_hash) {
                 $stmt = $pdo->prepare("UPDATE users SET fullname=?, username=?, email=?, phone=?, password=? WHERE id_user=?");
                 $stmt->execute([$fullname, $username, $email, $phone, $update_password_hash, $user_id]);
+
+                if (function_exists('create_admin_notification')) {
+                    $cust_name = !empty($fullname) ? $fullname : $username;
+                    create_admin_notification(
+                        'security',
+                        'Perubahan Password Pelanggan',
+                        "Pelanggan <b>{$cust_name}</b> (@{$username}) telah berhasil memperbarui password akunnya.",
+                        'admin.php?page=pelanggan'
+                    );
+                }
+
                 set_flash('success', 'Profil dan Password Anda berhasil diperbarui!');
             } else {
                 $stmt = $pdo->prepare("UPDATE users SET fullname=?, username=?, email=?, phone=? WHERE id_user=?");
