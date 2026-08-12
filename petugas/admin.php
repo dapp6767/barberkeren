@@ -496,19 +496,18 @@ $total_barbers = count($barbers);
 // Sales Metrics Connected to Database
 $sales_total_val = (float)$pdo->query("SELECT COALESCE(SUM(total_harga), 0) FROM transaksi WHERE status_pembayaran = 'lunas'")->fetchColumn();
 $sales_today_val = (float)$pdo->query("SELECT COALESCE(SUM(total_harga), 0) FROM transaksi WHERE status_pembayaran = 'lunas' AND DATE(waktu_bayar) = CURDATE()")->fetchColumn();
-if ($sales_today_val == 0) {
-    $sales_today_val = (float)$pdo->query("SELECT COALESCE(SUM(total_harga), 0) FROM transaksi WHERE status_pembayaran = 'lunas' AND DATE(waktu_bayar) = (SELECT MAX(DATE(waktu_bayar)) FROM transaksi)")->fetchColumn();
-}
+$sales_today_trx_count = (int)$pdo->query("SELECT COUNT(*) FROM transaksi WHERE status_pembayaran = 'lunas' AND DATE(waktu_bayar) = CURDATE()")->fetchColumn();
+
 $sales_this_week = (float)$pdo->query("SELECT COALESCE(SUM(total_harga), 0) FROM transaksi WHERE status_pembayaran = 'lunas' AND YEARWEEK(waktu_bayar, 1) = YEARWEEK(CURDATE(), 1)")->fetchColumn();
 $sales_last_week = (float)$pdo->query("SELECT COALESCE(SUM(total_harga), 0) FROM transaksi WHERE status_pembayaran = 'lunas' AND YEARWEEK(waktu_bayar, 1) = YEARWEEK(CURDATE(), 1) - 1")->fetchColumn();
 
-$week_ratio = 13;
+$week_ratio = 0;
 if ($sales_last_week > 0) {
     $week_ratio = round((($sales_this_week - $sales_last_week) / $sales_last_week) * 100);
 }
 
 $sales_yesterday = (float)$pdo->query("SELECT COALESCE(SUM(total_harga), 0) FROM transaksi WHERE status_pembayaran = 'lunas' AND DATE(waktu_bayar) = SUBDATE(CURDATE(), 1)")->fetchColumn();
-$day_ratio = 10;
+$day_ratio = 0;
 if ($sales_yesterday > 0) {
     $day_ratio = round((($sales_today_val - $sales_yesterday) / $sales_yesterday) * 100);
 }
@@ -1267,16 +1266,19 @@ if ($page === 'barber') {
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
                         <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Pendapatan Hari Ini</p>
+                            <p class="text-xs text-zinc-400 mb-1">Hari Ini (<?= date('d M Y') ?>)</p>
                             <p class="text-base font-bold text-emerald-400">Rp <?= number_format($sales_today_val, 0, ',', '.') ?></p>
+                            <p class="text-[10px] text-zinc-400 mt-0.5"><?= $sales_today_trx_count ?> Transaksi Lunas</p>
                         </div>
                         <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Pendapatan Kemarin</p>
+                            <p class="text-xs text-zinc-400 mb-1">Kemarin (<?= date('d M Y', strtotime('-1 day')) ?>)</p>
                             <p class="text-base font-bold text-amber-300">Rp <?= number_format($sales_yesterday, 0, ',', '.') ?></p>
+                            <p class="text-[10px] text-zinc-400 mt-0.5">Pendapatan Harian Kemarin</p>
                         </div>
                         <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
                             <p class="text-xs text-zinc-400 mb-1">Rata-rata Harian</p>
                             <p class="text-base font-bold text-amber-400">Rp <?= number_format($avg_daily_revenue, 0, ',', '.') ?></p>
+                            <p class="text-[10px] text-zinc-400 mt-0.5">Per Hari Aktif</p>
                         </div>
                     </div>
 
