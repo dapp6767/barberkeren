@@ -1267,7 +1267,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                 </p>
                             </div>
 
-                        <?php else: ?>
+                        <?php else: 
+                            $selected_service_id = $_GET['service_id'] ?? '';
+                            $selected_service_name = '';
+                            if (!empty($selected_service_id) && !empty($services)) {
+                                foreach ($services as $s) {
+                                    $s_id = $s['id'] ?? $s['id_service'];
+                                    if ($s_id == $selected_service_id) {
+                                        $selected_service_name = $s['service_name'] . ' - Rp ' . number_format($s['price'], 0, ',', '.');
+                                        break;
+                                    }
+                                }
+                            }
+                        ?>
                             <!-- Form Ambil Tiket Baru -->
                             <div class="px-6 py-4 border-b border-amber-900/30 bg-[#16120c] flex items-center justify-between">
                                 <h3 class="font-bold text-[#e8d5a3] text-base tracking-wide flex items-center gap-2">
@@ -1284,30 +1296,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                         <input type="text" value="<?= htmlspecialchars($_SESSION['fullname'] ?? $_SESSION['username']) ?>" readonly class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-300 font-medium cursor-not-allowed text-base">
                                     </div>
                                     <div>
-                                        <div class="flex items-center justify-between mb-1.5">
-                                            <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Layanan Terpilih</label>
-                                            <a href="javascript:void(0)" onclick="navigateToTab('tab-layanan')" class="text-[11px] text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1">
-                                                <i data-lucide="grid" class="w-3 h-3"></i> Lihat Katalog Foto
-                                            </a>
-                                        </div>
-                                        <div class="relative">
-                                            <select name="service_id" id="main_service_select" onchange="onMainServiceChange(this)" class="w-full bg-zinc-900 border border-amber-500/30 hover:border-amber-400/60 focus:border-amber-400 rounded-xl px-4 py-3.5 pr-10 text-white font-semibold focus:outline-none transition-all cursor-pointer text-base appearance-none shadow-md" required>
-                                                <option value="" disabled <?= empty($_GET['service_id']) ? 'selected' : '' ?>>-- Klik di Sini untuk Pilih Layanan --</option>
-                                                <?php foreach ($services as $s): 
-                                                    $s_id = $s['id'] ?? $s['id_service'];
-                                                    $is_selected = (isset($_GET['service_id']) && $_GET['service_id'] == $s_id) ? 'selected' : '';
-                                                ?>
-                                                    <option value="<?= $s_id ?>" <?= $is_selected ?> class="bg-zinc-900 text-white py-2">
-                                                        <?= htmlspecialchars($s['service_name']) ?> - Rp <?= number_format($s['price'], 0, ',', '.') ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <div class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-amber-400">
-                                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                                        <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Layanan Terpilih</label>
+                                        <input type="hidden" name="service_id" value="<?= htmlspecialchars($selected_service_id) ?>" required>
+                                        
+                                        <!-- Tombol Kotak Pilih Layanan yang langsung mengarahkan ke Katalog Layanan -->
+                                        <button type="button" onclick="navigateToTab('tab-layanan')" class="w-full bg-zinc-900/90 border border-amber-500/40 hover:border-amber-400 hover:bg-zinc-800/80 rounded-xl px-4 py-3.5 text-left text-white font-semibold transition-all duration-200 cursor-pointer group flex items-center justify-between shadow-md active:scale-[0.99]">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 group-hover:bg-amber-500/20 transition-colors">
+                                                    <i data-lucide="scissors" class="w-4 h-4 text-amber-400"></i>
+                                                </div>
+                                                <span class="truncate text-sm md:text-base <?= empty($selected_service_name) ? 'text-zinc-400 italic font-normal' : 'text-amber-300 font-bold' ?>">
+                                                    <?= !empty($selected_service_name) ? htmlspecialchars($selected_service_name) : '-- Pilih dari Menu Layanan --' ?>
+                                                </span>
                                             </div>
-                                        </div>
+                                            <span class="text-xs bg-amber-500/20 text-amber-300 group-hover:bg-amber-400 group-hover:text-zinc-950 font-bold px-3 py-1.5 rounded-lg border border-amber-500/30 transition-all shrink-0 ml-2 flex items-center gap-1">
+                                                <?= !empty($selected_service_name) ? 'Ubah' : 'Pilih' ?> <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                            </span>
+                                        </button>
                                     </div>
-                                    <button type="submit" id="btn_submit_antrean" <?= empty($_GET['service_id']) ? 'disabled' : '' ?> class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg border border-amber-400/30 flex items-center justify-center gap-2 min-h-[48px] text-base active:scale-98 mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-amber-500">
+                                    <button type="submit" id="btn_submit_antrean" <?= empty($selected_service_id) ? 'disabled' : '' ?> class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg border border-amber-400/30 flex items-center justify-center gap-2 min-h-[48px] text-base active:scale-98 mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-amber-500">
                                         <i data-lucide="scissors" class="w-5 h-5"></i> AMBIL TIKET ANTREAN
                                     </button>
                                 </form>
