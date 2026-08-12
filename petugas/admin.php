@@ -906,10 +906,6 @@ if ($page === 'barber') {
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                     <span>Admin</span>
                 </a>
-                <a href="?page=barber" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'barber' ? 'bg-adminlte-primary text-amber-200 mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
-                    <i data-lucide="scissors-line-dashed" class="w-5 h-5"></i>
-                    <span>Panel</span>
-                </a>
                 <a href="?page=antrean" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'antrean' ? 'bg-adminlte-primary text-amber-200 mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
                     <i data-lucide="monitor" class="w-5 h-5"></i>
                     <span>Antrean</span>
