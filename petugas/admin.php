@@ -1487,7 +1487,7 @@ if ($page === 'barber') {
             ");
             $topSpendingList = $topSpendingStmt ? $topSpendingStmt->fetchAll(PDO::FETCH_ASSOC) : [];
             ?>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 mb-8">
                 <!-- Tren Pelanggan Harian (Horizontal Scroll Max 30 Hari) -->
                 <div class="p-6 rounded-2xl border shadow-md flex flex-col justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
                     <div>
@@ -1710,7 +1710,6 @@ if ($page === 'barber') {
                     }
                 });
             </script>
-            </script>
 
             <!-- PENDAPATAN BULANAN MODULE (Moved to Dashboard) -->
             <?php
@@ -1736,7 +1735,7 @@ if ($page === 'barber') {
                 $highlightIdx = array_search(max($revByMonth), $revByMonth);
             ?>
             <!-- Stats row -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-8 mb-6">
                 <div class="rounded-2xl p-5 border" style="background:linear-gradient(135deg,#1e1408,#120e06);border-color:#4a3020;">
                     <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#8a6030;">Total Pendapatan <?= $selectedTahun ?></p>
                     <p class="text-3xl font-bold" style="color:#e8d5a3;">Rp <?= number_format($totalRevYear, 0, ',', '.') ?></p>
