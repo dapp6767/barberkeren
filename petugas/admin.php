@@ -1045,31 +1045,6 @@ if ($page === 'barber') {
                         <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
                             Rp <?= number_format($sales_today_val, 0, ',', '.') ?>
                         </div>
-                        <!-- Multi-layer Organic Gold/Amber Wave Chart SVG -->
-                        <div class="h-14 w-full relative overflow-hidden flex items-end my-1">
-                            <svg viewBox="0 0 200 60" class="w-full h-full" preserveAspectRatio="none">
-                                <defs>
-                                    <linearGradient id="goldGradCard" x1="0%" y1="0%" x2="0%" y2="100%">
-                                        <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.95"/>
-                                        <stop offset="100%" stop-color="#fde68a" stop-opacity="0.25"/>
-                                    </linearGradient>
-                                    <linearGradient id="amberGradCard" x1="0%" y1="0%" x2="0%" y2="100%">
-                                        <stop offset="0%" stop-color="#d97706" stop-opacity="0.85"/>
-                                        <stop offset="100%" stop-color="#b45309" stop-opacity="0.2"/>
-                                    </linearGradient>
-                                    <linearGradient id="brownGradCard" x1="0%" y1="0%" x2="0%" y2="100%">
-                                        <stop offset="0%" stop-color="#78350f" stop-opacity="0.9"/>
-                                        <stop offset="100%" stop-color="#451a03" stop-opacity="0.3"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Bottom Warm Brown Layer -->
-                                <path d="M 0 55 C 30 50, 50 35, 80 42 C 110 50, 140 45, 170 38 C 185 35, 195 40, 200 42 L 200 60 L 0 60 Z" fill="url(#brownGradCard)"/>
-                                <!-- Middle Amber Layer -->
-                                <path d="M 0 45 C 25 35, 55 52, 85 45 C 115 38, 145 48, 175 42 C 190 38, 195 45, 200 48 L 200 60 L 0 60 Z" fill="url(#amberGradCard)"/>
-                                <!-- Top Gold Wave Layer -->
-                                <path d="M 0 40 C 20 22, 45 38, 70 18 C 95 -2, 120 28, 145 12 C 170 -2, 190 18, 200 32 L 200 60 L 0 60 Z" fill="url(#goldGradCard)"/>
-                            </svg>
-                        </div>
                     </div>
                 </div>
 
