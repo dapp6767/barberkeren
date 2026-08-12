@@ -17,6 +17,22 @@ $active_queues   = get_active_queues();
 $barbers        = get_all_barbers();
 $services       = get_all_services();
 
+// Fetch queue count per barber (untuk step pilih barber)
+$pdo_early = get_db_connection();
+$barber_queue_counts = [];
+$stmt_bc = $pdo_early->query("SELECT barber_id, COUNT(*) as cnt FROM antrian WHERE status_antrean IN ('waiting','serving') AND DATE(waktu_dibuat) = CURDATE() GROUP BY barber_id");
+if ($stmt_bc) {
+    foreach ($stmt_bc->fetchAll(PDO::FETCH_ASSOC) as $bcrow) {
+        $barber_queue_counts[(int)$bcrow['barber_id']] = (int)$bcrow['cnt'];
+    }
+}
+// Fetch detail barber dengan kursi untuk step pilih barber
+$barbers_detail = [];
+$stmt_bd = $pdo_early->query("SELECT id, nama, kursi, spesialisasi, status, tingkatan FROM barber WHERE status = 'Aktif' OR status = 'aktif' ORDER BY kursi ASC");
+if ($stmt_bd) {
+    $barbers_detail = $stmt_bd->fetchAll(PDO::FETCH_ASSOC);
+}
+
 $pdo = get_db_connection();
 $my_user_id = $_SESSION['user_id'] ?? null;
 $my_queue = null;
@@ -885,8 +901,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             <section id="tab-layanan" class="tab-content <?= $is_layanan ? 'active' : '' ?>">
             <!-- LAYANAN MODULE -->
-            <div class="w-full pb-32">
+            <div id="layanan-main-content" class="w-full pb-32">
                 <!-- Header & Search Row -->
+
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                     <div>
                         <h2 class="text-3xl font-bold tracking-tight">
@@ -984,7 +1001,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 </div>
             </div>
 
-            <!-- Floating Action Bar — hidden until service is selected, desktop-aware -->
+            <!-- Floating Action Bar — hidden until service is selected -->
             <div id="layanan-action-bar" class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none">
                 <!-- Offset for sidebar on desktop -->
                 <div class="md:pl-64 lg:pl-64 transition-all duration-300" id="fab-inner-wrapper">
@@ -1000,19 +1017,285 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                 <p id="fab-price" class="text-amber-400 font-black text-base leading-none"></p>
                             </div>
                         </div>
-                        <a id="fab-link" href="#"
+                        <button id="fab-next-btn" onclick="openBarberStep()"
                            class="relative z-10 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-[0_0_15px_rgba(245,158,11,0.3)] flex items-center gap-2 whitespace-nowrap">
-                            <i data-lucide="ticket" class="w-4 h-4"></i>
-                            Ambil Antrean
-                        </a>
+                            <i data-lucide="user-check" class="w-4 h-4"></i>
+                            Pilih Barber
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
+            <!-- =========================================================
+                 STEP 2: PILIH BARBER — hidden by default, shown after pilih layanan
+                 ========================================================= -->
+            <div id="step-pilih-barber" class="hidden w-full pb-36">
+
+                <!-- Header Navigation & Stepper -->
+                <div class="mb-6 bg-[#16120C] border border-amber-900/30 rounded-2xl p-5 shadow-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <!-- Back Button & Title -->
+                        <div class="flex items-center gap-3">
+                            <button onclick="backToLayanan()" class="flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-amber-500/20 text-zinc-300 hover:text-amber-300 border border-white/10 hover:border-amber-500/30 transition-all duration-200 group shadow-md" title="Kembali ke Pilih Layanan">
+                                <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                                    <span>Pilih Barber & Kursi</span>
+                                </h2>
+                                <p class="text-xs text-zinc-400">Pilih barber favorit Anda atau biarkan sistem memilih otomatis antrean terpendek</p>
+                            </div>
+                        </div>
+
+                        <!-- Stepper Indicator -->
+                        <div class="flex items-center gap-2 bg-zinc-900/80 px-3.5 py-1.5 rounded-xl border border-white/5 self-start sm:self-auto">
+                            <span class="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold cursor-pointer" onclick="backToLayanan()">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                                <span>Layanan</span>
+                            </span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-zinc-600"></i>
+                            <span class="flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                <span>2. Barber</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Selected Service Info Card -->
+                    <div class="mt-4 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 bg-zinc-900/40 px-4 py-3 rounded-xl border border-amber-500/10">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                                <i data-lucide="scissors" class="w-4 h-4"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-[10px] text-zinc-400 uppercase font-semibold tracking-wider block">Layanan Terpilih</span>
+                                <span id="step2-service-name" class="text-white font-bold text-sm truncate block"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="step2-service-price" class="text-emerald-400 font-black text-base"></span>
+                            <button onclick="backToLayanan()" class="text-xs text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2">Ubah</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Subtitle -->
+                <div class="flex items-center justify-between mb-4 px-1">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-200/80 flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
+                        Daftar Barber Tersedia Hari Ini
+                    </h3>
+                    <span class="text-xs text-zinc-500">Klik salah satu untuk memilih</span>
+                </div>
+
+                <!-- Barber Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8" id="barber-grid">
+
+                    <!-- Option: Bebas / Otomatis -->
+                    <div class="barber-card group relative cursor-pointer rounded-2xl border-2 border-amber-500/30 bg-gradient-to-b from-[#241a0e] to-[#161009] p-5 shadow-lg transition-all duration-300 hover:border-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:-translate-y-1 select-none"
+                         data-barber-id="0"
+                         data-barber-name="Bebas / Pilih Otomatis"
+                         data-barber-kursi="Otomatis"
+                         data-barber-letter="Auto"
+                         onclick="selectBarber(this)">
+
+                        <!-- Recommendation Badge -->
+                        <div class="absolute -top-3 right-4 bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 font-black text-[10px] uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-amber-300/40">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rekomendasi Tercepat
+                        </div>
+
+                        <div class="flex flex-col gap-4">
+                            <!-- Icon & Title -->
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-13 h-13 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-2xl shadow-inner shrink-0 group-hover:scale-105 transition-transform">
+                                        ⚡
+                                    </div>
+                                    <div>
+                                        <h4 class="text-white font-bold text-base leading-tight group-hover:text-amber-300 transition-colors">Bebas / Otomatis</h4>
+                                        <p class="text-xs text-zinc-400 mt-1">Antrean paling sepi &amp; cepat</p>
+                                    </div>
+                                </div>
+                                <div class="barber-selected-tick hidden shrink-0">
+                                    <div class="w-7 h-7 rounded-full bg-amber-400 flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.6)]">
+                                        <i data-lucide="check" class="w-4 h-4 text-amber-950 font-black"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Highlights -->
+                            <div class="bg-black/30 rounded-xl p-3 border border-white/5 text-xs text-zinc-300 space-y-1.5">
+                                <div class="flex items-center gap-2 text-amber-300 font-medium">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+                                    <span>Waktu tunggu paling singkat</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-zinc-400">
+                                    <i data-lucide="shuffle" class="w-3.5 h-3.5 text-zinc-500 shrink-0"></i>
+                                    <span>Dialokasikan otomatis oleh sistem</span>
+                                </div>
+                            </div>
+
+                            <!-- Footer Tag -->
+                            <div class="flex items-center justify-between pt-2 border-t border-white/10 text-xs">
+                                <span class="text-zinc-400 font-medium">Kursi: <strong class="text-amber-300 font-semibold">Semua Kursi</strong></span>
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-400/20 text-amber-300 font-bold border border-amber-500/30">
+                                    Tiket Auto
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barber Cards (PHP Loop) -->
+                    <?php
+                    $barber_letter_colors = [
+                        'A' => ['bg' => 'from-amber-600 to-amber-800',   'border' => 'border-amber-500/30',  'text' => 'text-amber-300',  'badge' => 'bg-amber-500/15 text-amber-400 border-amber-500/30'],
+                        'B' => ['bg' => 'from-blue-600 to-blue-800',     'border' => 'border-blue-500/30',    'text' => 'text-blue-300',   'badge' => 'bg-blue-500/15 text-blue-400 border-blue-500/30'],
+                        'C' => ['bg' => 'from-emerald-600 to-emerald-800','border' => 'border-emerald-500/30','text' => 'text-emerald-300','badge' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'],
+                        'D' => ['bg' => 'from-purple-600 to-purple-800', 'border' => 'border-purple-500/30',  'text' => 'text-purple-300', 'badge' => 'bg-purple-500/15 text-purple-400 border-purple-500/30'],
+                        'E' => ['bg' => 'from-rose-600 to-rose-800',     'border' => 'border-rose-500/30',    'text' => 'text-rose-300',   'badge' => 'bg-rose-500/15 text-rose-400 border-rose-500/30'],
+                    ];
+                    foreach ($barbers_detail as $br):
+                        // Determine queue letter from kursi
+                        $kursi_str = strtoupper($br['kursi'] ?? '');
+                        $br_letter = 'A';
+                        if (preg_match('/KURSI\s*([A-Z])/', $kursi_str, $m_br)) {
+                            $br_letter = $m_br[1];
+                        }
+                        $br_queue_count = $barber_queue_counts[$br['id']] ?? 0;
+                        $colors = $barber_letter_colors[$br_letter] ?? $barber_letter_colors['A'];
+                        
+                        // Check if barber has a custom uploaded photo
+                        $b_user_id = $br['user_id'] ?? 0;
+                        $b_profile_files = glob(__DIR__ . '/../asset/image/profile_' . $b_user_id . '.*');
+                        $b_photo_url = !empty($b_profile_files) ? '../asset/image/' . basename($b_profile_files[0]) : null;
+
+                        // Status busy: barber sedang melayani
+                        $stmt_serv = $pdo_early->prepare("SELECT COUNT(*) FROM antrian WHERE barber_id = ? AND status_antrean = 'serving'");
+                        $stmt_serv->execute([$br['id']]);
+                        $is_serving = ($stmt_serv->fetchColumn() > 0);
+
+                        // Initials avatar fallback
+                        $nama_parts = explode(' ', trim($br['nama']));
+                        $initials = strtoupper(substr($nama_parts[0], 0, 1)) . (isset($nama_parts[1]) ? strtoupper(substr($nama_parts[1], 0, 1)) : '');
+                    ?>
+                    <div class="barber-card group relative cursor-pointer rounded-2xl border-2 border-white/10 bg-[#1A1612] p-5 shadow-lg transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:-translate-y-1 select-none"
+                         data-barber-id="<?= $br['id'] ?>"
+                         data-barber-name="<?= htmlspecialchars($br['nama']) ?>"
+                         data-barber-kursi="<?= htmlspecialchars($br['kursi']) ?>"
+                         data-barber-letter="<?= $br_letter ?>"
+                         onclick="selectBarber(this)">
+
+                        <div class="flex flex-col gap-4">
+                            <!-- Avatar, Name & Checkmark -->
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3.5">
+                                    <?php if ($b_photo_url): ?>
+                                        <img src="<?= $b_photo_url ?>" alt="<?= htmlspecialchars($br['nama']) ?>" class="w-13 h-13 rounded-2xl object-cover border-2 border-amber-500/40 shadow-md shrink-0 group-hover:scale-105 transition-transform">
+                                    <?php else: ?>
+                                        <div class="w-13 h-13 rounded-2xl bg-gradient-to-br <?= $colors['bg'] ?> flex items-center justify-center shadow-lg text-white font-black text-base shrink-0 group-hover:scale-105 transition-transform border border-white/10">
+                                            <?= $initials ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div>
+                                        <h4 class="text-white font-bold text-base leading-tight group-hover:text-amber-300 transition-colors"><?= htmlspecialchars($br['nama']) ?></h4>
+                                        <p class="text-xs text-zinc-400 mt-1"><?= htmlspecialchars($br['spesialisasi'] ?? 'Hair Stylist') ?> · <span class="text-amber-400/80 font-medium"><?= htmlspecialchars($br['tingkatan'] ?? 'Professional') ?></span></p>
+                                    </div>
+                                </div>
+
+                                <div class="barber-selected-tick hidden shrink-0">
+                                    <div class="w-7 h-7 rounded-full bg-amber-400 flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.6)]">
+                                        <i data-lucide="check" class="w-4 h-4 text-amber-950 font-black"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Station & Ticket Prefix Badges -->
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-zinc-800/90 text-zinc-200 border border-white/10">
+                                    <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-400"></i>
+                                    <?= htmlspecialchars($br['kursi']) ?>
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold <?= $colors['badge'] ?> border">
+                                    <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
+                                    No Tiket: <strong><?= $br_letter ?>-xx</strong>
+                                </span>
+                            </div>
+
+                            <!-- Queue Status & Live Indicator -->
+                            <div class="flex items-center justify-between pt-3 border-t border-white/10 text-xs">
+                                <div class="flex items-center gap-1.5 font-medium">
+                                    <i data-lucide="users" class="w-3.5 h-3.5 text-zinc-400"></i>
+                                    <?php if ($br_queue_count === 0): ?>
+                                        <span class="text-emerald-400 font-semibold">Tidak ada antrean</span>
+                                    <?php else: ?>
+                                        <span class="text-zinc-300"><strong><?= $br_queue_count ?></strong> orang dalam antrean</span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <?php if ($is_serving): ?>
+                                    <span class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>Melayani
+                                    </span>
+                                <?php elseif ($br_queue_count === 0): ?>
+                                    <span class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>Tersedia
+                                    </span>
+                                <?php else: ?>
+                                    <span class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>Menunggu
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Sticky Bottom Action Bar — Submit Form -->
+                <div class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none" id="barber-submit-bar">
+                    <div class="md:pl-64 lg:pl-64 transition-all duration-300">
+                        <div class="max-w-2xl mx-auto bg-gradient-to-r from-zinc-950 via-[#1e1509] to-zinc-950 border border-amber-500/60 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-[0_12px_40px_rgba(0,0,0,0.9)] relative overflow-hidden backdrop-blur-xl">
+                            <div class="absolute inset-0 bg-amber-500/5 backdrop-blur-md"></div>
+                            
+                            <!-- Summary Info -->
+                            <div class="relative z-10 flex items-center gap-3.5 min-w-0">
+                                <div class="w-11 h-11 rounded-xl bg-amber-400/20 border border-amber-500/40 flex items-center justify-center shrink-0 shadow-inner text-amber-400">
+                                    <i data-lucide="ticket" class="w-6 h-6"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider">Konfirmasi Pilihan Barber</p>
+                                    <p id="submit-barber-name" class="text-white font-bold text-sm truncate leading-tight"></p>
+                                    <p id="submit-barber-kursi" class="text-amber-400 text-xs font-semibold leading-none mt-0.5 truncate"></p>
+                                </div>
+                            </div>
+
+                            <!-- Action Form -->
+                            <form id="form-ambil-antrian" action="dashboard.php" method="POST" class="relative z-10 shrink-0 ml-3">
+                                <input type="hidden" name="action" value="take_ticket">
+                                <input type="hidden" name="service_id" id="hidden-service-id" value="">
+                                <input type="hidden" name="barber_id" id="hidden-barber-id" value="">
+                                <button type="submit" id="btn-final-submit"
+                                    class="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 active:scale-95 text-amber-950 font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.5)] flex items-center gap-2 whitespace-nowrap border border-amber-300/50">
+                                    <span>Ambil Antrean</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3]"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End step-pilih-barber -->
+
             <script>
             (function() {
-                let selectedId = null;
+                let selectedServiceId = null;
+                let selectedServiceName = '';
+                let selectedServicePrice = '';
+                let selectedBarberId = null;
 
+                // ---- STEP 1: Pilih Layanan ----
                 function selectLayanan(el) {
                     // Deselect previous
                     document.querySelectorAll('.service-item').forEach(function(card) {
@@ -1028,19 +1311,120 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     el.querySelector('.selected-overlay').classList.replace('opacity-0', 'opacity-100');
                     el.querySelector('.selected-tick').classList.remove('hidden');
 
-                    selectedId = el.dataset.id;
-                    const name = el.dataset.name;
-                    const priceFmt = el.dataset.priceFmt;
+                    selectedServiceId = el.dataset.id;
+                    selectedServiceName = el.dataset.name;
+                    selectedServicePrice = el.dataset.priceFmt;
 
                     // Update FAB
-                    document.getElementById('fab-name').textContent = name;
-                    document.getElementById('fab-price').textContent = priceFmt;
-                    document.getElementById('fab-link').href = 'dashboard.php?service_id=' + selectedId;
+                    document.getElementById('fab-name').textContent = selectedServiceName;
+                    document.getElementById('fab-price').textContent = selectedServicePrice;
 
                     // Show FAB
                     const bar = document.getElementById('layanan-action-bar');
                     bar.classList.remove('translate-y-4', 'opacity-0', 'pointer-events-none');
                     bar.classList.add('translate-y-0', 'opacity-100');
+
+                    lucide.createIcons();
+                }
+
+                // ---- STEP 2: Buka Pilih Barber ----
+                function openBarberStep() {
+                    if (!selectedServiceId) return;
+
+                    // Sembunyikan grid layanan + header + search + FAB
+                    document.getElementById('layanan-main-content').style.display = 'none';
+                    document.getElementById('layanan-action-bar').style.display = 'none';
+
+                    // Tampilkan step 2
+                    const step2 = document.getElementById('step-pilih-barber');
+                    step2.classList.remove('hidden');
+                    step2.style.opacity = '0';
+                    step2.style.transform = 'translateX(30px)';
+                    setTimeout(() => {
+                        step2.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        step2.style.opacity = '1';
+                        step2.style.transform = 'translateX(0)';
+                    }, 10);
+
+                    // Update badge layanan di step 2
+                    document.getElementById('step2-service-name').textContent = selectedServiceName;
+                    document.getElementById('step2-service-price').textContent = selectedServicePrice;
+
+                    // Reset barber selection
+                    selectedBarberId = null;
+                    document.querySelectorAll('.barber-card').forEach(c => {
+                        c.classList.remove('border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/50', 'scale-[1.01]');
+                        c.classList.add('border-white/10');
+                        c.querySelector('.barber-selected-tick').classList.add('hidden');
+                    });
+
+                    const submitBar = document.getElementById('barber-submit-bar');
+                    submitBar.classList.remove('translate-y-0', 'opacity-100');
+                    submitBar.classList.add('translate-y-4', 'opacity-0', 'pointer-events-none');
+
+                    // Scroll to top
+                    const mainArea = document.querySelector('main');
+                    if (mainArea) mainArea.scrollTop = 0;
+
+                    lucide.createIcons();
+                }
+
+                // ---- Kembali ke Step 1 ----
+                function backToLayanan() {
+                    const step2 = document.getElementById('step-pilih-barber');
+                    step2.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                    step2.style.opacity = '0';
+                    step2.style.transform = 'translateX(30px)';
+
+                    setTimeout(() => {
+                        step2.classList.add('hidden');
+                        step2.style.opacity = '';
+                        step2.style.transform = '';
+                        step2.style.transition = '';
+
+                        document.getElementById('layanan-main-content').style.display = '';
+                        document.getElementById('layanan-action-bar').style.display = '';
+                    }, 200);
+
+                    const mainArea = document.querySelector('main');
+                    if (mainArea) mainArea.scrollTop = 0;
+                }
+
+                // ---- STEP 2: Pilih Barber ----
+                function selectBarber(el) {
+                    // Deselect all
+                    document.querySelectorAll('.barber-card').forEach(function(card) {
+                        card.classList.remove('border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/50', 'scale-[1.01]');
+                        card.classList.add('border-white/10');
+                        card.querySelector('.barber-selected-tick').classList.add('hidden');
+                    });
+
+                    // Select this card with active glow & ring
+                    el.classList.remove('border-white/10');
+                    el.classList.add('border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/50', 'scale-[1.01]');
+                    el.querySelector('.barber-selected-tick').classList.remove('hidden');
+
+                    selectedBarberId = el.dataset.barberId;
+                    const barberName = el.dataset.barberName;
+                    const barberKursi = el.dataset.barberKursi;
+                    const barberLetter = el.dataset.barberLetter;
+
+                    // Set hidden inputs
+                    document.getElementById('hidden-service-id').value = selectedServiceId;
+                    document.getElementById('hidden-barber-id').value = (selectedBarberId === '0') ? '' : selectedBarberId;
+
+                    // Update submit bar info
+                    document.getElementById('submit-barber-name').textContent = barberName;
+                    if (selectedBarberId === '0') {
+                        document.getElementById('submit-barber-kursi').textContent = 'Sistem akan otomatis memilih antrean paling singkat';
+                    } else {
+                        document.getElementById('submit-barber-kursi').textContent = barberKursi + ' · Estimasi Tiket ' + barberLetter + '-xx';
+                    }
+
+                    // Show submit bar with smooth transition
+                    const submitBar = document.getElementById('barber-submit-bar');
+                    submitBar.classList.remove('translate-y-4', 'opacity-0', 'pointer-events-none');
+                    submitBar.classList.add('translate-y-0', 'opacity-100');
 
                     lucide.createIcons();
                 }
@@ -1059,6 +1443,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 // Expose globally
                 window.selectLayanan = selectLayanan;
                 window.onMainServiceChange = onMainServiceChange;
+                window.openBarberStep = openBarberStep;
+                window.backToLayanan = backToLayanan;
+                window.selectBarber = selectBarber;
 
                 // Search filter
                 document.addEventListener('DOMContentLoaded', function() {
@@ -1077,6 +1464,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             })();
             </script>
             </section> <!-- End Layanan -->
+
 
             <section id="tab-qris" class="tab-content <?= $is_qris ? 'active' : '' ?>">
             <!-- SCAN QRIS MODULE -->
