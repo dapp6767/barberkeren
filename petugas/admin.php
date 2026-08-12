@@ -1033,12 +1033,6 @@ if ($page === 'barber') {
                             </div>
                         </div>
                     </div>
-                    <div class="relative z-10">
-                        <div class="w-full h-[1px] bg-white/10 my-3"></div>
-                        <a href="admin.php?page=transaksi" class="block text-center text-xs text-zinc-300 hover:text-[#f59e0b] font-medium transition-colors">
-                            Day Sales Rp <?= number_format($sales_today_val, 0, ',', '.') ?>
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Card 2: Pendapatan Perhari -->
@@ -1079,12 +1073,6 @@ if ($page === 'barber') {
                             </svg>
                         </div>
                     </div>
-                    <div class="relative z-10">
-                        <div class="w-full h-[1px] bg-white/10 my-3"></div>
-                        <div class="text-center text-xs text-zinc-300 font-medium">
-                            Rata-rata Harian Rp <?= number_format($avg_daily_revenue, 0, ',', '.') ?>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Card 3: Payments -->
@@ -1117,12 +1105,6 @@ if ($page === 'barber') {
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <div class="relative z-10">
-                        <div class="w-full h-[1px] bg-white/10 my-3"></div>
-                        <a href="admin.php?page=transaksi" class="block text-center text-xs text-zinc-300 hover:text-[#f59e0b] font-medium transition-colors">
-                            Conversion rate <?= $conversion_rate ?>%
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Card 4: Users & Barber -->
@@ -1151,12 +1133,6 @@ if ($page === 'barber') {
                                 <span class="text-amber-300 font-semibold">100% Ready</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="relative z-10">
-                        <div class="w-full h-[1px] bg-white/10 my-3"></div>
-                        <a href="admin.php?page=akun" class="block text-center text-xs text-zinc-300 hover:text-[#f59e0b] font-medium transition-colors">
-                            Barber Aktif <?= $total_barbers_active ?> Barber
-                        </a>
                     </div>
                 </div>
             </div>
