@@ -525,6 +525,12 @@ $total_transaksi_lunas = (int)$pdo->query("SELECT COUNT(*) FROM transaksi WHERE 
 $total_antrean_count = (int)$pdo->query("SELECT COUNT(*) FROM antrian")->fetchColumn();
 $conversion_rate = $total_antrean_count > 0 ? round(($total_transaksi_lunas / $total_antrean_count) * 100, 1) : 100.0;
 
+// Antrean Hari Ini Metrics Connected to Database
+$today_antrian_total = (int)$pdo->query("SELECT COUNT(*) FROM antrian WHERE DATE(waktu_dibuat) = CURDATE()")->fetchColumn();
+$today_antrian_waiting = (int)$pdo->query("SELECT COUNT(*) FROM antrian WHERE DATE(waktu_dibuat) = CURDATE() AND status_antrean = 'waiting'")->fetchColumn();
+$today_antrian_serving = (int)$pdo->query("SELECT COUNT(*) FROM antrian WHERE DATE(waktu_dibuat) = CURDATE() AND status_antrean = 'serving'")->fetchColumn();
+$today_antrian_completed = (int)$pdo->query("SELECT COUNT(*) FROM antrian WHERE DATE(waktu_dibuat) = CURDATE() AND status_antrean IN ('completed', 'review')")->fetchColumn();
+
 // Users & Barbers Connected to Database
 $total_users_count = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $total_barbers_active = (int)$pdo->query("SELECT COUNT(*) FROM barber WHERE status = 'aktif' OR status = 'Aktif'")->fetchColumn();
@@ -1005,31 +1011,27 @@ if ($page === 'barber') {
             <?php if ($page === 'dashboard' || empty($page)): ?>
             <!-- DASHBOARD METRIC CARDS (LUXURY DARK GOLD THEME CONNECTED TO DB) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <!-- Card 1: Total Sales -->
+                <!-- Card 1: Antrean Hari Ini -->
                 <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
                     <div class="relative z-10">
                         <!-- Header -->
                         <div class="flex items-center justify-between text-zinc-300 mb-2">
-                            <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Total Sales</span>
-                            <button type="button" onclick="openCardModal('salesModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Sales">i</button>
+                            <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Antrean Hari Ini</span>
+                            <button type="button" onclick="openCardModal('todayQueueModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Antrean Hari Ini">i</button>
                         </div>
                         <!-- Big Metric Value -->
                         <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-3">
-                            Rp <?= number_format($sales_total_val, 0, ',', '.') ?>
+                            <?= number_format($today_antrian_total) ?> <span class="text-sm font-normal text-amber-400/90">Antrean</span>
                         </div>
-                        <!-- Ratio Indicators -->
+                        <!-- Status Indicators -->
                         <div class="space-y-1.5 text-xs text-zinc-300 mb-2">
                             <div class="flex items-center justify-between">
-                                <span>Week ratio <strong class="text-zinc-100 font-semibold ml-1"><?= abs($week_ratio) ?>%</strong></span>
-                                <span class="<?= $week_ratio >= 0 ? 'text-rose-500' : 'text-emerald-500' ?> text-[10px] font-bold">
-                                    <?= $week_ratio >= 0 ? '▲' : '▼' ?>
-                                </span>
+                                <span>Menunggu (Waiting)</span>
+                                <span class="text-amber-400 font-bold"><?= $today_antrian_waiting ?> Orang</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span>Day ratio <strong class="text-zinc-100 font-semibold ml-1"><?= abs($day_ratio) ?>%</strong></span>
-                                <span class="<?= $day_ratio >= 0 ? 'text-emerald-500' : 'text-rose-500' ?> text-[10px] font-bold">
-                                    <?= $day_ratio >= 0 ? '▼' : '▲' ?>
-                                </span>
+                                <span>Sedang Dilayani / Selesai</span>
+                                <span class="text-emerald-400 font-bold"><?= $today_antrian_serving + $today_antrian_completed ?> Orang</span>
                             </div>
                         </div>
                     </div>
@@ -1140,16 +1142,16 @@ if ($page === 'barber') {
             <!-- METRIC DETAIL MODALS OVERLAY -->
             <div id="cardModalBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden transition-opacity duration-300 items-center justify-center p-4 overflow-y-auto">
 
-                <!-- 1. Sales Modal -->
-                <div id="salesModal" class="card-modal-content hidden bg-[#18120c] border border-amber-600/40 rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative text-white my-auto">
+                <!-- 1. Today Queue Modal -->
+                <div id="todayQueueModal" class="card-modal-content hidden bg-[#18120c] border border-amber-600/40 rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative text-white my-auto">
                     <div class="flex items-center justify-between border-b border-amber-900/40 pb-4 mb-4">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                                <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                                <i data-lucide="list-ordered" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-amber-100">Detail Pendapatan & Sales</h3>
-                                <p class="text-xs text-zinc-400">Rincian akumulasi omset dan metode pembayaran</p>
+                                <h3 class="text-lg font-bold text-amber-100">Detail Antrean Hari Ini (<?= date('d M Y') ?>)</h3>
+                                <p class="text-xs text-zinc-400">Rincian status antrean pelanggan hari ini</p>
                             </div>
                         </div>
                         <button type="button" onclick="closeCardModal()" class="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800 transition-colors">
@@ -1158,68 +1160,30 @@ if ($page === 'barber') {
                     </div>
 
                     <!-- Summary Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                         <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Total Sales</p>
-                            <p class="text-base font-bold text-amber-300">Rp <?= number_format($sales_total_val, 0, ',', '.') ?></p>
+                            <p class="text-xs text-zinc-400 mb-1">Total Antrean</p>
+                            <p class="text-base font-bold text-white"><?= number_format($today_antrian_total) ?></p>
                         </div>
                         <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Sales Hari Ini</p>
-                            <p class="text-base font-bold text-emerald-400">Rp <?= number_format($sales_today_val, 0, ',', '.') ?></p>
+                            <p class="text-xs text-zinc-400 mb-1">Menunggu (Waiting)</p>
+                            <p class="text-base font-bold text-amber-400"><?= number_format($today_antrian_waiting) ?></p>
                         </div>
                         <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
-                            <p class="text-xs text-zinc-400 mb-1">Sales Minggu Ini</p>
-                            <p class="text-base font-bold text-sky-400">Rp <?= number_format($sales_this_week, 0, ',', '.') ?></p>
+                            <p class="text-xs text-zinc-400 mb-1">Sedang Dilayani</p>
+                            <p class="text-base font-bold text-sky-400"><?= number_format($today_antrian_serving) ?></p>
+                        </div>
+                        <div class="bg-[#100b07] border border-amber-900/30 rounded-xl p-3.5 text-center">
+                            <p class="text-xs text-zinc-400 mb-1">Selesai</p>
+                            <p class="text-base font-bold text-emerald-400"><?= number_format($today_antrian_completed) ?></p>
                         </div>
                     </div>
 
-                    <!-- Breakdown by Payment Method -->
-                    <h4 class="text-xs font-semibold text-amber-200 uppercase tracking-wider mb-2">Metode Pembayaran</h4>
-                    <div class="space-y-2 mb-5">
-                        <?php foreach($modal_pay_methods as $pm): 
-                            $pct = $sales_total_val > 0 ? round(($pm['total_rev'] / $sales_total_val) * 100, 1) : 0;
-                        ?>
-                        <div class="bg-[#100b07] border border-zinc-800/80 rounded-lg p-3 flex flex-col gap-1.5">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-medium text-zinc-200 flex items-center gap-2">
-                                    <i data-lucide="credit-card" class="w-3.5 h-3.5 text-amber-400"></i>
-                                    <?= htmlspecialchars($pm['metode']) ?>
-                                </span>
-                                <span class="text-zinc-300 font-semibold">
-                                    Rp <?= number_format($pm['total_rev'], 0, ',', '.') ?> 
-                                    <span class="text-zinc-500 font-normal text-[11px]">(<?= $pm['count_trx'] ?> trx • <?= $pct ?>%)</span>
-                                </span>
-                            </div>
-                            <div class="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full rounded-full" style="width: <?= $pct ?>%;"></div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <!-- Top Services -->
-                    <h4 class="text-xs font-semibold text-amber-200 uppercase tracking-wider mb-2">Top 5 Layanan Terlaris</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-xs text-left text-zinc-300 border-collapse">
-                            <thead>
-                                <tr class="border-b border-zinc-800 text-zinc-400 bg-[#100b07]">
-                                    <th class="p-2.5 rounded-l-lg">Layanan</th>
-                                    <th class="p-2.5">Harga</th>
-                                    <th class="p-2.5 text-center">Transaksi</th>
-                                    <th class="p-2.5 text-right rounded-r-lg">Total Omset</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-800/50">
-                                <?php foreach($modal_top_layanan as $tl): ?>
-                                <tr class="hover:bg-amber-950/20 transition-colors">
-                                    <td class="p-2.5 font-medium text-white"><?= htmlspecialchars($tl['nama_layanan']) ?></td>
-                                    <td class="p-2.5 text-zinc-400">Rp <?= number_format($tl['harga'], 0, ',', '.') ?></td>
-                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-zinc-800 text-amber-300 font-semibold text-[11px]"><?= $tl['count_trx'] ?>x</span></td>
-                                    <td class="p-2.5 text-right font-semibold text-emerald-400">Rp <?= number_format($tl['total_rev'], 0, ',', '.') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                    <div class="text-center pt-2">
+                        <a href="admin.php?page=antrean" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 text-xs font-semibold transition-all">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            Buka Halaman Kelola Antrean Selengkapnya
+                        </a>
                     </div>
                 </div>
 
