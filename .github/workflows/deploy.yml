@@ -19,7 +19,7 @@ jobs:
         with:
           server: ftpupload.net
           username: if0_42597730
-          password: inigwdaffa2009
+          password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
           server-dir: elitebarber.web.id/htdocs/

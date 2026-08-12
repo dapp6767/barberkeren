@@ -13,3 +13,9 @@ Thumbs.db
 
 db/*.sql
 *.sql
+
+# Antigravity & AI Agent Local Data
+.agents/
+.gemini/
+.vscode/
+.env
