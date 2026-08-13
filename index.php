@@ -45,16 +45,24 @@ foreach ($all_layanan as $l) {
     }
 }
 
+// Ensure tgl_kursi column exists
+try {
+    $chkCol = $pdo->query("SHOW COLUMNS FROM barber LIKE 'tgl_kursi'");
+    if (!$chkCol || $chkCol->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE barber ADD COLUMN tgl_kursi DATE DEFAULT NULL");
+    }
+} catch (Exception $e) {}
+
 // Antrean per kursi hari ini
 $stmt_chairs = $pdo->query("
-    SELECT b.id, b.nama, b.kursi, b.status,
+    SELECT b.id, b.nama, b.kursi, b.tgl_kursi, b.status,
         MAX(CASE WHEN a.status_antrean='serving' THEN a.no_antrean ELSE NULL END) AS current_no,
         SUM(CASE WHEN a.status_antrean='waiting' THEN 1 ELSE 0 END) AS waiting_count,
         SUM(CASE WHEN a.status_antrean IN ('serving','waiting') THEN 1 ELSE 0 END) AS active_count
     FROM barber b
     LEFT JOIN antrian a ON a.barber_id = b.id AND DATE(a.waktu_dibuat) = CURDATE()
-    WHERE b.status = 'Aktif'
-    GROUP BY b.id, b.nama, b.kursi, b.status
+    WHERE b.status = 'Aktif' OR b.status = 'aktif'
+    GROUP BY b.id, b.nama, b.kursi, b.tgl_kursi, b.status
     ORDER BY b.kursi
 ");
 $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);

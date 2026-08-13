@@ -30,7 +30,30 @@ $stmt_b = $pdo->prepare("SELECT * FROM barber WHERE user_id = ? OR id = ? LIMIT 
 $stmt_b->execute([$user_id, $user_id]);
 $barber = $stmt_b->fetch(PDO::FETCH_ASSOC);
 
-$barber_id = $barber['id'] ?? null;
+// Ensure tgl_kursi column exists
+try {
+    $chkCol = $pdo->query("SHOW COLUMNS FROM barber LIKE 'tgl_kursi'");
+    if (!$chkCol || $chkCol->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE barber ADD COLUMN tgl_kursi DATE DEFAULT NULL");
+    }
+} catch (Exception $e) {}
+
+// Check daily chair status
+$has_selected_chair_today = false;
+if ($barber && !empty($barber['tgl_kursi']) && $barber['tgl_kursi'] === date('Y-m-d')) {
+    $has_selected_chair_today = true;
+}
+
+// Fetch occupied chairs today by other barbers
+$stmt_occ = $pdo->prepare("SELECT kursi, nama, id FROM barber WHERE tgl_kursi = CURDATE() AND (status = 'aktif' OR status = 'Aktif')");
+$stmt_occ->execute();
+$occ_list = $stmt_occ->fetchAll(PDO::FETCH_ASSOC);
+$occupied_chairs = [];
+foreach ($occ_list as $oc) {
+    if ($barber && $oc['id'] != $barber['id']) {
+        $occupied_chairs[$oc['kursi']] = $oc['nama'];
+    }
+}
 
 // Ambil Daftar Antrean Hari Ini
 $today = date('Y-m-d');
@@ -343,6 +366,27 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300"></i>
                     <span class="group-hover:underline underline-offset-4">Home</span>
                 </a>
+
+                <!-- Kursi Tugas Hari Ini Badge -->
+                <?php if ($barber): ?>
+                    <?php if ($has_selected_chair_today): ?>
+                        <div class="hidden md:flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 px-3 py-1 rounded-xl text-amber-300 text-xs font-bold shadow-inner ml-2">
+                            <i data-lucide="armchair" class="w-4 h-4 text-amber-400"></i>
+                            <span>Tugas Hari Ini: <strong class="text-amber-200"><?= htmlspecialchars($barber['kursi']) ?></strong></span>
+                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors text-[11px] font-semibold border border-amber-500/30">
+                                Ubah Kursi
+                            </button>
+                        </div>
+                    <?php else: ?>
+                        <div class="hidden md:flex items-center gap-2 bg-rose-500/20 border border-rose-500/40 px-3 py-1 rounded-xl text-rose-300 text-xs font-bold shadow-inner ml-2 animate-pulse">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+                            <span>Belum Pilih Kursi Hari Ini</span>
+                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2.5 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white transition-colors text-[11px] font-bold shadow">
+                                Pilih Kursi
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
             </div>
             <div class="flex items-center gap-4">
                 <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
@@ -596,6 +640,35 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             
             <?php if ($current_page === 'dashboard' || empty($current_page)): ?>
                 <!-- DEFAULT DASHBOARD WORK PANEL -->
+
+                <!-- Daily Chair Selection Banner -->
+                <?php if (!$has_selected_chair_today): ?>
+                    <div class="mb-6 p-4 rounded-xl bg-gradient-to-r from-amber-950/80 via-amber-900/40 to-amber-950/80 border-2 border-amber-500/50 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 text-xl">
+                                💈
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-amber-200 text-base">Anda Belum Memilih Kursi Tugas Hari Ini</h4>
+                                <p class="text-xs text-zinc-300">Silakan pilih Kursi A, B, atau C untuk hari ini agar pelanggan dapat memesan layanan Anda.</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="openSelectKursiModal()" class="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold text-xs px-5 py-2.5 rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(245,158,11,0.4)] shrink-0 flex items-center gap-1.5">
+                            <i data-lucide="armchair" class="w-4 h-4"></i> Pilih Kursi Sekarang
+                        </button>
+                    </div>
+                <?php else: ?>
+                    <div class="mb-6 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs text-amber-300">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Kursi bertugas Anda hari ini: <strong class="text-amber-200 font-bold"><?= htmlspecialchars($barber['kursi']) ?></strong> (Berlaku s/d Akhir Hari Ini)</span>
+                        </div>
+                        <button type="button" onclick="openSelectKursiModal()" class="text-amber-400 hover:text-amber-200 font-semibold underline underline-offset-2">
+                            Ubah Kursi Tugas
+                        </button>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Dashboard Stats -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="bg-adminlte-info rounded-lg p-6 relative overflow-hidden text-white shadow-lg">
@@ -1053,6 +1126,102 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 applySidebarState(willMinimize);
             });
         }</script>
+    <!-- Modal Pilih Kursi Tugas Harian -->
+    <div id="selectKursiModal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 <?= ($current_page === 'dashboard' && !$has_selected_chair_today) ? '' : 'hidden' ?>">
+        <div class="bg-gradient-to-b from-[#1c140b] to-[#120d07] border-2 border-amber-500/40 rounded-2xl max-w-xl w-full p-6 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white relative">
+            
+            <?php if ($has_selected_chair_today): ?>
+                <button type="button" onclick="closeSelectKursiModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            <?php endif; ?>
+
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-3xl mx-auto mb-3 shadow-inner">
+                    💈
+                </div>
+                <h3 class="text-2xl font-bold text-amber-200 tracking-tight">Pilih Kursi Tugas Hari Ini</h3>
+                <p class="text-xs text-zinc-400 mt-1">Silakan tentukan kursi layanan Anda untuk hari ini (<strong><?= date('d F Y') ?></strong>). Pilihan ini berlaku selama 1 hari.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <?php
+                $chairs_options = [
+                    'Kursi A' => ['letter' => 'A', 'desc' => 'Stasiun 1 (Kiri)', 'color' => 'amber'],
+                    'Kursi B' => ['letter' => 'B', 'desc' => 'Stasiun 2 (Tengah)', 'color' => 'blue'],
+                    'Kursi C' => ['letter' => 'C', 'desc' => 'Stasiun 3 (Kanan)', 'color' => 'emerald'],
+                ];
+                foreach ($chairs_options as $k_name => $k_info):
+                    $is_current = ($barber && $barber['kursi'] === $k_name && $has_selected_chair_today);
+                    $occupied_by = $occupied_chairs[$k_name] ?? null;
+                ?>
+                    <div class="relative rounded-xl border-2 p-4 transition-all duration-300 flex flex-col justify-between text-center select-none
+                        <?= $is_current 
+                            ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' 
+                            : ($occupied_by 
+                                ? 'border-zinc-800 bg-zinc-900/60 opacity-60 cursor-not-allowed' 
+                                : 'border-amber-500/40 bg-black/40 hover:border-amber-400 hover:bg-amber-950/40 hover:-translate-y-1 cursor-pointer') ?>">
+
+                        <div class="mb-3">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1"><?= $k_info['desc'] ?></span>
+                            <h4 class="text-xl font-black text-white"><?= $k_name ?></h4>
+                        </div>
+
+                        <?php if ($is_current): ?>
+                            <div class="my-2">
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[11px] border border-emerald-500/40 inline-block">
+                                    ✓ Kursi Anda
+                                </span>
+                            </div>
+                            <button type="button" disabled class="w-full mt-2 py-2 px-3 rounded-lg bg-emerald-600/40 text-emerald-300 font-bold text-xs cursor-default">
+                                Aktif Hari Ini
+                            </button>
+                        <?php elseif ($occupied_by): ?>
+                            <div class="my-2">
+                                <span class="px-2.5 py-1 rounded-full bg-red-500/20 text-red-400 font-semibold text-[11px] border border-red-500/30 inline-block truncate max-w-full" title="Diisi oleh <?= htmlspecialchars($occupied_by) ?>">
+                                    🔒 <?= htmlspecialchars($occupied_by) ?>
+                                </span>
+                            </div>
+                            <button type="button" disabled class="w-full mt-2 py-2 px-3 rounded-lg bg-zinc-800 text-zinc-500 font-semibold text-xs cursor-not-allowed">
+                                Terisi
+                            </button>
+                        <?php else: ?>
+                            <div class="my-2">
+                                <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-semibold text-[11px] border border-amber-500/30 inline-block">
+                                    Tersedia
+                                </span>
+                            </div>
+                            <form method="POST" action="barber.php">
+                                <input type="hidden" name="action" value="select_kursi">
+                                <input type="hidden" name="kursi" value="<?= $k_name ?>">
+                                <button type="submit" class="w-full mt-2 py-2 px-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition-colors shadow-md">
+                                    Pilih <?= $k_name ?>
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="text-center text-xs text-zinc-400 pt-3 border-t border-white/10 flex items-center justify-between">
+                <span>* Pilihan berlaku selama 24 jam (1 hari).</span>
+                <?php if ($has_selected_chair_today): ?>
+                    <button type="button" onclick="closeSelectKursiModal()" class="text-zinc-400 hover:text-white underline">Tutup Window</button>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openSelectKursiModal() {
+        const modal = document.getElementById('selectKursiModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+    function closeSelectKursiModal() {
+        const modal = document.getElementById('selectKursiModal');
+        if (modal) modal.classList.add('hidden');
+    }
+    </script>
 </body>
 </html>
 

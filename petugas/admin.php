@@ -36,6 +36,10 @@ try {
     if (!$chkBarberKursi || $chkBarberKursi->rowCount() === 0) {
         $pdo->exec("ALTER TABLE barber ADD COLUMN kursi VARCHAR(20) DEFAULT 'Kursi A'");
     }
+    $chkTglKursi = $pdo->query("SHOW COLUMNS FROM barber LIKE 'tgl_kursi'");
+    if (!$chkTglKursi || $chkTglKursi->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE barber ADD COLUMN tgl_kursi DATE DEFAULT NULL");
+    }
 } catch (Exception $e) {}
 
 // Handle AJAX Notification Endpoint & Form POST Actions via admin_functions.php

@@ -12,8 +12,17 @@ require_once __DIR__ . '/helper.php';
 if (!function_exists('determine_queue_letter')) {
     function determine_queue_letter($barber_id = null) {
         $pdo = get_koneksi();
+        
+        // Ensure tgl_kursi column exists
+        try {
+            $chkCol = $pdo->query("SHOW COLUMNS FROM barber LIKE 'tgl_kursi'");
+            if (!$chkCol || $chkCol->rowCount() === 0) {
+                $pdo->exec("ALTER TABLE barber ADD COLUMN tgl_kursi DATE DEFAULT NULL");
+            }
+        } catch (Exception $e) {}
+
         if ($barber_id) {
-            $stmt = $pdo->prepare("SELECT kursi FROM barber WHERE id = ? LIMIT 1");
+            $stmt = $pdo->prepare("SELECT kursi, tgl_kursi FROM barber WHERE id = ? LIMIT 1");
             $stmt->execute([$barber_id]);
             $barber = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($barber && !empty($barber['kursi'])) {
@@ -23,9 +32,17 @@ if (!function_exists('determine_queue_letter')) {
             }
         }
         
-        $stmt = $pdo->prepare("SELECT id, kursi FROM barber WHERE status = 'aktif' ORDER BY id ASC");
+        // Auto allocation: prefer barbers who selected a chair today
+        $stmt = $pdo->prepare("SELECT id, kursi FROM barber WHERE (status = 'aktif' OR status = 'Aktif') AND tgl_kursi = CURDATE() ORDER BY id ASC");
         $stmt->execute();
         $barbers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Fallback if no barbers have confirmed chair today
+        if (empty($barbers)) {
+            $stmt = $pdo->prepare("SELECT id, kursi FROM barber WHERE (status = 'aktif' OR status = 'Aktif') ORDER BY id ASC");
+            $stmt->execute();
+            $barbers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
 
         if (empty($barbers)) {
             return 'A';

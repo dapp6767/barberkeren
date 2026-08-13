@@ -31,9 +31,17 @@ if ($stmt_bc) {
         $barber_queue_counts[(int)$bcrow['barber_id']] = (int)$bcrow['cnt'];
     }
 }
+// Ensure tgl_kursi column exists
+try {
+    $chkCol = $pdo_early->query("SHOW COLUMNS FROM barber LIKE 'tgl_kursi'");
+    if (!$chkCol || $chkCol->rowCount() === 0) {
+        $pdo_early->exec("ALTER TABLE barber ADD COLUMN tgl_kursi DATE DEFAULT NULL");
+    }
+} catch (Exception $e) {}
+
 // Fetch detail barber dengan kursi untuk step pilih barber
 $barbers_detail = [];
-$stmt_bd = $pdo_early->query("SELECT id, nama, kursi, spesialisasi, status, tingkatan FROM barber WHERE status = 'Aktif' OR status = 'aktif' ORDER BY kursi ASC");
+$stmt_bd = $pdo_early->query("SELECT id, user_id, nama, kursi, tgl_kursi, spesialisasi, status, tingkatan FROM barber WHERE status = 'Aktif' OR status = 'aktif' ORDER BY kursi ASC");
 if ($stmt_bd) {
     $barbers_detail = $stmt_bd->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -966,6 +974,9 @@ if ($my_user_id) {
                         // Initials avatar fallback
                         $nama_parts = explode(' ', trim($br['nama']));
                         $initials = strtoupper(substr($nama_parts[0], 0, 1)) . (isset($nama_parts[1]) ? strtoupper(substr($nama_parts[1], 0, 1)) : '');
+
+                        // Check if barber confirmed chair today
+                        $br_has_selected_chair = (!empty($br['tgl_kursi']) && $br['tgl_kursi'] === date('Y-m-d'));
                     ?>
                     <div class="barber-card group relative cursor-pointer rounded-2xl border-2 border-white/10 bg-[#1A1612] p-5 shadow-lg transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:-translate-y-1 select-none"
                          data-barber-id="<?= $br['id'] ?>"
@@ -1001,10 +1012,18 @@ if ($my_user_id) {
 
                             <!-- Station & Ticket Prefix Badges -->
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-zinc-800/90 text-zinc-200 border border-white/10">
-                                    <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-400"></i>
-                                    <?= htmlspecialchars($br['kursi']) ?>
-                                </span>
+                                <?php if ($br_has_selected_chair): ?>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30" title="Kursi aktif tugas hari ini">
+                                        <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-400"></i>
+                                        <?= htmlspecialchars($br['kursi']) ?> (Hari Ini)
+                                    </span>
+                                <?php else: ?>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-medium bg-zinc-800/80 text-zinc-400 border border-white/10" title="Barber belum mengonfirmasi kursi bertugas hari ini">
+                                        <i data-lucide="armchair" class="w-3.5 h-3.5 text-zinc-500"></i>
+                                        <?= htmlspecialchars($br['kursi']) ?> (Belum Siap)
+                                    </span>
+                                <?php endif; ?>
+
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold <?= $colors['badge'] ?> border">
                                     <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
                                     No Tiket: <strong><?= $br_letter ?>-xx</strong>
