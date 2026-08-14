@@ -65,6 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
     <style>
+        html, body {
+            height: auto;
+            min-height: 100%;
+        }
         body { font-family: 'Inter', sans-serif; }
         .auth-input {
             width: 100%;
@@ -88,13 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .alert-info    { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.3);  color: #93c5fd; padding: 12px 16px; border-radius: 10px; font-size: 0.875rem; margin-bottom: 16px; }
     </style>
 </head>
-<body class="antialiased min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden bg-black text-zinc-200">
+<body class="antialiased min-h-screen flex flex-col justify-start sm:justify-center items-center px-4 py-8 sm:py-12 relative overflow-x-hidden overflow-y-auto bg-black text-zinc-200">
 
     <div class="fixed inset-0 -z-10 bg-gradient-to-br from-black via-[#0a0a0a] to-[#3e2723] pointer-events-none"></div>
     <div class="fixed top-0 right-0 w-96 h-96 -z-10 pointer-events-none"
          style="background: radial-gradient(circle at top right, rgba(212,175,55,0.1) 0%, transparent 60%);"></div>
 
-    <div class="w-full max-w-lg relative">
+    <div class="w-full max-w-lg relative my-auto">
 
         <!-- Logo / Brand -->
         <div class="text-center mb-8">
@@ -182,6 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div id="rule_sym" class="flex items-center gap-1.5 transition-colors">
                             <i data-lucide="circle-dot" class="w-3 h-3 text-zinc-600"></i> Memiliki Simbol (@, #, !, dll)
                         </div>
+                    </div>
                 </div>
 
                 <button type="submit"
