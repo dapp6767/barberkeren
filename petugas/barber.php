@@ -303,27 +303,36 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     <div class="fixed inset-0 z-[-1] pointer-events-none" style="background: linear-gradient(135deg, #0e0a08 0%, #120e06 30%, #1a0e04 60%, #0a0603 100%);"></div>
     <div class="fixed inset-0 z-[-1] pointer-events-none" style="background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(90,50,15,0.15) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 20% 80%, rgba(60,30,5,0.1) 0%, transparent 50%);"></div>
 
+    <!-- Mobile Drawer Overlay Backdrop -->
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
+
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-adminlte-sidebar h-full flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-adminlte-sidebar h-full flex flex-col shadow-2xl transition-transform duration-300 -translate-x-full md:translate-x-0 md:static md:z-auto flex-shrink-0">
         <script>
-            if(localStorage.getItem('sidebarMinimized') === 'true') {
+            if(localStorage.getItem('sidebarMinimized') === 'true' && window.innerWidth >= 768) {
                 document.getElementById('sidebar').classList.replace('w-64', 'w-20');
             }
         </script>
         <!-- Brand Logo -->
-        <div id="brand-logo-container" class="h-16 flex items-center px-6 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
-            <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
-            <span id="brand-text" class="text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Barber</span></span>
+        <div id="brand-logo-container" class="h-16 flex items-center justify-between px-6 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
+            <div class="flex items-center">
+                <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
+                <span id="brand-text" class="text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Barber</span></span>
+            </div>
+            <!-- Close Button for Mobile -->
+            <button type="button" onclick="toggleMobileSidebar()" class="md:hidden text-stone-400 hover:text-white p-1 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
         </div>
         
         <!-- Sidebar Menu -->
         <div class="flex-1 overflow-y-auto py-4">
             <nav class="flex flex-col gap-1 px-3">
-                <a href="?page=dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg <?= ($current_page === 'dashboard' || !isset($_GET['page']) || empty($current_page)) ? 'bg-adminlte-primary text-amber-200 mt-4' : 'text-stone-400 hover:text-amber-200 mt-4' ?>">
+                <a href="?page=dashboard" onclick="if(window.innerWidth<768) toggleMobileSidebar();" class="flex items-center gap-3 px-3 py-2.5 rounded-lg <?= ($current_page === 'dashboard' || !isset($_GET['page']) || empty($current_page)) ? 'bg-adminlte-primary text-amber-200 mt-4' : 'text-stone-400 hover:text-amber-200 mt-4' ?>">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                     <span>Panel Kerja</span>
                 </a>
-                <a href="?page=charts" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $current_page === 'charts' ? 'bg-adminlte-primary text-white mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
+                <a href="?page=charts" onclick="if(window.innerWidth<768) toggleMobileSidebar();" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $current_page === 'charts' ? 'bg-adminlte-primary text-white mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
                     <i data-lucide="pie-chart" class="w-5 h-5"></i>
                     <span>Statistik (Charts)</span>
                 </a>
@@ -337,7 +346,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <?php endif; ?>
 
                 <p class="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 mt-4">Lainnya</p>
-                <a href="?page=profil" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= (in_array($current_page, ['profil', 'profile'])) ? 'bg-adminlte-primary text-white' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white' ?>">
+                <a href="?page=profil" onclick="if(window.innerWidth<768) toggleMobileSidebar();" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= (in_array($current_page, ['profil', 'profile'])) ? 'bg-adminlte-primary text-white' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white' ?>">
                     <i data-lucide="user" class="w-5 h-5"></i>
                     <span>Profil</span>
                 </a>
@@ -353,16 +362,16 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Top Navbar -->
-        <header class="h-16 flex items-center justify-between px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
-            <div class="flex items-center gap-4">
-                <button id="sidebar-toggle" class="transition-colors hover:text-amber-400" style="color:#8a6030;">
+        <header class="h-16 flex items-center justify-between px-4 sm:px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle" class="p-1.5 rounded-lg text-amber-400 hover:bg-amber-950/50 transition-colors focus:outline-none" title="Menu Navigasi">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
-                <h1 class="text-xl font-semibold text-white capitalize">
+                <h1 class="text-base sm:text-xl font-semibold text-white capitalize truncate max-w-[150px] sm:max-w-none">
                     <?= $current_page === 'dashboard' ? 'Panel Kerja Barber' : ($current_page === 'charts' ? 'Statistik & Analisis Performa' : ($current_page === 'profil' ? 'Profil Barber Saya' : str_replace('_', ' ', $current_page))) ?>
                 </h1>
                 
-                <a href="../index.php" class="hidden sm:flex items-center gap-1.5 text-zinc-400 hover:text-blue-400 transition-colors duration-300 text-sm font-medium ml-4 group" title="Ke Home">
+                <a href="../index.php" class="hidden sm:flex items-center gap-1.5 text-zinc-400 hover:text-blue-400 transition-colors duration-300 text-sm font-medium ml-2 group" title="Ke Home">
                     <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300"></i>
                     <span class="group-hover:underline underline-offset-4">Home</span>
                 </a>
@@ -370,85 +379,85 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <!-- Kursi Tugas Hari Ini Badge -->
                 <?php if ($barber): ?>
                     <?php if ($has_selected_chair_today): ?>
-                        <div class="hidden md:flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 px-3 py-1 rounded-xl text-amber-300 text-xs font-bold shadow-inner ml-2">
-                            <i data-lucide="armchair" class="w-4 h-4 text-amber-400"></i>
-                            <span>Tugas Hari Ini: <strong class="text-amber-200"><?= htmlspecialchars($barber['kursi']) ?></strong></span>
-                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors text-[11px] font-semibold border border-amber-500/30">
-                                Ubah Kursi
+                        <div class="flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/40 px-2.5 py-1 rounded-xl text-amber-300 text-xs font-bold shadow-inner ml-1 sm:ml-2">
+                            <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-400"></i>
+                            <span class="hidden sm:inline">Tugas Hari Ini: </span><strong class="text-amber-200"><?= htmlspecialchars($barber['kursi']) ?></strong>
+                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors text-[10px] font-semibold border border-amber-500/30">
+                                Ubah
                             </button>
                         </div>
                     <?php else: ?>
-                        <div class="hidden md:flex items-center gap-2 bg-rose-500/20 border border-rose-500/40 px-3 py-1 rounded-xl text-rose-300 text-xs font-bold shadow-inner ml-2 animate-pulse">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
-                            <span>Belum Pilih Kursi Hari Ini</span>
-                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2.5 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white transition-colors text-[11px] font-bold shadow">
-                                Pilih Kursi
+                        <div class="flex items-center gap-1.5 bg-rose-500/20 border border-rose-500/40 px-2.5 py-1 rounded-xl text-rose-300 text-xs font-bold shadow-inner ml-1 sm:ml-2 animate-pulse">
+                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400"></i>
+                            <span class="hidden sm:inline">Belum Pilih Kursi</span>
+                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white transition-colors text-[10px] font-bold shadow">
+                                Pilih
                             </button>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
-            <div class="flex items-center gap-4">
-                <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-profil')" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" title="Profil Saya">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div id="realtime-clock" class="hidden md:block text-xs sm:text-sm text-zinc-300 font-medium tracking-wide"></div>
+                <a href="?page=profil" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" title="Profil Saya">
                     <?php 
                     $nav_avatar_name = !empty($user_data['fullname']) ? urlencode($user_data['fullname']) : urlencode($_SESSION['username']);
                     $nav_profile_files = glob(__DIR__ . '/../asset/image/profile_' . $_SESSION['user_id'] . '.*');
                     $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
                     ?>
-                    <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-zinc-700/50">
+                    <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shadow-md border-2 border-zinc-700/50">
                 </a>
             </div>
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 overflow-y-auto p-6 page-transition">
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6 page-transition">
             <?php if (function_exists('display_flash')) display_flash(); ?>
 
             <?php if ($current_page === 'charts'): ?>
                 <!-- DEDICATED CHARTS VIEW -->
                 <!-- Summary Stat Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <div class="p-5 rounded-xl border shadow-md flex items-center justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
                         <div>
-                            <p class="text-xs font-semibold text-amber-200/80 uppercase tracking-wider">Pelanggan Bulan Ini</p>
-                            <h3 class="text-3xl font-extrabold text-white mt-1"><?= number_format($barberCountMonth) ?> <span class="text-sm font-normal text-amber-400">Orang</span></h3>
+                            <p class="text-[10px] sm:text-xs font-semibold text-amber-200/80 uppercase tracking-wider">Pelanggan Bulan Ini</p>
+                            <h3 class="text-lg sm:text-3xl font-extrabold text-white mt-1"><?= number_format($barberCountMonth) ?> <span class="text-xs font-normal text-amber-400">Orang</span></h3>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                            <i data-lucide="users" class="w-6 h-6"></i>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 self-end sm:self-auto">
+                            <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                         </div>
                     </div>
 
-                    <div class="p-5 rounded-xl border shadow-md flex items-center justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
                         <div>
-                            <p class="text-xs font-semibold text-emerald-200/80 uppercase tracking-wider">Nilai Layanan Bulan Ini</p>
-                            <h3 class="text-2xl font-extrabold text-emerald-400 mt-1">Rp <?= number_format($barberOmsetMonth, 0, ',', '.') ?></h3>
+                            <p class="text-[10px] sm:text-xs font-semibold text-emerald-200/80 uppercase tracking-wider">Omset Bulan Ini</p>
+                            <h3 class="text-base sm:text-2xl font-extrabold text-emerald-400 mt-1">Rp <?= number_format($barberOmsetMonth, 0, ',', '.') ?></h3>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-                            <i data-lucide="banknote" class="w-6 h-6"></i>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 self-end sm:self-auto">
+                            <i data-lucide="banknote" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                         </div>
                     </div>
 
-                    <div class="p-5 rounded-xl border shadow-md flex items-center justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
                         <div>
-                            <p class="text-xs font-semibold text-sky-200/80 uppercase tracking-wider">Layanan Terlaris</p>
-                            <h3 class="text-xl font-bold text-sky-300 mt-1 truncate max-w-[140px]"><?= htmlspecialchars($topServiceName) ?></h3>
+                            <p class="text-[10px] sm:text-xs font-semibold text-sky-200/80 uppercase tracking-wider">Terlaris</p>
+                            <h3 class="text-sm sm:text-xl font-bold text-sky-300 mt-1 truncate max-w-[100px] sm:max-w-[140px]"><?= htmlspecialchars($topServiceName) ?></h3>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400">
-                            <i data-lucide="scissors" class="w-6 h-6"></i>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 self-end sm:self-auto">
+                            <i data-lucide="scissors" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                         </div>
                     </div>
 
-                    <div class="p-5 rounded-xl border shadow-md flex items-center justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
                         <div>
-                            <p class="text-xs font-semibold text-amber-200/80 uppercase tracking-wider">Rating & Kepuasan</p>
-                            <h3 class="text-2xl font-extrabold text-amber-300 mt-1 flex items-center gap-1.5">
+                            <p class="text-[10px] sm:text-xs font-semibold text-amber-200/80 uppercase tracking-wider">Rating</p>
+                            <h3 class="text-base sm:text-2xl font-extrabold text-amber-300 mt-1 flex items-center gap-1">
                                 ⭐ <?= number_format($barberRating, 1) ?> 
-                                <span class="text-xs font-normal text-stone-400">/ 5.0 (<?= $barberTotalUlasan ?> Ulasan)</span>
+                                <span class="text-[10px] sm:text-xs font-normal text-stone-400">(<?= $barberTotalUlasan ?>)</span>
                             </h3>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                            <i data-lucide="star" class="w-6 h-6"></i>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 self-end sm:self-auto">
+                            <i data-lucide="star" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                         </div>
                     </div>
                 </div>
@@ -670,35 +679,166 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <?php endif; ?>
 
                 <!-- Dashboard Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-adminlte-info rounded-lg p-6 relative overflow-hidden text-white shadow-lg">
+                <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-6">
+                    <div class="bg-adminlte-info rounded-xl p-3.5 sm:p-6 relative overflow-hidden text-white shadow-lg border border-blue-500/30">
                         <div class="relative z-10">
-                            <h3 class="text-4xl font-bold mb-1"><?= count($queues) ?></h3>
-                            <p class="text-blue-50 font-medium">Total Antrean Hari Ini</p>
+                            <h3 class="text-2xl sm:text-4xl font-black mb-0.5 sm:mb-1"><?= count($queues) ?></h3>
+                            <p class="text-blue-100 text-xs sm:text-sm font-medium">Total Antrean</p>
                         </div>
-                        <i data-lucide="list" class="absolute -right-4 -bottom-4 w-32 h-32 text-black/10 z-0"></i>
+                        <i data-lucide="list" class="absolute -right-3 -bottom-3 sm:-right-4 sm:-bottom-4 w-16 h-16 sm:w-32 sm:h-32 text-white/10 z-0"></i>
                     </div>
-                    <div class="bg-adminlte-warning rounded-lg p-6 relative overflow-hidden text-zinc-900 shadow-lg">
+                    <div class="bg-adminlte-warning rounded-xl p-3.5 sm:p-6 relative overflow-hidden text-zinc-950 shadow-lg border border-amber-500/40">
                         <div class="relative z-10">
-                            <h3 class="text-4xl font-bold mb-1"><?= $total_waiting ?></h3>
-                            <p class="text-yellow-900 font-medium">Antrean Menunggu</p>
+                            <h3 class="text-2xl sm:text-4xl font-black mb-0.5 sm:mb-1"><?= $total_waiting ?></h3>
+                            <p class="text-amber-950 text-xs sm:text-sm font-semibold">Menunggu</p>
                         </div>
-                        <i data-lucide="clock" class="absolute -right-4 -bottom-4 w-32 h-32 text-black/10 z-0"></i>
+                        <i data-lucide="clock" class="absolute -right-3 -bottom-3 sm:-right-4 sm:-bottom-4 w-16 h-16 sm:w-32 sm:h-32 text-black/10 z-0"></i>
                     </div>
-                    <div class="bg-adminlte-success rounded-lg p-6 relative overflow-hidden text-white shadow-lg">
+                    <div class="bg-adminlte-success rounded-xl p-3.5 sm:p-6 relative overflow-hidden text-white shadow-lg border border-emerald-500/30">
                         <div class="relative z-10">
-                            <h3 class="text-4xl font-bold mb-1"><?= $total_served ?></h3>
-                            <p class="text-green-100 font-medium">Pelanggan Selesai</p>
+                            <h3 class="text-2xl sm:text-4xl font-black mb-0.5 sm:mb-1"><?= $total_served ?></h3>
+                            <p class="text-emerald-100 text-xs sm:text-sm font-medium">Selesai</p>
                         </div>
-                        <i data-lucide="check-circle" class="absolute -right-4 -bottom-4 w-32 h-32 text-black/10 z-0"></i>
+                        <i data-lucide="check-circle" class="absolute -right-3 -bottom-3 sm:-right-4 sm:-bottom-4 w-16 h-16 sm:w-32 sm:h-32 text-black/10 z-0"></i>
                     </div>
                 </div>
 
-                <!-- Table Card -->
-                <div class="bg-adminlte-card rounded-lg border border-zinc-700 shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-zinc-700 bg-[#30363d] flex justify-between items-center">
-                        <h3 class="font-semibold text-white">Daftar Antrean Tugas Anda</h3>
-                    </div>
+                <!-- Antrean Queue Header -->
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <h3 class="font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                        <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i>
+                        Daftar Antrean Tugas Anda
+                    </h3>
+                    <span class="text-xs text-stone-400 bg-stone-900 px-2.5 py-1 rounded-full border border-stone-800">
+                        Total: <strong class="text-amber-300"><?= count($queues) ?></strong>
+                    </span>
+                </div>
+
+                <!-- Mobile Queue Cards View (Visible on Mobile < md) -->
+                <div class="block md:hidden space-y-3 mb-6">
+                    <?php if (empty($queues)): ?>
+                        <div class="p-8 text-center bg-adminlte-card rounded-xl border border-zinc-800 text-stone-500 text-sm">
+                            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 text-stone-600"></i>
+                            Belum ada antrean masuk untuk Anda hari ini.
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($queues as $q): 
+                            $base_price = (float)($q['harga'] ?? 0);
+                            $final_price = $base_price;
+                            $status = $q['status_antrean'];
+
+                            $card_border = 'border-amber-900/40';
+                            $badge_bg = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                            $status_label = 'MENUNGGU';
+
+                            if ($status === 'serving') {
+                                $card_border = 'border-blue-500/60 shadow-[0_0_15px_rgba(59,130,246,0.25)]';
+                                $badge_bg = 'bg-blue-500/20 text-blue-300 border-blue-500/40 animate-pulse';
+                                $status_label = 'SEDANG DILAYANI';
+                            } elseif ($status === 'payment') {
+                                $card_border = 'border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.25)]';
+                                $badge_bg = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                                $status_label = 'MENUNGGU BAYAR';
+                            } elseif (in_array($status, ['paid', 'review', 'completed'])) {
+                                $card_border = 'border-emerald-500/40';
+                                $badge_bg = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+                                $status_label = 'SELESAI';
+                            }
+                        ?>
+                        <div class="p-4 rounded-xl border bg-gradient-to-b from-[#1a1208] to-[#120d07] <?= $card_border ?> shadow-lg space-y-3 transition-all duration-300">
+                            <!-- Header: Tiket & Status Badge -->
+                            <div class="flex items-center justify-between pb-2 border-b border-amber-900/30">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-medium text-stone-400">Tiket:</span>
+                                    <span class="text-xl font-black text-amber-200 tracking-wider bg-amber-950/80 px-2.5 py-0.5 rounded-lg border border-amber-800/50">
+                                        <?= htmlspecialchars($q['no_antrean']) ?>
+                                    </span>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wider <?= $badge_bg ?>">
+                                    <?= $status_label ?>
+                                </span>
+                            </div>
+
+                            <!-- Details: Pelanggan & Layanan -->
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                    <span class="text-[10px] text-stone-400 block uppercase tracking-wider">Pelanggan</span>
+                                    <span class="font-bold text-white truncate block"><?= htmlspecialchars($q['pelanggan_nama'] ?? 'Guest') ?></span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[10px] text-stone-400 block uppercase tracking-wider">Layanan</span>
+                                    <span class="font-bold text-amber-100 truncate block"><?= htmlspecialchars($q['nama_layanan'] ?? 'Cukur Standar') ?></span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-1">
+                                <div class="text-xs text-stone-400">
+                                    <span>Harga:</span>
+                                    <span class="text-emerald-400 font-extrabold text-base ml-1">Rp <?= number_format($final_price, 0, ',', '.') ?></span>
+                                </div>
+                                <?php if ($status === 'paid' && !empty($q['metode_bayar'])): ?>
+                                    <span class="text-[10px] text-stone-300 bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
+                                        Via: <?= htmlspecialchars($q['metode_bayar']) ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Mobile Action Buttons -->
+                            <div class="pt-2 border-t border-amber-900/30 flex flex-wrap gap-2">
+                                <?php if ($status === 'waiting'): ?>
+                                    <form method="POST" class="flex-1">
+                                        <input type="hidden" name="action" value="call">
+                                        <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95">
+                                            <i data-lucide="megaphone" class="w-4 h-4"></i> Panggil
+                                        </button>
+                                    </form>
+                                    <form method="POST" class="shrink-0">
+                                        <input type="hidden" name="action" value="skip">
+                                        <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                                        <button type="submit" class="bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-800/40 text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95" onclick="return confirm('Lewati antrean ini?')">
+                                            <i data-lucide="skip-forward" class="w-4 h-4"></i> Skip
+                                        </button>
+                                    </form>
+                                <?php elseif ($status === 'serving'): ?>
+                                    <form method="POST" class="w-full">
+                                        <input type="hidden" name="action" value="finish_service">
+                                        <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95">
+                                            <i data-lucide="check" class="w-4 h-4"></i> Selesai Layani
+                                        </button>
+                                    </form>
+                                <?php elseif ($status === 'payment'): ?>
+                                    <form method="POST" class="w-full">
+                                        <input type="hidden" name="action" value="confirm_paid">
+                                        <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                                        <input type="hidden" name="total_harga" value="<?= $final_price ?>">
+                                        <button type="submit" class="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95" onclick="return confirm('Konfirmasi bayar cash langsung?')">
+                                            <i data-lucide="banknote" class="w-4 h-4"></i> Terima Cash
+                                        </button>
+                                    </form>
+                                <?php elseif ($status === 'paid'): ?>
+                                    <form method="POST" class="w-full">
+                                        <input type="hidden" name="action" value="confirm_paid">
+                                        <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                                        <input type="hidden" name="total_harga" value="<?= $final_price ?>">
+                                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95">
+                                            <i data-lucide="printer" class="w-4 h-4"></i> Cetak & Selesai
+                                        </button>
+                                    </form>
+                                <?php elseif (in_array($status, ['review', 'completed'])): ?>
+                                    <button type="button" class="w-full bg-stone-800 hover:bg-stone-700 text-stone-300 font-semibold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-all active:scale-95" onclick="printStruk('<?= $q['no_antrean'] ?>', '<?= htmlspecialchars($q['pelanggan_nama'] ?? 'Guest') ?>', '<?= htmlspecialchars($q['nama_layanan'] ?? 'Layanan') ?>', '<?= $final_price ?>', '<?= htmlspecialchars($q['metode_bayar'] ?? 'Cash') ?>')">
+                                        <i data-lucide="printer" class="w-4 h-4"></i> Cetak Ulang Struk
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Desktop Table View (Visible on Desktop >= md) -->
+                <div class="hidden md:block bg-adminlte-card rounded-xl border border-zinc-700 shadow-md overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
@@ -1101,11 +1241,30 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         setInterval(updateClock, 1000); 
         updateClock();
 
+        // Toggle Mobile Sidebar Drawer & Overlay
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar || !overlay) return;
+            
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
         // Sidebar Toggle with Smooth State Persistence
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebar = document.getElementById('sidebar');
 
         function applySidebarState(isMinimized) {
+            if (!sidebar) return;
             if (isMinimized) {
                 sidebar.classList.remove('w-64'); 
                 sidebar.classList.add('w-20');
@@ -1116,19 +1275,21 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         }
 
         if (sidebarToggle && sidebar) {
-            // Load state without transition glitch
-            const isMinimized = localStorage.getItem('sidebarMinimized') === 'true';
-            
-            // Toggle on click
             sidebarToggle.addEventListener('click', () => {
-                const willMinimize = sidebar.classList.contains('w-64');
-                localStorage.setItem('sidebarMinimized', willMinimize);
-                applySidebarState(willMinimize);
+                if (window.innerWidth < 768) {
+                    toggleMobileSidebar();
+                } else {
+                    const willMinimize = sidebar.classList.contains('w-64');
+                    localStorage.setItem('sidebarMinimized', willMinimize);
+                    applySidebarState(willMinimize);
+                }
             });
-        }</script>
+        }
+    </script>
+
     <!-- Modal Pilih Kursi Tugas Harian -->
     <div id="selectKursiModal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 <?= ($current_page === 'dashboard' && !$has_selected_chair_today) ? '' : 'hidden' ?>">
-        <div class="bg-gradient-to-b from-[#1c140b] to-[#120d07] border-2 border-amber-500/40 rounded-2xl max-w-xl w-full p-6 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white relative">
+        <div class="bg-gradient-to-b from-[#1c140b] to-[#120d07] border-2 border-amber-500/40 rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white relative max-h-[90vh] overflow-y-auto">
             
             <?php if ($has_selected_chair_today): ?>
                 <button type="button" onclick="closeSelectKursiModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
@@ -1140,7 +1301,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-3xl mx-auto mb-3 shadow-inner">
                     💈
                 </div>
-                <h3 class="text-2xl font-bold text-amber-200 tracking-tight">Pilih Kursi Tugas Hari Ini</h3>
+                <h3 class="text-xl sm:text-2xl font-bold text-amber-200 tracking-tight">Pilih Kursi Tugas Hari Ini</h3>
                 <p class="text-xs text-zinc-400 mt-1">Silakan tentukan kursi layanan Anda untuk hari ini (<strong><?= date('d F Y') ?></strong>). Pilihan ini berlaku selama 1 hari.</p>
             </div>
 
@@ -1211,6 +1372,43 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             </div>
         </div>
     </div>
+
+    <!-- Mobile Bottom Navigation Bar (Visible on Mobile < md) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0e0a08]/95 border-t border-amber-900/40 backdrop-blur-xl px-2 py-1.5 flex items-center justify-around shadow-[0_-4px_25px_rgba(0,0,0,0.8)]">
+        <a href="?page=dashboard" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl transition-all <?= ($current_page === 'dashboard' || empty($current_page)) ? 'text-amber-400 font-bold bg-amber-500/10' : 'text-stone-400 hover:text-amber-200' ?>">
+            <div class="relative">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <?php if ($total_waiting > 0): ?>
+                    <span class="absolute -top-1 -right-2 bg-amber-500 text-amber-950 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                        <?= $total_waiting ?>
+                    </span>
+                <?php endif; ?>
+            </div>
+            <span class="text-[10px] tracking-wide">Panel</span>
+        </a>
+
+        <a href="?page=charts" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl transition-all <?= $current_page === 'charts' ? 'text-amber-400 font-bold bg-amber-500/10' : 'text-stone-400 hover:text-amber-200' ?>">
+            <i data-lucide="pie-chart" class="w-5 h-5"></i>
+            <span class="text-[10px] tracking-wide">Statistik</span>
+        </a>
+
+        <button type="button" onclick="openSelectKursiModal()" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl text-stone-400 hover:text-amber-200 transition-all relative">
+            <div class="relative">
+                <i data-lucide="armchair" class="w-5 h-5 <?= $has_selected_chair_today ? 'text-emerald-400' : 'text-rose-400 animate-pulse' ?>"></i>
+            </div>
+            <span class="text-[10px] tracking-wide flex items-center gap-0.5">
+                <span>Kursi</span>
+                <?php if ($has_selected_chair_today && $barber): ?>
+                    <span class="font-extrabold text-amber-300 text-[9px] uppercase">(<?= str_replace('Kursi ', '', $barber['kursi']) ?>)</span>
+                <?php endif; ?>
+            </span>
+        </button>
+
+        <a href="?page=profil" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl transition-all <?= in_array($current_page, ['profil', 'profile']) ? 'text-amber-400 font-bold bg-amber-500/10' : 'text-stone-400 hover:text-amber-200' ?>">
+            <i data-lucide="user" class="w-5 h-5"></i>
+            <span class="text-[10px] tracking-wide">Profil</span>
+        </a>
+    </nav>
 
     <script>
     function openSelectKursiModal() {
