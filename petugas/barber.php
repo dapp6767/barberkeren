@@ -1374,39 +1374,46 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     </div>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile < md) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0e0a08]/95 border-t border-amber-900/40 backdrop-blur-xl px-2 py-1.5 flex items-center justify-around shadow-[0_-4px_25px_rgba(0,0,0,0.8)]">
-        <a href="?page=dashboard" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl transition-all <?= ($current_page === 'dashboard' || empty($current_page)) ? 'text-amber-400 font-bold bg-amber-500/10' : 'text-stone-400 hover:text-amber-200' ?>">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0e0a08]/95 border-t border-amber-900/50 backdrop-blur-xl px-3 py-2 flex items-center justify-around shadow-[0_-8px_30px_rgba(0,0,0,0.9)]">
+        <!-- Panel Kerja -->
+        <a href="?page=dashboard" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative <?= ($current_page === 'dashboard' || empty($current_page)) ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'text-stone-400 hover:text-amber-200' ?>">
             <div class="relative">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <i data-lucide="scissors" class="w-5 h-5 transition-transform duration-300 <?= ($current_page === 'dashboard' || empty($current_page)) ? 'scale-110 text-amber-400' : '' ?>"></i>
                 <?php if ($total_waiting > 0): ?>
-                    <span class="absolute -top-1 -right-2 bg-amber-500 text-amber-950 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                    <span class="absolute -top-1.5 -right-2.5 bg-amber-500 text-amber-950 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
                         <?= $total_waiting ?>
                     </span>
                 <?php endif; ?>
             </div>
-            <span class="text-[10px] tracking-wide">Panel</span>
+            <span class="text-[10px] tracking-wide font-semibold">Panel</span>
         </a>
 
-        <a href="?page=charts" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl transition-all <?= $current_page === 'charts' ? 'text-amber-400 font-bold bg-amber-500/10' : 'text-stone-400 hover:text-amber-200' ?>">
-            <i data-lucide="pie-chart" class="w-5 h-5"></i>
-            <span class="text-[10px] tracking-wide">Statistik</span>
+        <!-- Statistik -->
+        <a href="?page=charts" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative <?= $current_page === 'charts' ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'text-stone-400 hover:text-amber-200' ?>">
+            <i data-lucide="bar-chart-3" class="w-5 h-5 transition-transform duration-300 <?= $current_page === 'charts' ? 'scale-110 text-amber-400' : '' ?>"></i>
+            <span class="text-[10px] tracking-wide font-semibold">Statistik</span>
         </a>
 
-        <button type="button" onclick="openSelectKursiModal()" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl text-stone-400 hover:text-amber-200 transition-all relative">
+        <!-- Kursi Tugas -->
+        <button type="button" onclick="openSelectKursiModal()" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative text-stone-400 hover:text-amber-200 <?= !$has_selected_chair_today ? 'bg-rose-500/10 border border-rose-500/30' : '' ?>">
             <div class="relative">
-                <i data-lucide="armchair" class="w-5 h-5 <?= $has_selected_chair_today ? 'text-emerald-400' : 'text-rose-400 animate-pulse' ?>"></i>
+                <i data-lucide="armchair" class="w-5 h-5 <?= $has_selected_chair_today ? 'text-emerald-400' : 'text-rose-400 animate-bounce' ?>"></i>
+                <?php if (!$has_selected_chair_today): ?>
+                    <span class="absolute -top-1 -right-1 bg-rose-500 w-2 h-2 rounded-full animate-ping"></span>
+                <?php endif; ?>
             </div>
-            <span class="text-[10px] tracking-wide flex items-center gap-0.5">
+            <span class="text-[10px] tracking-wide font-semibold flex items-center gap-0.5">
                 <span>Kursi</span>
                 <?php if ($has_selected_chair_today && $barber): ?>
-                    <span class="font-extrabold text-amber-300 text-[9px] uppercase">(<?= str_replace('Kursi ', '', $barber['kursi']) ?>)</span>
+                    <span class="font-extrabold text-amber-300 text-[9px] uppercase bg-amber-950 px-1 rounded border border-amber-800/50">(<?= str_replace('Kursi ', '', $barber['kursi']) ?>)</span>
                 <?php endif; ?>
             </span>
         </button>
 
-        <a href="?page=profil" class="flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-xl transition-all <?= in_array($current_page, ['profil', 'profile']) ? 'text-amber-400 font-bold bg-amber-500/10' : 'text-stone-400 hover:text-amber-200' ?>">
-            <i data-lucide="user" class="w-5 h-5"></i>
-            <span class="text-[10px] tracking-wide">Profil</span>
+        <!-- Profil Saya -->
+        <a href="?page=profil" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative <?= in_array($current_page, ['profil', 'profile']) ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'text-stone-400 hover:text-amber-200' ?>">
+            <i data-lucide="user-circle" class="w-5 h-5 transition-transform duration-300 <?= in_array($current_page, ['profil', 'profile']) ? 'scale-110 text-amber-400' : '' ?>"></i>
+            <span class="text-[10px] tracking-wide font-semibold">Profil</span>
         </a>
     </nav>
 
