@@ -723,6 +723,237 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     </div>
                 </div>
             </div><!-- /tab-dashboard -->
+
+            <!-- TAB 2: STATISTIK & CHARTS -->
+            <div id="tab-charts" class="tab-content <?= $current_page === 'charts' ? 'active' : '' ?>">
+                <!-- Summary Stat Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-amber-200/80 uppercase tracking-wider">Pelanggan Bulan Ini</p>
+                            <h3 class="text-lg sm:text-3xl font-extrabold text-white mt-1"><?= number_format($barberCountMonth) ?> <span class="text-xs font-normal text-amber-400">Orang</span></h3>
+                        </div>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 self-end sm:self-auto">
+                            <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-emerald-200/80 uppercase tracking-wider">Omset Bulan Ini</p>
+                            <h3 class="text-base sm:text-2xl font-extrabold text-emerald-400 mt-1">Rp <?= number_format($barberOmsetMonth, 0, ',', '.') ?></h3>
+                        </div>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 self-end sm:self-auto">
+                            <i data-lucide="banknote" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-sky-200/80 uppercase tracking-wider">Terlaris</p>
+                            <h3 class="text-sm sm:text-xl font-bold text-sky-300 mt-1 truncate max-w-[100px] sm:max-w-[140px]"><?= htmlspecialchars($topServiceName) ?></h3>
+                        </div>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 self-end sm:self-auto">
+                            <i data-lucide="scissors" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 sm:p-5 rounded-xl border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-amber-200/80 uppercase tracking-wider">Rating</p>
+                            <h3 class="text-base sm:text-2xl font-extrabold text-amber-300 mt-1 flex items-center gap-1">
+                                ⭐ <?= number_format($barberRating, 1) ?> 
+                                <span class="text-[10px] sm:text-xs font-normal text-stone-400">(<?= $barberTotalUlasan ?>)</span>
+                            </h3>
+                        </div>
+                        <div class="p-2 sm:p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 self-end sm:self-auto">
+                            <i data-lucide="star" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid 2 Chart Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Line Chart (Tren 30 Hari Terakhir - Scrollable) -->
+                    <div class="lg:col-span-2 p-6 rounded-2xl border shadow-md flex flex-col justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                        <div>
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-3 border-b border-amber-900/30">
+                                <h3 class="text-xl font-bold tracking-wide flex items-center gap-2" style="color:#e8d5a3;">
+                                    <i data-lucide="trending-up" class="w-5 h-5 text-amber-400"></i>
+                                    Tren Pelanggan Dilayani (30 Hari Terakhir)
+                                </h3>
+                                <span class="text-[11px] text-amber-300 bg-amber-950/60 border border-amber-800/40 px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shrink-0">
+                                    ↔ Geser Kiri / Kanan (Max 30 Hari)
+                                </span>
+                            </div>
+                            <div id="barberChartScrollContainer" class="overflow-x-auto custom-scroll pb-2">
+                                <div style="height: 330px; min-width: 1250px;">
+                                    <canvas id="barberChart1"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pie/Doughnut Chart (Proporsi Layanan) -->
+                    <div class="p-6 rounded-2xl border shadow-md flex flex-col justify-between" style="background: linear-gradient(135deg, #1a1208 0%, #120e06 100%); border-color: #3a2510;">
+                        <div>
+                            <h3 class="text-xl font-bold mb-4 pb-3 border-b border-amber-900/30 tracking-wide flex items-center gap-2" style="color:#e8d5a3;">
+                                <i data-lucide="pie-chart" class="w-5 h-5 text-sky-400"></i>
+                                Proporsi Layanan Dikerjakan
+                            </h3>
+                            <div style="height: 330px; width: 100%;" class="flex items-center justify-center">
+                                <?php if (empty($pieCounts)): ?>
+                                    <div class="text-center text-stone-400 py-12">Belum ada data layanan selesai.</div>
+                                <?php else: ?>
+                                    <canvas id="barberPieChart"></canvas>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: PROFIL SAYA -->
+            <div id="tab-profil" class="tab-content <?= in_array($current_page, ['profil', 'profile']) ? 'active' : '' ?>">
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-6 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white tracking-tight">Profil Saya</h2>
+                            <p class="text-zinc-400 text-sm mt-1">Kelola informasi pribadi dan keamanan akun Anda</p>
+                        </div>
+                    </div>
+
+                    <form action="barber.php?page=profil" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <input type="hidden" name="action" value="update_profil">
+                        
+                        <!-- Left Column: Avatar & Summary -->
+                        <div class="col-span-1">
+                            <div class="bg-adminlte-card border border-zinc-700 rounded-xl p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+                                <!-- Background Decoration -->
+                                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-amber-900/30 to-amber-950/20 z-0"></div>
+                                
+                                <div class="relative z-10 w-28 h-28 rounded-full border-4 border-zinc-700 shadow-xl mt-4 mb-4 overflow-hidden bg-zinc-900 group">
+                                    <?php 
+                                    $avatar_name = !empty($user_data['fullname']) ? urlencode($user_data['fullname']) : urlencode($_SESSION['username']);
+                                    $profile_files = glob(__DIR__ . '/../asset/image/profile_' . $_SESSION['user_id'] . '.*');
+                                    $profile_url = !empty($profile_files) ? '../asset/image/' . basename($profile_files[0]) : "https://ui-avatars.com/api/?name={$avatar_name}&background=random&color=fff&size=128&bold=true";
+                                    ?>
+                                    <img src="<?= $profile_url ?>" alt="Avatar" class="w-full h-full object-cover">
+                                    <label for="foto_profil_input" class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-semibold backdrop-blur-sm">
+                                        <i data-lucide="camera" class="w-6 h-6 mb-1 text-amber-400"></i>
+                                        Ubah Foto
+                                    </label>
+                                    <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/*" onchange="document.getElementById('profile_save_btn').click();">
+                                </div>
+                                
+                                <h3 class="relative z-10 text-xl font-bold text-white mb-1"><?= !empty($user_data['fullname']) ? htmlspecialchars($user_data['fullname']) : htmlspecialchars($_SESSION['username']) ?></h3>
+                                <span class="relative z-10 bg-amber-500/20 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-4 border border-amber-500/30">
+                                    Barber
+                                </span>
+                                
+                                <div class="relative z-10 w-full text-left space-y-3 mt-4 border-t border-zinc-700/80 pt-4">
+                                    <div class="flex items-center gap-3 text-sm text-zinc-300">
+                                        <i data-lucide="mail" class="w-4 h-4 text-amber-400"></i>
+                                        <span class="truncate"><?= !empty($user_data['email']) ? htmlspecialchars($user_data['email']) : '<em class="text-zinc-500">Belum diatur</em>' ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-sm text-zinc-300">
+                                        <i data-lucide="phone" class="w-4 h-4 text-amber-400"></i>
+                                        <span><?= !empty($user_data['phone']) ? htmlspecialchars($user_data['phone']) : '<em class="text-zinc-500">Belum diatur</em>' ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-sm text-zinc-300">
+                                        <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+                                        <span>@<?= htmlspecialchars($user_data['username'] ?? $_SESSION['username']) ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-sm text-amber-300 bg-amber-950/40 p-2.5 rounded-lg border border-amber-800/40">
+                                        <i data-lucide="star" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                                        <span>Rating: <strong>⭐ <?= number_format($barberRating, 1) ?> / 5.0</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Edit Form -->
+                        <div class="col-span-1 md:col-span-2">
+                            <div class="bg-adminlte-card border border-zinc-700 rounded-xl shadow-2xl overflow-hidden">
+                                <div class="border-b border-zinc-700 px-6 py-4 bg-[#30363d] flex items-center gap-3">
+                                    <i data-lucide="settings-2" class="w-5 h-5 text-amber-400"></i>
+                                    <h3 class="text-lg font-semibold text-white">Pengaturan Akun</h3>
+                                </div>
+                                
+                                <div class="p-6 space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-zinc-400 mb-2">Nama Lengkap</label>
+                                            <input type="text" name="fullname" value="<?= htmlspecialchars($user_data['fullname'] ?? '') ?>" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-amber-500" placeholder="Nama lengkap Anda" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-zinc-400 mb-2">Username</label>
+                                            <input type="text" name="username" value="<?= htmlspecialchars($user_data['username'] ?? $_SESSION['username']) ?>" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-amber-500" placeholder="Username" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-zinc-400 mb-2">Email</label>
+                                            <input type="email" name="email" value="<?= htmlspecialchars($user_data['email'] ?? '') ?>" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-amber-500" placeholder="alamat@email.com">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-zinc-400 mb-2">No. WhatsApp / Telepon</label>
+                                            <input type="text" name="phone" value="<?= htmlspecialchars($user_data['phone'] ?? '') ?>" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-amber-500" placeholder="08xxxxxxxxxx">
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-zinc-700/80 pt-6">
+                                        <h4 class="text-sm font-medium text-white mb-4 flex items-center gap-2">
+                                            <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i> Keamanan Akun & Ubah Password
+                                        </h4>
+                                        
+                                        <div class="space-y-4 max-w-xl">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Lama Saat Ini</label>
+                                                <div class="relative">
+                                                    <input type="password" id="barber_old_pass" name="old_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Masukkan password lama Anda">
+                                                    <button type="button" onclick="togglePass('barber_old_pass', 'b_eye_old')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                        <i data-lucide="eye" id="b_eye_old" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                                <p class="text-[11px] text-zinc-500 mt-1">* Wajib diisi untuk memverifikasi bahwa Anda adalah pemilik sah akun ini.</p>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Password Baru</label>
+                                                    <div class="relative">
+                                                        <input type="password" id="barber_new_pass" name="new_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Min. 6-8 karakter">
+                                                        <button type="button" onclick="togglePass('barber_new_pass', 'b_eye_new')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                            <i data-lucide="eye" id="b_eye_new" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
+                                                    <div class="relative">
+                                                        <input type="password" id="barber_conf_pass" name="confirm_password" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-500 transition-all text-sm" placeholder="Ulangi password baru">
+                                                        <button type="button" onclick="togglePass('barber_conf_pass', 'b_eye_conf')" class="absolute right-3 top-3 text-zinc-400 hover:text-white">
+                                                            <i data-lucide="eye" id="b_eye_conf" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" id="profile_save_btn" class="bg-amber-600 hover:bg-amber-500 text-white font-medium px-6 py-2.5 rounded-md transition-colors shadow-lg flex items-center gap-2">
+                                            <i data-lucide="save" class="w-4 h-4"></i> Simpan Perubahan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -811,7 +1042,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     }
                 };
 
-                new Chart(document.getElementById('barberChart1'), {
+                window.barberChart1 = new Chart(document.getElementById('barberChart1'), {
                     type: 'line',
                     data: {
                         labels: labels,
@@ -919,7 +1150,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 const amberPieColors = ['#F59E0B', '#D97706', '#B45309', '#FDE68A', '#78350F'];
                 const totalPie = finalPieCounts.reduce((a, b) => a + b, 0);
 
-                new Chart(document.getElementById('barberPieChart'), {
+                window.barberPieChart = new Chart(document.getElementById('barberPieChart'), {
                     type: 'doughnut',
                     data: {
                         labels: finalPieLabels,
@@ -1250,6 +1481,22 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
 
             // Update active states for bottom nav and sidebar
             updateBarberNavState(targetTabId, pageName);
+
+            // Auto resize & scroll chart canvas when tab-charts is opened
+            if (targetTabId === 'tab-charts') {
+                setTimeout(function() {
+                    if (window.barberChart1) {
+                        window.barberChart1.resize();
+                        window.barberChart1.update();
+                    }
+                    if (window.barberPieChart) {
+                        window.barberPieChart.resize();
+                        window.barberPieChart.update();
+                    }
+                    const scrollContainer = document.getElementById('barberChartScrollContainer');
+                    if (scrollContainer) scrollContainer.scrollLeft = scrollContainer.scrollWidth;
+                }, 50);
+            }
         }
 
         function updateBarberNavState(targetTabId, pageName) {
