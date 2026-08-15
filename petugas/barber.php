@@ -1451,7 +1451,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         </a>
 
         <!-- Profil -->
-        <a href="?page=profil" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= in_array($current_page, ['profil', 'profile']) ? 'active' : '' ?>">
+        <a href="javascript:void(0)" onclick="switchBarberTab('tab-profil', 'profil', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= in_array($current_page, ['profil', 'profile']) ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <img src="<?= $nav_profile_url ?>" alt="Foto Profil" class="profile-img w-7 h-7 rounded-full object-cover border-2 transition-all">
             <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-0 right-3"></span>
