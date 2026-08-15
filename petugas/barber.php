@@ -1288,8 +1288,8 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     </script>
 
     <!-- Modal Pilih Kursi Tugas Harian -->
-    <div id="selectKursiModal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 <?= ($current_page === 'dashboard' && !$has_selected_chair_today) ? '' : 'hidden' ?>">
-        <div class="bg-gradient-to-b from-[#1c140b] to-[#120d07] border-2 border-amber-500/40 rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white relative max-h-[90vh] overflow-y-auto">
+    <div id="selectKursiModal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 pb-20 md:pb-4 transition-all duration-300 <?= ($current_page === 'dashboard' && !$has_selected_chair_today) ? '' : 'hidden' ?>">
+        <div class="bg-gradient-to-b from-[#1c140b] to-[#120d07] border-2 border-amber-500/40 rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white relative max-h-[85vh] overflow-y-auto">
             
             <?php if ($has_selected_chair_today): ?>
                 <button type="button" onclick="closeSelectKursiModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
@@ -1374,7 +1374,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     </div>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile < md) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0e0a08]/95 border-t border-amber-900/50 backdrop-blur-xl px-3 py-2 flex items-center justify-around shadow-[0_-8px_30px_rgba(0,0,0,0.9)]">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 border-t border-amber-900/50 backdrop-blur-xl px-3 py-2 flex items-center justify-around shadow-[0_-8px_30px_rgba(0,0,0,0.9)]">
         <!-- Panel Kerja -->
         <a href="?page=dashboard" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative <?= ($current_page === 'dashboard' || empty($current_page)) ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'text-stone-400 hover:text-amber-200' ?>">
             <div class="relative flex items-center justify-center">
@@ -1397,7 +1397,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         </a>
 
         <!-- Kursi Tugas -->
-        <button type="button" onclick="openSelectKursiModal()" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative text-stone-400 hover:text-amber-200 <?= !$has_selected_chair_today ? 'bg-rose-500/10 border border-rose-500/30' : '' ?>">
+        <button type="button" id="btn-nav-kursi" onclick="openSelectKursiModal()" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative text-stone-400 hover:text-amber-200 border border-transparent <?= (!$has_selected_chair_today && ($current_page === 'dashboard' || empty($current_page))) ? 'text-amber-300 font-bold bg-amber-500/15 border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : '' ?>">
             <div class="relative flex items-center justify-center">
                 <i class="fa-solid fa-chair text-lg <?= $has_selected_chair_today ? 'text-emerald-400' : 'text-rose-400 animate-bounce' ?>"></i>
                 <?php if (!$has_selected_chair_today): ?>
@@ -1424,10 +1424,15 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     <script>
     function openSelectKursiModal() {
         const modal = document.getElementById('selectKursiModal');
+        const kursiBtn = document.getElementById('btn-nav-kursi');
         if (modal) modal.classList.remove('hidden');
+        if (kursiBtn) {
+            kursiBtn.classList.add('text-amber-300', 'font-bold', 'bg-amber-500/15', 'border-amber-500/30', 'shadow-[0_0_12px_rgba(245,158,11,0.2)]');
+        }
     }
     function closeSelectKursiModal() {
         const modal = document.getElementById('selectKursiModal');
+        const kursiBtn = document.getElementById('btn-nav-kursi');
         if (modal) modal.classList.add('hidden');
     }
     document.addEventListener("DOMContentLoaded", function() {
