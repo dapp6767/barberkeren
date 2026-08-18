@@ -132,33 +132,9 @@ function require_role($role) {
     }
 }
 
-// Record Website Visitor
+// Record Website Visitor (Deprecated)
 function record_website_visit() {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-    // Only record once per session hour to avoid spamming database
-    $last_recorded = $_SESSION['last_visit_recorded'] ?? 0;
-    if (time() - $last_recorded > 1800) { // 30 minutes
-        global $pdo;
-        if (!isset($pdo)) {
-            $db_path = __DIR__ . '/../config/database.php';
-            if (file_exists($db_path)) {
-                require_once $db_path;
-            }
-        }
-        if (isset($pdo)) {
-            try {
-                $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-                $user_id = $_SESSION['user_id'] ?? null;
-                $stmt = $pdo->prepare("INSERT INTO kunjungan_website (ip_address, user_id) VALUES (?, ?)");
-                $stmt->execute([$ip, $user_id]);
-                $_SESSION['last_visit_recorded'] = time();
-            } catch (Exception $e) {
-                // Silently ignore if table doesn't exist yet
-            }
-        }
-    }
+    // Feature disabled
 }
 
 /**

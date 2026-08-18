@@ -1,25 +1,25 @@
-name: Deploy to InfinityFree via FTP
+  name: Deploy to InfinityFree via FTP
 
-on:
-  push:
-    branches:
-      - main
-      - master
+  on:
+    push:
+      branches:
+        - main
+        - master
 
-jobs:
-  web-deploy:
-    name: Deploy to Hosting
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v4
+  jobs:
+    web-deploy:
+      name: Deploy to Hosting
+      runs-on: ubuntu-latest
+      steps:
+        - name: 🚚 Get latest code
+          uses: actions/checkout@v4
 
-      - name: 📁 Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftpupload.net
-          username: if0_42597730
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          server-dir: elitebarber.web.id/htdocs/
+        - name: 📁 Sync files via FTP
+          uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+          with:
+            server: ftpupload.net
+            username: if0_42597730
+            password: ${{ secrets.FTP_PASSWORD }}
+            protocol: ftp
+            port: 21
+            server-dir: elitebarber.web.id/htdocs/

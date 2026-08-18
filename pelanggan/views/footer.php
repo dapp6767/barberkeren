@@ -1,0 +1,253 @@
+        </main>
+    </div>
+
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 border-t border-amber-900/40 flex justify-around items-center shadow-2xl transform-gpu"
+         style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">
+
+        <!-- Beranda -->
+        <a href="javascript:void(0)" onclick="switchTab('tab-dashboard', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_dashboard ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
+                <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"/>
+                <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+            </svg>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
+            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Beranda</span>
+        </a>
+
+        <!-- Layanan -->
+        <a href="javascript:void(0)" onclick="switchTab('tab-layanan', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_layanan ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 transform -rotate-45 text-amber-400">
+                <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zm-3.64 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0-10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM19 3l-6 6 2 2 7-7V3h-3z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="outline-icon w-6 h-6 transform -rotate-45">
+                <circle cx="6" cy="6" r="3"></circle>
+                <circle cx="6" cy="18" r="3"></circle>
+                <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+            </svg>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
+            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Layanan</span>
+        </a>
+
+        <!-- Scan QRIS -->
+        <a href="javascript:void(0)" onclick="switchTab('tab-qris', this)" class="nav-item <?= $is_qris ? 'active' : '' ?> relative -top-5 flex flex-col items-center group">
+            <div class="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full shadow-lg border-4 border-[#140f09] transition-transform duration-200 active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-7 h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
+                </svg>
+            </div>
+            <span class="nav-label absolute -bottom-5 text-[10px] font-semibold text-amber-500 whitespace-nowrap">Scan QRIS</span>
+        </a>
+
+        <!-- Riwayat -->
+        <a href="javascript:void(0)" onclick="switchTab('tab-riwayat', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_riwayat ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
+                <path fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75-6.75a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clip-rule="evenodd"/>
+                <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+            </svg>
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
+            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Riwayat</span>
+        </a>
+
+        <!-- Profil -->
+        <a href="javascript:void(0)" onclick="switchTab('tab-profil', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $is_profil ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <?php
+                $bn_avatar_name = !empty($curr_fn) ? urlencode($curr_fn) : urlencode($curr_un ?? 'User');
+                $bn_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $my_user_id . '.*');
+                $bn_profile_url = !empty($bn_profile_files)
+                    ? '../asset/image/' . basename($bn_profile_files[0]) . '?v=' . filemtime($bn_profile_files[0])
+                    : "https://ui-avatars.com/api/?name={$bn_avatar_name}&background=3d2b1a&color=F59E0B&size=64&bold=true";
+            ?>
+            <img src="<?= $bn_profile_url ?>" alt="Foto Profil" class="profile-img w-7 h-7 rounded-full object-cover border-2 transition-all">
+            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-0 right-3"></span>
+            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Profil</span>
+        </a>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+
+        // Real-time Clock
+        function updateClock() {
+            const now = new Date();
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            
+            const dayName = days[now.getDay()];
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const clockString = `${dayName}, ${day} ${month} ${year} | ${hours}:${minutes}:${seconds}`;
+            const clockEl = document.getElementById('realtime-clock');
+            if (clockEl) {
+                clockEl.textContent = clockString;
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Sidebar Toggle with Persistence
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        function applySidebarState(isMinimized) {
+            const fouc = document.getElementById('fouc-style');
+            if (fouc) fouc.remove();
+            
+            if (isMinimized) {
+                sidebar.classList.remove('w-64'); 
+                sidebar.classList.add('w-20');
+            } else {
+                sidebar.classList.remove('w-20'); 
+                sidebar.classList.add('w-64');
+            }
+        }
+
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (window.innerWidth < 768) {
+                    sidebar.classList.toggle('open-mobile');
+                } else {
+                    const willMinimize = sidebar.classList.contains('w-64');
+                    localStorage.setItem('sidebarMinimized', willMinimize);
+                    applySidebarState(willMinimize);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && sidebar.classList.contains('open-mobile') && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    sidebar.classList.remove('open-mobile');
+                }
+            });
+        }
+
+        // SPA Navigation Helper
+        function switchTab(targetTabId, navElement) {
+            const currentTab = document.querySelector('.tab-content.active');
+            const targetTab = document.getElementById(targetTabId);
+
+            if (currentTab && currentTab.id === targetTabId) return;
+
+            updateNavState(navElement);
+            executeDOMSwitch(currentTab, targetTab);
+        }
+
+        function executeDOMSwitch(currentTab, targetTab) {
+            if (currentTab) currentTab.classList.remove('active');
+            if (targetTab) {
+                targetTab.classList.add('active');
+                const mainArea = document.querySelector('main');
+                if(mainArea) mainArea.scrollTop = 0;
+            }
+        }
+
+        function updateNavState(activeNav) {
+            if (!activeNav) return;
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            activeNav.classList.add('active');
+
+            const onclickAttr = activeNav.getAttribute('onclick');
+            const match = onclickAttr ? onclickAttr.match(/switchTab\('([^']+)'/) || onclickAttr.match(/navigateToTab\('([^']+)'/) : null;
+            if (match && match[1]) {
+                const targetTabId = match[1];
+                document.querySelectorAll('.sidebar-item').forEach(item => {
+                    item.classList.remove('bg-adminlte-primary', 'text-amber-200');
+                    item.classList.add('text-stone-400');
+                });
+                const sidebarLink = document.querySelector(`.sidebar-item[onclick*="${targetTabId}"]`);
+                if (sidebarLink) {
+                    sidebarLink.classList.remove('text-stone-400');
+                    sidebarLink.classList.add('bg-adminlte-primary', 'text-amber-200');
+                }
+            }
+        }
+        
+        window.navigateToTab = function(tabId) {
+            const navLink = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
+            if (navLink) switchTab(tabId, navLink);
+        };
+
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.setAttribute('data-lucide', 'eye-off');
+                } else {
+                    input.type = 'password';
+                    icon.setAttribute('data-lucide', 'eye');
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        const profPassInput = document.getElementById('new_pass_input');
+        if (profPassInput) {
+            profPassInput.addEventListener('input', function() {
+                const val = this.value;
+                const rLen = document.getElementById('prof_rule_len');
+                const rCase = document.getElementById('prof_rule_case');
+                const rNum = document.getElementById('prof_rule_num');
+                const rSym = document.getElementById('prof_rule_sym');
+
+                if (rLen) rLen.className = val.length >= 6 ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+                if (rCase) rCase.className = (/[A-Z]/.test(val) && /[a-z]/.test(val)) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+                if (rNum) rNum.className = /[0-9]/.test(val) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+                if (rSym) rSym.className = /[\W_]/.test(val) ? 'flex items-center gap-1.5 text-emerald-400 font-medium' : 'flex items-center gap-1.5 text-zinc-400';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+
+        // DataTables Init
+        $(document).ready(function() {
+            if (window.lucide) lucide.createIcons();
+            if ($('#riwayatTable').length) {
+                $('#riwayatTable').DataTable({
+                    language: {
+                        search: "Cari Riwayat:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ riwayat",
+                        infoEmpty: "Belum ada data riwayat",
+                        infoFiltered: "(disaring dari _MAX_ total riwayat)",
+                        zeroRecords: "Tidak ada riwayat yang sesuai",
+                        paginate: {
+                            first: "Awal",
+                            last: "Akhir",
+                            next: "❯",
+                            previous: "❮"
+                        }
+                    },
+                    pageLength: 10,
+                    order: [[3, 'desc']],
+                    responsive: true
+                });
+            }
+        });
+    </script>
+</body>
+</html>

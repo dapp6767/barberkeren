@@ -65,7 +65,6 @@ if (!function_exists('handle_crud_user')) {
                         try { $pdo->prepare("DELETE FROM antrian WHERE pelanggan_id = ?")->execute([$id]); } catch (Exception $e) {}
                         try { $pdo->prepare("DELETE FROM ulasan WHERE pelanggan_id = ?")->execute([$id]); } catch (Exception $e) {}
                         try { $pdo->prepare("DELETE FROM barber WHERE user_id = ?")->execute([$id]); } catch (Exception $e) {}
-                        try { $pdo->prepare("DELETE FROM kunjungan_website WHERE user_id = ?")->execute([$id]); } catch (Exception $e) {}
                         
                         $stmt = $pdo->prepare("DELETE FROM users WHERE id_user = ?");
                         $stmt->execute([$id]);
