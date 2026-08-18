@@ -740,13 +740,36 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
             });
         }
 
-        // Horizontal Mouse Wheel Scroll for Landing Page Carousels
+        // Ultra-Smooth Inertia Mouse Wheel Horizontal Scroll for Landing Page Carousels
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.overflow-x-auto').forEach(container => {
+                let targetScrollLeft = container.scrollLeft;
+                let isAnimating = false;
+
+                function renderSmoothScroll() {
+                    const distance = targetScrollLeft - container.scrollLeft;
+                    if (Math.abs(distance) > 0.5) {
+                        container.scrollLeft += distance * 0.12;
+                        requestAnimationFrame(renderSmoothScroll);
+                    } else {
+                        container.scrollLeft = targetScrollLeft;
+                        isAnimating = false;
+                    }
+                }
+
                 container.addEventListener('wheel', (e) => {
                     if (e.deltaY !== 0) {
                         e.preventDefault();
-                        container.scrollLeft += e.deltaY * 1.2;
+                        if (!isAnimating) {
+                            targetScrollLeft = container.scrollLeft;
+                        }
+                        const maxScroll = container.scrollWidth - container.clientWidth;
+                        targetScrollLeft = Math.max(0, Math.min(maxScroll, targetScrollLeft + e.deltaY * 1.5));
+                        
+                        if (!isAnimating) {
+                            isAnimating = true;
+                            requestAnimationFrame(renderSmoothScroll);
+                        }
                     }
                 }, { passive: false });
             });
