@@ -40,6 +40,8 @@ try {
     if (!$chkTglKursi || $chkTglKursi->rowCount() === 0) {
         $pdo->exec("ALTER TABLE barber ADD COLUMN tgl_kursi DATE DEFAULT NULL");
     }
+    // Auto-drop obsolete table kunjungan_website on hosting
+    $pdo->exec("DROP TABLE IF EXISTS kunjungan_website");
 } catch (Exception $e) {}
 
 // Handle AJAX Notification Endpoint & Form POST Actions via admin_functions.php
