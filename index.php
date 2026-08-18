@@ -740,38 +740,94 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
             });
         }
 
-        // Ultra-Smooth Inertia Mouse Wheel Horizontal Scroll for Landing Page Carousels
+        // Ultra-Smooth Inertia Mouse Wheel & Mouse Drag Horizontal Scroll
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.overflow-x-auto').forEach(container => {
                 let targetScrollLeft = container.scrollLeft;
+                let currentScrollLeft = container.scrollLeft;
                 let isAnimating = false;
+                let snapTimer = null;
 
                 function renderSmoothScroll() {
-                    const distance = targetScrollLeft - container.scrollLeft;
-                    if (Math.abs(distance) > 0.5) {
-                        container.scrollLeft += distance * 0.12;
+                    const diff = targetScrollLeft - currentScrollLeft;
+                    if (Math.abs(diff) > 0.1) {
+                        currentScrollLeft += diff * 0.14; // Buttery smooth dampening
+                        container.scrollLeft = currentScrollLeft;
                         requestAnimationFrame(renderSmoothScroll);
                     } else {
+                        currentScrollLeft = targetScrollLeft;
                         container.scrollLeft = targetScrollLeft;
                         isAnimating = false;
+                        
+                        // Restore CSS scroll snap after wheel scrolling finishes
+                        if (snapTimer) clearTimeout(snapTimer);
+                        snapTimer = setTimeout(() => {
+                            container.style.scrollSnapType = '';
+                            container.style.scrollBehavior = '';
+                        }, 120);
                     }
                 }
 
                 container.addEventListener('wheel', (e) => {
-                    if (e.deltaY !== 0) {
+                    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                    if (delta !== 0) {
                         e.preventDefault();
+
+                        // Temporarily disable CSS scroll snap & CSS smooth behavior to prevent jitter/fighting
+                        container.style.scrollSnapType = 'none';
+                        container.style.scrollBehavior = 'auto';
+                        if (snapTimer) clearTimeout(snapTimer);
+
                         if (!isAnimating) {
+                            currentScrollLeft = container.scrollLeft;
                             targetScrollLeft = container.scrollLeft;
                         }
+
                         const maxScroll = container.scrollWidth - container.clientWidth;
-                        targetScrollLeft = Math.max(0, Math.min(maxScroll, targetScrollLeft + e.deltaY * 1.5));
-                        
+                        targetScrollLeft = Math.max(0, Math.min(maxScroll, targetScrollLeft + delta * 1.5));
+
                         if (!isAnimating) {
                             isAnimating = true;
                             requestAnimationFrame(renderSmoothScroll);
                         }
                     }
                 }, { passive: false });
+
+                // Click & Drag horizontal scroll support for desktop mouse
+                let isMouseDown = false;
+                let startX, scrollStart;
+
+                container.addEventListener('mousedown', (e) => {
+                    isMouseDown = true;
+                    container.style.scrollSnapType = 'none';
+                    container.style.scrollBehavior = 'auto';
+                    container.style.cursor = 'grabbing';
+                    container.style.userSelect = 'none';
+                    startX = e.pageX - container.offsetLeft;
+                    scrollStart = container.scrollLeft;
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (isMouseDown) {
+                        isMouseDown = false;
+                        container.style.cursor = '';
+                        container.style.userSelect = '';
+                        setTimeout(() => {
+                            container.style.scrollSnapType = '';
+                            container.style.scrollBehavior = '';
+                        }, 100);
+                    }
+                });
+
+                container.addEventListener('mousemove', (e) => {
+                    if (!isMouseDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - container.offsetLeft;
+                    const walk = (x - startX) * 1.5;
+                    container.scrollLeft = scrollStart - walk;
+                    targetScrollLeft = container.scrollLeft;
+                    currentScrollLeft = container.scrollLeft;
+                });
             });
         });
     </script>
