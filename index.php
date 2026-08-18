@@ -739,6 +739,18 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                 track.style.animationPlayState = 'running';
             });
         }
+
+        // Horizontal Mouse Wheel Scroll for Landing Page Carousels
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.overflow-x-auto').forEach(container => {
+                container.addEventListener('wheel', (e) => {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        container.scrollLeft += e.deltaY * 1.2;
+                    }
+                }, { passive: false });
+            });
+        });
     </script>
     
     <!-- AOS JS & Init -->
