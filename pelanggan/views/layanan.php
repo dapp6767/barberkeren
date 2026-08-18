@@ -21,38 +21,53 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="service-list-container">
         <?php 
         $default_images_layanan = [
-            'pridecut'      => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'maxcut'        => '../asset/image/maxcut.png',
-            'hair coloring' => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            'hairlight'     => '../asset/image/hairlight.png',
-            'full hairlight'=> '../asset/image/full_hairlight.png',
-            'hair tattoo'   => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            'shave'         => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            'korean wave'   => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'pridecut'                  => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'pangkas rambut biasa'      => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'maxcut'                    => '../asset/image/maxcut.png',
+            'pangkas rambut luar biasa' => '../asset/image/maxcut.png',
+            'hair coloring'             => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'hairlight'                 => '../asset/image/hairlight.png',
+            'full hairlight'            => '../asset/image/full_hairlight.png',
+            'hair tattoo'               => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'shave'                     => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'korean wave'               => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
         ];
         $dummy_desc_arr = [
-            'color' => 'Pewarnaan rambut highlight full kepala',
-            'light' => 'Pewarnaan rambut highlight full kepala',
-            'default' => 'Potong Rambut + Cuci + Styling',
+            'pridecut'                  => 'Potong Rambut Presisi + Cuci + Styling Premium',
+            'pangkas rambut biasa'      => 'Potong Rambut Rapi + Cuci + Styling Sederhana',
+            'maxcut'                    => 'Potong Rambut Ekstra + Treatment Kepala + Styling',
+            'pangkas rambut luar biasa' => 'Potong Rambut Spesial + Pijat + Styling Eksklusif',
+            'hair coloring'             => 'Pewarnaan rambut full kepala dengan cat berkualitas tinggi',
+            'hairlight'                 => 'Pewarnaan highlight aksen rambut',
+            'full hairlight'            => 'Pewarnaan highlight full kepala',
+            'hair tattoo'               => 'Seni ukir pola rambut presisi tinggi',
+            'shave'                     => 'Cukur jenggot & kumis bersih dengan perawatan handuk hangat',
+            'korean wave'               => 'Perming keriting gaya Korea modern & stylish',
         ];
         
         foreach($services as $i => $srv): 
             $s_id = $srv['id'] ?? $srv['id_service'] ?? 0;
             $s_name = $srv['nama_layanan'] ?? $srv['service_name'] ?? '';
             $s_price = (float)($srv['harga'] ?? $srv['price'] ?? 0);
-            $s_desc = !empty($srv['deskripsi']) ? $srv['deskripsi'] : ($dummy_desc_arr['default'] ?? 'Potong Rambut + Cuci + Styling');
-            $s_durasi = !empty($srv['durasi']) ? $srv['durasi'] . ' Menit' : '45 Menit';
+            $nama_lower = strtolower(trim($s_name));
+
+            $s_desc = !empty($srv['deskripsi']) 
+                ? $srv['deskripsi'] 
+                : ($dummy_desc_arr[$nama_lower] ?? 'Potong Rambut + Cuci + Styling');
+
+            if (!empty($srv['durasi'])) {
+                $s_durasi = $srv['durasi'] . ' Menit';
+            } else if (stripos($s_name, 'color') !== false || stripos($s_name, 'light') !== false || stripos($s_name, 'wave') !== false) {
+                $s_durasi = '90 Menit';
+            } else {
+                $s_durasi = '45 Menit';
+            }
 
             $files = glob(__DIR__ . "/../../asset/image/layanan_{$s_id}.*");
-            $nama_lower = strtolower($s_name);
             $img = !empty($files)
                 ? '../asset/image/' . basename($files[0])
                 : ($default_images_layanan[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
 
-            if(stripos($s_name, 'color') !== false || stripos($s_name, 'light') !== false) {
-                $s_desc = $dummy_desc_arr['light'] ?? $s_desc;
-                $s_durasi = '90 Menit';
-            }
             $price_formatted = 'Rp ' . number_format($s_price, 0, ',', '.');
         ?>
         <!-- Service Card (Desktop Grid Style) -->
