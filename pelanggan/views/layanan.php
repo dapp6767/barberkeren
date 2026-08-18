@@ -21,9 +21,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="service-list-container">
         <?php 
         $default_images_layanan = [
-            'pridecut'                  => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             'pangkas rambut biasa'      => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'maxcut'                    => '../asset/image/maxcut.png',
             'pangkas rambut luar biasa' => '../asset/image/maxcut.png',
             'hair coloring'             => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
             'hairlight'                 => '../asset/image/hairlight.png',
@@ -33,9 +31,7 @@
             'korean wave'               => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
         ];
         $dummy_desc_arr = [
-            'pridecut'                  => 'Potong Rambut Presisi + Cuci + Styling Premium',
             'pangkas rambut biasa'      => 'Potong Rambut Rapi + Cuci + Styling Sederhana',
-            'maxcut'                    => 'Potong Rambut Ekstra + Treatment Kepala + Styling',
             'pangkas rambut luar biasa' => 'Potong Rambut Spesial + Pijat + Styling Eksklusif',
             'hair coloring'             => 'Pewarnaan rambut full kepala dengan cat berkualitas tinggi',
             'hairlight'                 => 'Pewarnaan highlight aksen rambut',
