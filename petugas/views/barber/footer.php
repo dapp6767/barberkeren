@@ -223,5 +223,48 @@
         }
     });
 </script>
+
+<!-- Mobile Fixed Bottom Navigation Bar (Barber Workstation) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 backdrop-blur-md border-t border-amber-900/40 flex justify-around items-center shadow-2xl transform-gpu"
+     style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">
+
+    <!-- Workstation -->
+    <a href="barber.php?page=dashboard" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative <?= ($current_page === 'dashboard' || empty($current_page)) ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'text-stone-400 hover:text-amber-200' ?>">
+        <div class="relative flex items-center justify-center">
+            <i data-lucide="layout-dashboard" class="w-5 h-5 text-amber-400"></i>
+            <?php if (isset($total_waiting) && $total_waiting > 0): ?>
+                <span class="absolute -top-1 -right-2 bg-amber-500 text-amber-950 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                    <?= $total_waiting ?>
+                </span>
+            <?php endif; ?>
+        </div>
+        <span class="text-[10px] tracking-wide font-semibold mt-0.5">Workstation</span>
+    </a>
+
+    <!-- Kursi Tugas -->
+    <button type="button" id="btn-nav-kursi" onclick="openSelectKursiModal()" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative text-stone-400 hover:text-amber-200 border border-transparent <?= (isset($has_selected_chair_today) && !$has_selected_chair_today) ? 'text-amber-300 font-bold bg-amber-500/15 border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : '' ?>">
+        <div class="relative flex items-center justify-center">
+            <i data-lucide="armchair" class="w-5 h-5 <?= (isset($has_selected_chair_today) && $has_selected_chair_today) ? 'text-emerald-400' : 'text-rose-400 animate-bounce' ?>"></i>
+            <?php if (isset($has_selected_chair_today) && !$has_selected_chair_today): ?>
+                <span class="absolute -top-1 -right-1 bg-rose-500 w-2 h-2 rounded-full animate-ping"></span>
+            <?php endif; ?>
+        </div>
+        <span class="text-[10px] tracking-wide font-semibold flex items-center gap-0.5 mt-0.5">
+            <span>Kursi</span>
+            <?php if (isset($has_selected_chair_today) && $has_selected_chair_today && isset($barber['kursi'])): ?>
+                <span class="font-extrabold text-amber-300 text-[9px] uppercase bg-amber-950 px-1 rounded border border-amber-800/50">(<?= str_replace('Kursi ', '', $barber['kursi']) ?>)</span>
+            <?php endif; ?>
+        </span>
+    </button>
+
+    <!-- Profil Saya -->
+    <a href="barber.php?page=profil" class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 relative <?= in_array($current_page ?? '', ['profil', 'profile']) ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'text-stone-400 hover:text-amber-200' ?>">
+        <div class="flex items-center justify-center">
+            <i data-lucide="user-cog" class="w-5 h-5 text-amber-400"></i>
+        </div>
+        <span class="text-[10px] tracking-wide font-semibold mt-0.5">Profil</span>
+    </a>
+</nav>
 </body>
 </html>
+
