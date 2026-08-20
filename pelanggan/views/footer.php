@@ -185,6 +185,12 @@
                 const mainArea = document.querySelector('main');
                 if(mainArea) mainArea.scrollTop = 0;
             }
+
+            if (targetTab && targetTab.id === 'tab-qris') {
+                if (typeof startQrisCamera === 'function') startQrisCamera();
+            } else {
+                if (typeof stopQrisCamera === 'function') stopQrisCamera();
+            }
         }
 
         function updateNavState(activeNav) {
@@ -247,6 +253,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (window.lucide) {
                 lucide.createIcons();
+            }
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab && activeTab.id === 'tab-qris') {
+                if (typeof startQrisCamera === 'function') startQrisCamera();
             }
         });
 
