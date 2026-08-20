@@ -289,11 +289,15 @@
                     <i data-lucide="user" class="w-5 h-5"></i>
                     <span>Profil</span>
                 </a>
-                <a href="../auth/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-400/10 hover:text-red-300 transition-colors mt-1">
-                    <i data-lucide="log-out" class="w-5 h-5"></i>
-                    <span>Logout</span>
-                </a>
             </nav>
+        </div>
+
+        <!-- Sidebar Footer / Bottom Home Button -->
+        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40">
+            <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
+                <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
+                <span class="text-sm font-medium">Home</span>
+            </a>
         </div>
     </aside>
 
@@ -309,11 +313,6 @@
                 <h1 class="text-xl font-semibold text-white capitalize">
                     <?= $page === 'dashboard' ? 'Dashboard Overview' : str_replace('_', ' ', $page) ?>
                 </h1>
-                
-                <a href="../index.php" class="hidden sm:flex items-center gap-1.5 text-zinc-400 hover:text-blue-400 transition-colors duration-300 text-sm font-medium ml-4 group" title="Ke Home">
-                    <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300"></i>
-                    <span class="group-hover:underline underline-offset-4">Home</span>
-                </a>
             </div>
             <div class="flex items-center gap-4">
                 <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
@@ -341,14 +340,28 @@
                     </div>
                 </div>
 
-                <a href="admin.php?page=profil" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" title="Profil Saya">
-                    <?php 
-                    $nav_avatar_name = !empty($current_user['fullname']) ? urlencode($current_user['fullname']) : urlencode($current_user['username']);
-                    $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $_SESSION['user_id'] . '.*');
-                    $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
-                    ?>
-                    <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-zinc-700/50">
-                </a>
+                <div class="relative" id="user-profile-dropdown-container">
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                        <?php 
+                        $nav_avatar_name = !empty($current_user['fullname']) ? urlencode($current_user['fullname']) : urlencode($current_user['username']);
+                        $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $_SESSION['user_id'] . '.*');
+                        $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
+                        ?>
+                        <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars($current_user['fullname'] ?: $current_user['username']) ?></span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
+                    </button>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                        <div class="py-1 bg-rose-950/10">
+                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 

@@ -499,7 +499,34 @@
         if (container && dropdown && !container.contains(e.target)) {
             dropdown.classList.add('hidden');
         }
+
+        const profileContainer = document.getElementById('user-profile-dropdown-container');
+        if (profileContainer && !profileContainer.contains(e.target)) {
+            closeProfileDropdown();
+        }
     });
+
+    function toggleProfileDropdown(e) {
+        if (e) e.stopPropagation();
+        const dropdown = document.getElementById('user-profile-dropdown-menu');
+        const chevron = document.getElementById('profile-dropdown-chevron');
+        if (dropdown) {
+            const isHidden = dropdown.classList.contains('hidden');
+            dropdown.classList.toggle('hidden');
+            if (chevron) {
+                chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+    }
+
+    function closeProfileDropdown() {
+        const dropdown = document.getElementById('user-profile-dropdown-menu');
+        const chevron = document.getElementById('profile-dropdown-chevron');
+        if (dropdown && !dropdown.classList.contains('hidden')) {
+            dropdown.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+    }
 
     function getNotifIcon(type) {
         if (type === 'add_layanan') return 'scissors';

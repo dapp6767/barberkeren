@@ -190,11 +190,11 @@
             </a>
         </nav>
 
-        <!-- Sidebar Footer -->
-        <div class="p-3 border-t border-zinc-800/80 bg-zinc-950/40">
-            <a href="../auth/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors">
-                <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
-                <span class="font-medium">Keluar System</span>
+        <!-- Sidebar Footer / Bottom Home Button -->
+        <div class="sidebar-footer p-3 border-t border-zinc-800/80 bg-zinc-950/40">
+            <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
+                <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
+                <span class="text-sm font-medium">Home</span>
             </a>
         </div>
     </aside>
@@ -213,24 +213,31 @@
                 </div>
             </div>
 
-            <!-- Right Profile Info -->
+            <!-- Right Profile Info & Dropdown -->
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-3">
-                    <?php
-                    $user_photo_files = glob(__DIR__ . '/../../asset/image/profile_' . $user_id . '.*');
-                    $has_b_photo = !empty($user_photo_files);
-                    $b_photo_url = $has_b_photo ? '../asset/image/' . basename($user_photo_files[0]) . '?v=' . filemtime($user_photo_files[0]) : null;
-                    ?>
-                    <?php if ($has_b_photo): ?>
-                        <img src="<?= $b_photo_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-amber-500/50">
-                    <?php else: ?>
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-600 to-amber-900 border border-amber-500/40 flex items-center justify-center text-amber-100 font-bold text-sm shadow">
-                            <?= strtoupper(substr($user_data['fullname'] ?? $user_data['username'] ?? 'B', 0, 1)) ?>
+                <div class="relative" id="user-profile-dropdown-container">
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                        <?php
+                        $user_photo_files = glob(__DIR__ . '/../../asset/image/profile_' . $user_id . '.*');
+                        $has_b_photo = !empty($user_photo_files);
+                        $b_photo_url = $has_b_photo ? '../asset/image/' . basename($user_photo_files[0]) . '?v=' . filemtime($user_photo_files[0]) : "https://ui-avatars.com/api/?name=" . urlencode($user_data['fullname'] ?? 'Barber') . "&background=random&color=fff&size=64&bold=true";
+                        ?>
+                        <img src="<?= $b_photo_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <div class="hidden md:flex flex-col text-left">
+                            <span class="text-xs font-bold text-white max-w-[120px] truncate"><?= htmlspecialchars($user_data['fullname'] ?? $user_data['username'] ?? 'Barber') ?></span>
+                            <span class="text-[10px] text-amber-400 capitalize">Barber Specialist</span>
                         </div>
-                    <?php endif; ?>
-                    <div class="hidden md:flex flex-col">
-                        <span class="text-xs font-bold text-white"><?= htmlspecialchars($user_data['fullname'] ?? $user_data['username'] ?? 'Barber') ?></span>
-                        <span class="text-[10px] text-amber-400 capitalize">Barber Specialist</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
+                    </button>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                        <div class="py-1 bg-rose-950/10">
+                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
