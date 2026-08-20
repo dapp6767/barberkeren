@@ -153,6 +153,25 @@ if (!function_exists('login_user')) {
             return ['status' => false, 'message' => 'Username/Email dan Password wajib diisi!'];
         }
 
+        // --- BRUTE-FORCE RATE LIMITING (ANTI TAHAPAN PEMBOBOLAN) ---
+        $attempts = $_SESSION['login_attempts'] ?? 0;
+        $lastAttempt = $_SESSION['last_login_attempt_time'] ?? 0;
+        $lockoutSeconds = 60; // Waktu tunggu 60 detik jika 5x gagal
+
+        if ($attempts >= 5) {
+            $timePassed = time() - $lastAttempt;
+            if ($timePassed < $lockoutSeconds) {
+                $remaining = $lockoutSeconds - $timePassed;
+                return [
+                    'status'  => false,
+                    'message' => "🛑 Terlalu banyak percobaan login yang gagal! Demi keamanan akun Anda, silakan tunggu {$remaining} detik lagi sebelum mencoba kembali."
+                ];
+            } else {
+                // Waktu pendinginan habis, reset ulang penghitung
+                $_SESSION['login_attempts'] = 0;
+            }
+        }
+
         try {
             $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1");
             $stmt->execute([$username_email, $username_email]);
@@ -160,6 +179,8 @@ if (!function_exists('login_user')) {
 
             if ($user) {
                 if (!empty($selected_role) && $user['role'] !== $selected_role) {
+                    $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+                    $_SESSION['last_login_attempt_time'] = time();
                     return [
                         'status'  => false,
                         'message' => 'Role/Akses yang Anda pilih (' . strtoupper($selected_role) . ') tidak sesuai dengan akun ini!'
@@ -188,6 +209,10 @@ if (!function_exists('login_user')) {
 
                     session_regenerate_id(true);
 
+                    // Reset penghitung percobaan gagal jika login berhasil
+                    unset($_SESSION['login_attempts']);
+                    unset($_SESSION['last_login_attempt_time']);
+
                     $_SESSION['user_id']   = $user['id_user'];
                     $_SESSION['username']  = $user['username'];
                     $_SESSION['fullname']  = !empty($user['fullname']) ? $user['fullname'] : $user['username'];
@@ -199,6 +224,10 @@ if (!function_exists('login_user')) {
                     
                     setcookie('remember_me', $token, time() + (86400 * 30), "/", "", false, true);
 
+                    if (function_exists('touch_user_activity')) {
+                        touch_user_activity();
+                    }
+
                     return [
                         'status' => true,
                         'role'   => $user['role'],
@@ -207,7 +236,18 @@ if (!function_exists('login_user')) {
                 }
             }
 
-            return ['status' => false, 'message' => 'Username/Email atau Password salah!'];
+            // Gagal login: tambahkan hitungan percobaan
+            $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+            $_SESSION['last_login_attempt_time'] = time();
+
+            $currentCount = $_SESSION['login_attempts'];
+            $remaining = 5 - $currentCount;
+            
+            if ($remaining > 0) {
+                return ['status' => false, 'message' => "Username/Email atau Password salah! (Sisa kesempatan mencoba: {$remaining}x)"];
+            } else {
+                return ['status' => false, 'message' => '🛑 Terlalu banyak percobaan gagal! Akses login dikunci sementara selama 60 detik demi keamanan.'];
+            }
         } catch (PDOException $e) {
             return ['status' => false, 'message' => 'Error Database: ' . $e->getMessage()];
         }
