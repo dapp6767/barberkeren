@@ -50,7 +50,7 @@ function redirect($url) {
     header("Location: " . $url);
     exit;
 }
-// Touch User Last Active Timestamp
+// Touch User Last Active Timestamp & Multi-Device Active Session Tracker
 function touch_user_activity() {
     if (isset($_SESSION['user_id'])) {
         global $pdo;
@@ -61,10 +61,37 @@ function touch_user_activity() {
             }
         }
         if (isset($pdo)) {
-            if (!isset($_SESSION['last_active_updated']) || (time() - $_SESSION['last_active_updated']) > 300) {
+            $user_id = (int)$_SESSION['user_id'];
+            $sess_id = session_id();
+            if (!$sess_id) return;
+
+            $agent = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
+            $ip = substr($_SERVER['REMOTE_ADDR'] ?? '', 0, 45);
+
+            // Update every 30 seconds or on first page hit
+            if (!isset($_SESSION['last_active_updated']) || (time() - $_SESSION['last_active_updated']) > 30) {
                 try {
-                    $stmt = $pdo->prepare("UPDATE users SET is_online = 1, last_active = NOW() WHERE id_user = ?");
-                    $stmt->execute([$_SESSION['user_id']]);
+                    // Auto-ensure user_sessions table exists
+                    $pdo->exec("CREATE TABLE IF NOT EXISTS user_sessions (
+                        session_id VARCHAR(128) PRIMARY KEY,
+                        user_id INT NOT NULL,
+                        user_agent VARCHAR(255) DEFAULT '',
+                        ip_address VARCHAR(45) DEFAULT '',
+                        last_activity DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        KEY idx_user (user_id),
+                        KEY idx_last_activity (last_activity)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                    // Insert or update current device session
+                    $stmtSess = $pdo->prepare("INSERT INTO user_sessions (session_id, user_id, user_agent, ip_address, last_activity) 
+                                               VALUES (?, ?, ?, ?, NOW()) 
+                                               ON DUPLICATE KEY UPDATE user_id = VALUES(user_id), user_agent = VALUES(user_agent), ip_address = VALUES(ip_address), last_activity = NOW()");
+                    $stmtSess->execute([$sess_id, $user_id, $agent, $ip]);
+
+                    // Update main users table is_online flag & timestamp
+                    $stmtUsers = $pdo->prepare("UPDATE users SET is_online = 1, last_active = NOW() WHERE id_user = ?");
+                    $stmtUsers->execute([$user_id]);
+
                     $_SESSION['last_active_updated'] = time();
                 } catch (Exception $e) {}
             }

@@ -1,6 +1,19 @@
 <?php if ($page === 'akun'): ?>
 <!-- AKUN PENGGUNA MODULE -->
 <?php
+// Auto-ensure user_sessions table exists
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS user_sessions (
+        session_id VARCHAR(128) PRIMARY KEY,
+        user_id INT NOT NULL,
+        user_agent VARCHAR(255) DEFAULT '',
+        ip_address VARCHAR(45) DEFAULT '',
+        last_activity DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        KEY idx_user (user_id),
+        KEY idx_last_activity (last_activity)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+} catch (Exception $e) {}
+
 // Fetch Users with Real-Time Online Status & Last Active Timestamp for Akun Module Card
 $userActivityStmt = $pdo->query("
     SELECT 
@@ -9,13 +22,18 @@ $userActivityStmt = $pdo->query("
         u.fullname, 
         u.role,
         COALESCE(u.is_online, 0) as is_online,
+        COALESCE((SELECT COUNT(*) FROM user_sessions us WHERE us.user_id = u.id_user AND us.last_activity >= NOW() - INTERVAL 15 MINUTE), 0) as active_sessions_count,
         COALESCE(NULLIF(u.fullname, ''), u.username) as nama,
         COALESCE(
+            (SELECT MAX(us2.last_activity) FROM user_sessions us2 WHERE us2.user_id = u.id_user),
             u.last_active, 
             (SELECT MAX(waktu_dibuat) FROM antrian WHERE pelanggan_id = u.id_user)
         ) as last_seen
     FROM users u
-    ORDER BY (u.is_online = 1 AND u.last_active >= NOW() - INTERVAL 15 MINUTE) DESC, last_seen DESC
+    ORDER BY (
+        (SELECT COUNT(*) FROM user_sessions us3 WHERE us3.user_id = u.id_user AND us3.last_activity >= NOW() - INTERVAL 15 MINUTE) > 0
+        OR (u.is_online = 1 AND u.last_active >= NOW() - INTERVAL 15 MINUTE)
+    ) DESC, last_seen DESC
     LIMIT 50
 ");
 $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_ASSOC) : [];
@@ -163,8 +181,9 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
                         <?php 
                         foreach ($userActivityList as $uAct): 
                             $last_time = $uAct['last_seen'] ? strtotime($uAct['last_seen']) : 0;
-                            // Account is ONLINE only if is_online == 1 AND active within last 15 mins
-                            $is_currently_online = ((int)$uAct['is_online'] === 1) && ($last_time > 0) && (time() - $last_time <= 900);
+                            $active_sess = (int)($uAct['active_sessions_count'] ?? 0);
+                            // Account is ONLINE if active_sessions_count > 0 OR (is_online == 1 AND active within last 15 mins)
+                            $is_currently_online = ($active_sess > 0) || (((int)$uAct['is_online'] === 1) && ($last_time > 0) && (time() - $last_time <= 900));
                             $formatted_date = $last_time > 0 ? date('d M Y H:i', $last_time) : 'Belum ada';
                             
                             $userPhotoPath = "../asset/image/profile_" . $uAct['id_user'] . ".jpg";
@@ -203,7 +222,7 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
                                         <span>•</span>
                                         <?php if ($is_currently_online): ?>
                                             <span class="text-emerald-400 font-medium flex items-center gap-1">
-                                                Online Sekarang
+                                                Online Sekarang <?= $active_sess > 1 ? "({$active_sess} perangkat)" : "" ?>
                                             </span>
                                         <?php else: ?>
                                             <span class="text-zinc-400">
