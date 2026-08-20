@@ -323,11 +323,6 @@
                 <h1 class="text-xl font-semibold text-white capitalize">
                     Pelanggan
                 </h1>
-
-                <a href="../index.php" class="hidden sm:flex items-center gap-1.5 text-zinc-400 hover:text-blue-400 transition-colors duration-300 text-sm font-medium ml-4 group" title="Ke Home">
-                    <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300"></i>
-                    <span class="group-hover:underline underline-offset-4">Home</span>
-                </a>
             </div>
             <div class="flex items-center gap-4">
                 <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
