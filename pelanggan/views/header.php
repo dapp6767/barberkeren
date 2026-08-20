@@ -305,10 +305,6 @@
                     <i data-lucide="user-circle" class="fa-solid fa-user-gear w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Profil Saya</span>
                 </a>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-qris')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_qris ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="qr-code" class="fa-solid fa-qrcode w-5 h-5 text-amber-400 shrink-0"></i>
-                    <span>Scan QRIS</span>
-                </a>
             </nav>
         </div>
 
