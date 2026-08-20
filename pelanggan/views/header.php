@@ -304,8 +304,8 @@
                 
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Lainnya</p>
                 <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-amber-200/80 hover:bg-amber-500/10 hover:text-amber-200 transition-colors mt-1">
-                    <i data-lucide="globe" class="fa-solid fa-globe w-5 h-5 text-amber-400 shrink-0"></i>
-                    <span>Landing Page</span>
+                    <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-amber-400 shrink-0"></i>
+                    <span>Home</span>
                 </a>
             </nav>
         </div>
@@ -348,29 +348,11 @@
                     </button>
 
                     <!-- Profile Dropdown Menu -->
-                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
-                        <!-- User Info Header -->
-                        <div class="px-4 py-3 border-b border-amber-900/40 bg-gradient-to-r from-amber-950/40 to-stone-900/40">
-                            <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Pelanggan</p>
-                            <p class="text-sm font-bold text-amber-100 truncate mt-0.5"><?= htmlspecialchars($curr_fn ?: $curr_un) ?></p>
-                        </div>
-                        
-                        <!-- Menu Options -->
-                        <div class="py-1.5">
-                            <a href="javascript:void(0)" onclick="navigateToTab('tab-profil'); closeProfileDropdown();" class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:bg-amber-500/15 hover:text-amber-200 transition-colors">
-                                <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
-                                <span>Profil Saya</span>
-                            </a>
-                            <a href="../index.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:bg-amber-500/15 hover:text-amber-200 transition-colors">
-                                <i data-lucide="globe" class="w-4 h-4 text-amber-400"></i>
-                                <span>Landing Page</span>
-                            </a>
-                        </div>
-
-                        <div class="border-t border-amber-900/40 py-1.5 bg-rose-950/10">
-                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/15 hover:text-rose-300 transition-colors">
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                        <div class="py-1 bg-rose-950/10">
+                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
                                 <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
-                                <span>Logout / Keluar</span>
+                                <span>Logout</span>
                             </a>
                         </div>
                     </div>
