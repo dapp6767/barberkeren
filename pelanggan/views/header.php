@@ -140,8 +140,8 @@
         #sidebar.w-20 #brand-logo-container { padding-left: 0; padding-right: 0; justify-content: center; }
         #sidebar.w-20 #brand-icon { margin-right: 0; }
         #sidebar.w-20 #brand-text { opacity: 0; max-width: 0; margin: 0; }
-        #sidebar.w-20 nav a { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
-        #sidebar.w-20 nav span, #sidebar.w-20 nav p { opacity: 0; max-width: 0; padding: 0; margin: 0; border: none; }
+        #sidebar.w-20 nav a, #sidebar.w-20 .sidebar-footer a { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
+        #sidebar.w-20 nav span, #sidebar.w-20 nav p, #sidebar.w-20 .sidebar-footer span { opacity: 0; max-width: 0; padding: 0; margin: 0; border: none; }
         
         * {
             -webkit-tap-highlight-color: transparent;
@@ -301,13 +301,15 @@
                     <i data-lucide="user-circle" class="fa-solid fa-user-gear w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Profil Saya</span>
                 </a>
-                
-                <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Lainnya</p>
-                <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-amber-200/80 hover:bg-amber-500/10 hover:text-amber-200 transition-colors mt-1">
-                    <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-amber-400 shrink-0"></i>
-                    <span>Home</span>
-                </a>
             </nav>
+        </div>
+
+        <!-- Sidebar Footer / Bottom Home Button -->
+        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40">
+            <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
+                <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
+                <span class="text-sm font-medium">Home</span>
+            </a>
         </div>
     </aside>
 
