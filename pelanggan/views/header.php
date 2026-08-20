@@ -303,9 +303,9 @@
                 </a>
                 
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Lainnya</p>
-                <a href="../auth/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-400/10 hover:text-red-300 transition-colors mt-1">
-                    <i data-lucide="log-out" class="fa-solid fa-right-from-bracket w-5 h-5 text-red-400 shrink-0"></i>
-                    <span>Logout</span>
+                <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-amber-200/80 hover:bg-amber-500/10 hover:text-amber-200 transition-colors mt-1">
+                    <i data-lucide="globe" class="fa-solid fa-globe w-5 h-5 text-amber-400 shrink-0"></i>
+                    <span>Landing Page</span>
                 </a>
             </nav>
         </div>
@@ -331,19 +331,50 @@
             </div>
             <div class="flex items-center gap-4">
                 <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-profil')" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" title="Profil Saya">
-                    <?php 
-                    $curr_fn = $user['fullname'] ?? $_SESSION['fullname'] ?? '';
-                    $curr_un = $user['username'] ?? $_SESSION['username'] ?? 'User';
-                    $nav_avatar_name = !empty($curr_fn) ? urlencode($curr_fn) : urlencode($curr_un);
-                    $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $my_user_id . '.*');
-                    $nav_profile_url = !empty($nav_profile_files)
-                        ? '../asset/image/' . basename($nav_profile_files[0]) . '?v=' . filemtime($nav_profile_files[0])
-                        : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
-                    ?>
-                    <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60">
-                    <span class="hidden md:block text-sm text-zinc-300 font-medium"><?= htmlspecialchars($curr_fn ?: $curr_un) ?></span>
-                </a>
+                <?php 
+                $curr_fn = $user['fullname'] ?? $_SESSION['fullname'] ?? '';
+                $curr_un = $user['username'] ?? $_SESSION['username'] ?? 'User';
+                $nav_avatar_name = !empty($curr_fn) ? urlencode($curr_fn) : urlencode($curr_un);
+                $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $my_user_id . '.*');
+                $nav_profile_url = !empty($nav_profile_files)
+                    ? '../asset/image/' . basename($nav_profile_files[0]) . '?v=' . filemtime($nav_profile_files[0])
+                    : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
+                ?>
+                <div class="relative" id="user-profile-dropdown-container">
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                        <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars($curr_fn ?: $curr_un) ?></span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
+                    </button>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                        <!-- User Info Header -->
+                        <div class="px-4 py-3 border-b border-amber-900/40 bg-gradient-to-r from-amber-950/40 to-stone-900/40">
+                            <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Pelanggan</p>
+                            <p class="text-sm font-bold text-amber-100 truncate mt-0.5"><?= htmlspecialchars($curr_fn ?: $curr_un) ?></p>
+                        </div>
+                        
+                        <!-- Menu Options -->
+                        <div class="py-1.5">
+                            <a href="javascript:void(0)" onclick="navigateToTab('tab-profil'); closeProfileDropdown();" class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:bg-amber-500/15 hover:text-amber-200 transition-colors">
+                                <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+                                <span>Profil Saya</span>
+                            </a>
+                            <a href="../index.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-zinc-300 hover:bg-amber-500/15 hover:text-amber-200 transition-colors">
+                                <i data-lucide="globe" class="w-4 h-4 text-amber-400"></i>
+                                <span>Landing Page</span>
+                            </a>
+                        </div>
+
+                        <div class="border-t border-amber-900/40 py-1.5 bg-rose-950/10">
+                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/15 hover:text-rose-300 transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
+                                <span>Logout / Keluar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
