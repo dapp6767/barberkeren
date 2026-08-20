@@ -187,11 +187,21 @@
         ).then(() => {
             isQrisCameraRunning = true;
         }).catch(err => {
-            console.warn("Camera start failed, showing fallback placeholder:", err);
-            if (placeholder) {
-                placeholder.style.display = 'flex';
-                placeholder.querySelector('p').textContent = "Izin kamera diperlukan atau kamera tidak tersedia";
-            }
+            console.warn("Primary camera failed, attempting user webcam fallback:", err);
+            html5QrCode.start(
+                { facingMode: "user" },
+                config,
+                onQrCodeScanned,
+                onQrScanError
+            ).then(() => {
+                isQrisCameraRunning = true;
+            }).catch(fallbackErr => {
+                console.warn("Fallback camera also failed:", fallbackErr);
+                if (placeholder) {
+                    placeholder.style.display = 'flex';
+                    placeholder.querySelector('p').textContent = "Izin kamera diperlukan atau kamera tidak tersedia";
+                }
+            });
         });
     }
 
