@@ -235,6 +235,27 @@
         .nav-indicator {
             display: none;
         }
+
+        /* Mobile Bottom Navigation Item Styles */
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .nav-item .solid-icon { display: none; }
+        .nav-item .outline-icon { display: block; color: #9ca3af; }
+        .nav-item .active-pulse { display: none; }
+        .nav-item .profile-img { border-color: transparent; }
+
+        .nav-item.active .solid-icon { display: block; }
+        .nav-item.active .outline-icon { display: none; }
+        .nav-item.active .active-pulse { display: block; }
+        .nav-item.active .nav-label { color: #f59e0b; font-weight: 700; }
+        .nav-item.active .profile-img { border-color: #f59e0b; }
     </style>
 </head>
 <body class="text-amber-50 bg-adminlte-bg font-sans antialiased overflow-x-hidden flex h-screen">
