@@ -2,7 +2,7 @@
 <!-- LAYANAN MODULE -->
 <div class="mb-6 space-y-6">
     <!-- Donut Chart Layanan -->
-    <div class="p-8 bg-adminlte-card rounded-lg border border-zinc-700 shadow-md flex flex-col items-center justify-center">
+    <div class="p-4 sm:p-6 md:p-8 bg-adminlte-card rounded-lg border border-zinc-700 shadow-md flex flex-col items-center justify-center">
         <h4 class="text-white font-semibold mb-6 text-lg tracking-wide uppercase text-zinc-300">Statistik Layanan (Berdasarkan Transaksi)</h4>
         <div style="width: 100%; max-width: 450px;">
             <canvas id="donutChartLayanan"></canvas>

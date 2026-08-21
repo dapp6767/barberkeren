@@ -133,6 +133,28 @@
         .tabulator-search:focus { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,0.15); }
         .tabulator-search::placeholder { color: #a1a1aa; }
 
+        @media (max-width: 640px) {
+            .tabulator-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            .tabulator-controls > div {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .tabulator-btn {
+                flex: 1 1 calc(50% - 0.25rem);
+                justify-content: center;
+            }
+            .tabulator-search {
+                width: 100% !important;
+            }
+            .tabulator-wrapper {
+                padding: 0.75rem;
+            }
+        }
+
         /* Fix table cell text colors */
         .tabulator-row .text-white { color: #fde68a !important; }
         .tabulator-row .text-zinc-400 { color: #d4d4d8 !important; }
@@ -239,61 +261,70 @@
     <div class="fixed inset-0 z-[-1] pointer-events-none" style="background: linear-gradient(135deg, #0e0a08 0%, #120e06 30%, #1a0e04 60%, #0a0603 100%);"></div>
     <div class="fixed inset-0 z-[-1] pointer-events-none" style="background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(90,50,15,0.15) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 20% 80%, rgba(60,30,5,0.1) 0%, transparent 50%);"></div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-adminlte-sidebar h-full flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
+
+    <!-- Sidebar (Off-canvas Drawer on Mobile, Collapsible Sidebar on Desktop) -->
+    <aside id="sidebar" class="w-64 bg-adminlte-sidebar h-full flex flex-col shadow-2xl flex-shrink-0 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static md:z-auto transition-transform md:transition-all duration-300">
         <script>
-            if(localStorage.getItem('sidebarMinimized') === 'true') {
+            if(window.innerWidth >= 768 && localStorage.getItem('sidebarMinimized') === 'true') {
                 document.getElementById('sidebar').classList.replace('w-64', 'w-20');
             }
         </script>
         <!-- Brand Logo -->
-        <div id="brand-logo-container" class="h-16 flex items-center px-6 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
-            <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
-            <span id="brand-text" class="text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Admin</span></span>
+        <div id="brand-logo-container" class="h-16 flex items-center justify-between md:justify-start px-6 overflow-hidden shrink-0" style="border-bottom: 1px solid #3a2510;">
+            <div class="flex items-center">
+                <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
+                <span id="brand-text" class="text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Admin</span></span>
+            </div>
+            <!-- Mobile Close Button -->
+            <button id="sidebar-close-btn" class="md:hidden text-amber-400/80 hover:text-amber-200 p-1 focus:outline-none">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
         </div>
         
         <!-- Sidebar Menu -->
-        <div class="flex-1 overflow-y-auto py-4">
+        <div class="flex-1 overflow-y-auto py-4 custom-scroll">
             <nav class="flex flex-col gap-1 px-3">
-                <a href="?page=dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg <?= ($page === 'dashboard' || empty($page)) ? 'bg-adminlte-primary text-amber-200 mt-4' : 'text-stone-400 hover:text-amber-200 mt-4' ?>">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <a href="?page=dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg <?= ($page === 'dashboard' || empty($page)) ? 'bg-adminlte-primary text-amber-200 mt-2' : 'text-stone-400 hover:text-amber-200 mt-2' ?>">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
                     <span>Admin</span>
                 </a>
                 <a href="?page=antrean" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'antrean' ? 'bg-adminlte-primary text-amber-200 mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
-                    <i data-lucide="monitor" class="w-5 h-5"></i>
+                    <i data-lucide="monitor" class="w-5 h-5 shrink-0"></i>
                     <span>Antrean</span>
                 </a>
                 
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Kelola Data</p>
                 <a href="?page=layanan" class="flex items-center gap-3 px-3 py-2.5 rounded-lg <?= $page === 'layanan' ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="scissors" class="w-5 h-5"></i>
+                    <i data-lucide="scissors" class="w-5 h-5 shrink-0"></i>
                     <span>Layanan</span>
                 </a>
                 <a href="?page=transaksi" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'transaksi' ? 'bg-adminlte-primary text-amber-200' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white' ?>">
-                    <i data-lucide="receipt-text" class="w-5 h-5"></i>
+                    <i data-lucide="receipt-text" class="w-5 h-5 shrink-0"></i>
                     <span>Transaksi</span>
                 </a>
                 <a href="?page=akun" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'akun' ? 'bg-adminlte-primary text-amber-200' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white' ?>">
-                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <i data-lucide="users" class="w-5 h-5 shrink-0"></i>
                     <span>Akun</span>
                 </a>
 
                 <p class="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 mt-4">Sistem</p>
                 <a href="?page=pengaturan" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'pengaturan' ? 'bg-adminlte-primary text-amber-200' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white' ?>">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
                     <span>Pengaturan WA</span>
                 </a>
 
                 <p class="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 mt-4">Lainnya</p>
                 <a href="?page=profil" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $page === 'profil' ? 'bg-adminlte-primary text-amber-200' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white' ?>">
-                    <i data-lucide="user" class="w-5 h-5"></i>
+                    <i data-lucide="user" class="w-5 h-5 shrink-0"></i>
                     <span>Profil</span>
                 </a>
             </nav>
         </div>
 
         <!-- Sidebar Footer / Bottom Home Button -->
-        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40">
+        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40 shrink-0">
             <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
                 <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
                 <span class="text-sm font-medium">Home</span>
@@ -302,31 +333,31 @@
     </aside>
 
     <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <div class="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         
         <!-- Top Navbar -->
-        <header class="h-16 flex items-center justify-between px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
-            <div class="flex items-center gap-4">
-                <button id="sidebar-toggle" class="transition-colors hover:text-amber-400" style="color:#8a6030;">
+        <header class="h-16 flex items-center justify-between px-3 sm:px-4 md:px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
+            <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                <button id="sidebar-toggle" class="p-1.5 rounded-lg transition-colors hover:text-amber-400 active:scale-95 focus:outline-none shrink-0" style="color:#8a6030;">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
-                <h1 class="text-xl font-semibold text-white capitalize">
+                <h1 class="text-sm sm:text-base md:text-xl font-bold text-white capitalize truncate max-w-[130px] sm:max-w-xs md:max-w-none">
                     <?= $page === 'dashboard' ? 'Dashboard Overview' : str_replace('_', ' ', $page) ?>
                 </h1>
             </div>
-            <div class="flex items-center gap-4">
-                <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
+            <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+                <div id="realtime-clock" class="hidden lg:block text-xs md:text-sm text-zinc-300 font-medium tracking-wide"></div>
 
                 <!-- NOTIFICATION BELL & DROPDOWN -->
                 <div class="relative" id="admin-notif-container">
-                    <button type="button" id="notif-bell-btn" onclick="toggleNotifDropdown(event)" class="relative px-3 py-2 text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 rounded-xl transition-all shadow-lg focus:outline-none flex items-center gap-2 cursor-pointer group" title="Notifikasi Sistem">
+                    <button type="button" id="notif-bell-btn" onclick="toggleNotifDropdown(event)" class="relative p-2 sm:px-3 sm:py-2 text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 rounded-xl transition-all shadow-lg focus:outline-none flex items-center gap-2 cursor-pointer group" title="Notifikasi Sistem">
                         <i data-lucide="bell" class="w-5 h-5 text-amber-400 group-hover:rotate-12 transition-transform"></i>
                         <span class="text-xs font-bold hidden sm:inline">Notif</span>
-                        <span id="notif-badge" class="hidden bg-rose-600 text-white font-extrabold text-xs px-2 py-0.5 rounded-full border border-rose-400 flex items-center justify-center animate-bounce shadow-md">0</span>
+                        <span id="notif-badge" class="hidden bg-rose-600 text-white font-extrabold text-xs px-1.5 py-0.5 sm:px-2 rounded-full border border-rose-400 flex items-center justify-center animate-bounce shadow-md">0</span>
                     </button>
 
                     <!-- Dropdown Content -->
-                    <div id="notif-dropdown-menu" class="hidden absolute right-0 mt-3 w-80 sm:w-96 bg-[#18120b] border border-amber-900/50 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl transition-all">
+                    <div id="notif-dropdown-menu" class="hidden absolute right-[-50px] sm:right-0 mt-3 w-[calc(100vw-1.5rem)] max-w-sm sm:w-96 bg-[#18120b] border border-amber-900/50 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl transition-all">
                         <div class="p-3.5 border-b border-amber-900/30 bg-[#22180f] flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="bell-ring" class="w-4 h-4 text-amber-400"></i>
@@ -341,15 +372,15 @@
                 </div>
 
                 <div class="relative" id="user-profile-dropdown-container">
-                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-all p-1 sm:p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
                         <?php 
                         $nav_avatar_name = !empty($current_user['fullname']) ? urlencode($current_user['fullname']) : urlencode($current_user['username']);
                         $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $_SESSION['user_id'] . '.*');
                         $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
                         ?>
-                        <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
                         <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars($current_user['fullname'] ?: $current_user['username']) ?></span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200 hidden sm:block" id="profile-dropdown-chevron"></i>
                     </button>
 
                     <!-- Profile Dropdown Menu -->
@@ -366,5 +397,5 @@
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 overflow-y-auto p-6 page-transition">
+        <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 page-transition w-full max-w-full min-w-0">
             <?php if (function_exists('display_flash')) display_flash(); ?>

@@ -37,8 +37,8 @@
 </div>
 
 <!-- Modal Tambah Layanan -->
-<div id="addLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999]">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-6 w-[400px] rounded-lg shadow-2xl">
+<div id="addLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-adminlte-primary"></i> Tambah Layanan</h3>
             <button onclick="closeAddLayananModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -76,8 +76,8 @@
 </div>
 
 <!-- Modal Edit Layanan -->
-<div id="editLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999]">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-6 w-[400px] rounded-lg shadow-2xl">
+<div id="editLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="edit" class="w-5 h-5 text-blue-400"></i> Edit Layanan</h3>
             <button onclick="closeEditLayananModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -116,8 +116,8 @@
 </div>
 
 <!-- Modal Tambah Akun -->
-<div id="addUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999]">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-6 w-[400px] rounded-lg shadow-2xl">
+<div id="addUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="user-plus" class="w-5 h-5 text-adminlte-primary"></i> Tambah User Baru</h3>
             <button onclick="closeAddUserModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -163,8 +163,8 @@
 </div>
 
 <!-- Modal Edit Akun -->
-<div id="editUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999]">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-6 w-[400px] rounded-lg shadow-2xl">
+<div id="editUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="edit" class="w-5 h-5 text-blue-400"></i> Edit User</h3>
             <button onclick="closeEditUserModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>

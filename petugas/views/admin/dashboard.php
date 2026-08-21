@@ -1,6 +1,6 @@
 <?php if ($page === 'dashboard' || empty($page)): ?>
 <!-- DASHBOARD METRIC CARDS (LUXURY DARK GOLD THEME CONNECTED TO DB) -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6">
     <!-- Card 1: Antrean Hari Ini -->
     <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
         <div class="relative z-10">

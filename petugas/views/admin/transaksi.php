@@ -15,6 +15,16 @@
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
+    @media (max-width: 768px) {
+        .holo-chart-section {
+            padding: 1.25rem 0.75rem;
+            border-radius: 12px;
+        }
+        .holo-chart-section::after,
+        .holo-syntax-right {
+            display: none !important;
+        }
+    }
 
     /* Ambient warm gold backdrop glow */
     .holo-chart-section::before {

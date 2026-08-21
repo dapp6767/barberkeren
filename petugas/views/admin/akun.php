@@ -260,7 +260,7 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
         </div>
         <div class="tabulator-wrapper">
             <div class="tabulator-controls">
-                <div class="flex gap-2">
+                <div class="flex gap-2 flex-wrap">
                     <button type="button" class="tabulator-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0e0a08; border-color: #f59e0b; font-weight: 700;" onclick="openAddUserModal()">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Akun
                     </button>
