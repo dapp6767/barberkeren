@@ -53,6 +53,15 @@ try {
     }
 } catch (Exception $e) {}
 
+// Ensure is_terbaik column exists on layanan table
+try {
+    $chkColLayanan = $pdo->query("SHOW COLUMNS FROM layanan LIKE 'is_terbaik'");
+    if (!$chkColLayanan || $chkColLayanan->rowCount() === 0) {
+        $pdo->exec("ALTER TABLE layanan ADD COLUMN is_terbaik TINYINT(1) DEFAULT 0");
+        $pdo->exec("UPDATE layanan SET is_terbaik = 1 WHERE LOWER(nama_layanan) LIKE '%luar biasa%' OR LOWER(nama_layanan) LIKE '%maxcut%'");
+    }
+} catch (Exception $e) {}
+
 // Antrean per kursi hari ini
 $stmt_chairs = $pdo->query("
     SELECT b.id, b.nama, b.kursi, b.tgl_kursi, b.status,
@@ -439,7 +448,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                         <div class="snap-start shrink-0 w-[350px] md:w-[450px] group relative bg-zinc-900/30 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-500 flex flex-col backdrop-blur-sm">
                             <div class="h-64 w-full overflow-hidden relative shrink-0">
                                 <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90" src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($p['nama_layanan']) ?>">
-                                <?php if(in_array(strtolower($p['nama_layanan']), ['maxcut', 'pangkas rambut luar biasa'])): ?>
+                                <?php if(!empty($p['is_terbaik']) || in_array(strtolower($p['nama_layanan']), ['maxcut', 'pangkas rambut luar biasa'])): ?>
                                 <div class="absolute top-6 right-6 bg-gold text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-gold/20">Terbaik</div>
                                 <?php endif; ?>
                                 <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>

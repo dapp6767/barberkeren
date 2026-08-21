@@ -66,6 +66,10 @@
                 <label class="block text-sm font-medium text-zinc-400 mb-1">Gambar Layanan</label>
                 <input type="file" name="gambar" accept="image/*" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-adminlte-primary file:text-white hover:file:bg-blue-600">
             </div>
+            <div class="flex items-center gap-2 pt-1 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-md">
+                <input type="checkbox" name="is_terbaik" id="add_is_terbaik" value="1" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900">
+                <label for="add_is_terbaik" class="text-xs font-semibold text-amber-400 cursor-pointer select-none">Tandai sebagai Layanan TERBAIK (Badge "TERBAIK")</label>
+            </div>
             <div class="pt-2">
                 <button type="submit" class="w-full bg-adminlte-primary hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i> Simpan Layanan
@@ -105,6 +109,10 @@
             <div>
                 <label class="block text-sm font-medium text-zinc-400 mb-1">Update Gambar Layanan (Biarkan kosong jika tidak diubah)</label>
                 <input type="file" name="gambar" accept="image/*" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600">
+            </div>
+            <div class="flex items-center gap-2 pt-1 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-md">
+                <input type="checkbox" name="is_terbaik" id="edit_is_terbaik" value="1" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900">
+                <label for="edit_is_terbaik" class="text-xs font-semibold text-amber-400 cursor-pointer select-none">Tandai sebagai Layanan TERBAIK (Badge "TERBAIK")</label>
             </div>
             <div class="pt-2">
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2">

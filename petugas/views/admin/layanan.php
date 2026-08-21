@@ -62,6 +62,9 @@
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
                                 <span class="text-white font-medium"><?= htmlspecialchars($l['nama_layanan']) ?></span>
+                                <?php if (!empty($l['is_terbaik'])): ?>
+                                    <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Terbaik</span>
+                                <?php endif; ?>
                             </div>
                         </td>
                         <td class="px-6 py-3 text-zinc-400"><?= htmlspecialchars($l['durasi'] ?? 0) ?> Menit</td>
@@ -91,7 +94,7 @@
                                     <button type="button" onclick="openDescModal('<?= htmlspecialchars(addslashes($l['nama_layanan']), ENT_QUOTES) ?>', '<?= $desc_text ?>', '<?= htmlspecialchars($l['durasi'] ?? 0) ?>', 'Rp <?= number_format($l['harga'], 0, ',', '.') ?>', '<?= $img_url ?>')" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-400/10 transition-colors" title="Lihat Lebih Lengkap">
                                         <i data-lucide="eye" class="w-4 h-4"></i>
                                     </button>
-                                    <button type="button" onclick="openEditLayananModal(<?= $l['id'] ?>, '<?= htmlspecialchars($l['nama_layanan'], ENT_QUOTES) ?>', <?= $l['harga'] ?>, <?= $l['durasi'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], $l['deskripsi'] ?? ''), ENT_QUOTES) ?>')" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-400/10 transition-colors" title="Edit">
+                                    <button type="button" onclick="openEditLayananModal(<?= $l['id'] ?>, '<?= htmlspecialchars($l['nama_layanan'], ENT_QUOTES) ?>', <?= $l['harga'] ?>, <?= $l['durasi'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], $l['deskripsi'] ?? ''), ENT_QUOTES) ?>', <?= (int)($l['is_terbaik'] ?? 0) ?>)" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-400/10 transition-colors" title="Edit">
                                         <i data-lucide="edit" class="w-4 h-4"></i>
                                     </button>
                                     <form method="POST" class="inline">
