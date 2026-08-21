@@ -23,6 +23,8 @@
         $default_images_layanan = [
             'pangkas rambut biasa'      => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             'pangkas rambut luar biasa' => '../asset/image/maxcut.png',
+            'pridecut'                  => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'maxcut'                    => '../asset/image/maxcut.png',
             'hair coloring'             => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
             'hairlight'                 => '../asset/image/hairlight.png',
             'full hairlight'            => '../asset/image/full_hairlight.png',

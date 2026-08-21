@@ -428,6 +428,8 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                             $files = glob(__DIR__ . "/asset/image/layanan_{$p['id']}.*");
                             $nama_lower = strtolower($p['nama_layanan']);
                             $default_images = [
+                                'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                                'pangkas rambut luar biasa' => 'asset/image/maxcut.png',
                                 'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                                 'maxcut' => 'asset/image/maxcut.png',
                             ];
@@ -437,7 +439,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                         <div class="snap-start shrink-0 w-[350px] md:w-[450px] group relative bg-zinc-900/30 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-500 flex flex-col backdrop-blur-sm">
                             <div class="h-64 w-full overflow-hidden relative shrink-0">
                                 <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90" src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($p['nama_layanan']) ?>">
-                                <?php if(strtolower($p['nama_layanan']) === 'maxcut'): ?>
+                                <?php if(in_array(strtolower($p['nama_layanan']), ['maxcut', 'pangkas rambut luar biasa'])): ?>
                                 <div class="absolute top-6 right-6 bg-gold text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-gold/20">Terbaik</div>
                                 <?php endif; ?>
                                 <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
