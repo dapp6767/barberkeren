@@ -835,81 +835,49 @@
     });
 </script>
 
-    <!-- Mobile Fixed Admin Bottom Navigation Dock (Classic Gentleman's Club Style) -->
-    <style>
-        .admin-mob-nav {
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-touch-callout: none !important;
-            user-select: none !important;
-            -webkit-user-select: none !important;
-            outline: none !important;
-            background-color: transparent !important;
-        }
-        .admin-mob-nav:focus, .admin-mob-nav:active, .admin-mob-nav:focus-visible {
-            outline: none !important;
-            box-shadow: none !important;
-            background-color: transparent !important;
-        }
-        .admin-mob-nav .nav-ind {
-            position: absolute;
-            top: -9px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0px;
-            height: 3px;
-            background: linear-gradient(90deg, #d4af37, #e5c158);
-            border-radius: 9999px;
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.9);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .admin-mob-nav.active .nav-ind {
-            opacity: 1;
-            width: 22px;
-        }
-        .admin-mob-nav.active i {
-            color: #e5c158 !important;
-            filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.8));
-            transform: scale(1.1);
-        }
-        .admin-mob-nav.active span {
-            color: #f8f4e9 !important;
-            font-weight: 700;
-        }
-    </style>
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0d0805]/95 backdrop-blur-md border-t border-[#8c6721]/40 flex justify-around items-center py-1.5 px-1 shadow-[0_-4px_25px_rgba(0,0,0,0.9)] transform-gpu"
-         style="padding-bottom: env(safe-area-inset-bottom, 6px);">
+    <!-- Mobile Fixed Admin Bottom Navigation Bar (Identical to Pelanggan & Barber System) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 backdrop-blur-md border-t border-amber-500/20 flex justify-around items-center shadow-[0_-4px_25px_rgba(0,0,0,0.8)] transform-gpu"
+         style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">
+
         <!-- Dashboard -->
-        <a href="?page=dashboard" class="admin-mob-nav flex flex-col items-center gap-0.5 px-2 py-1 min-w-[56px] rounded-xl transition-all relative <?= ($page === 'dashboard' || empty($page)) ? 'active' : '' ?>">
-            <div class="nav-ind"></div>
-            <i data-lucide="layout-dashboard" class="w-5 h-5 text-stone-400"></i>
-            <span class="text-[10px] font-serif tracking-tight text-stone-400">Admin</span>
+        <a href="?page=dashboard" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= ($page === 'dashboard' || empty($page)) ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <i data-lucide="layout-dashboard" class="outline-icon w-6 h-6"></i>
+            <i data-lucide="layout-dashboard" class="solid-icon w-6 h-6"></i>
+            <span class="nav-label text-[10px] font-serif font-bold tracking-tight leading-none mt-0.5">Admin</span>
         </a>
+
         <!-- Antrean -->
-        <a href="?page=antrean" class="admin-mob-nav flex flex-col items-center gap-0.5 px-2 py-1 min-w-[56px] rounded-xl transition-all relative <?= $page === 'antrean' ? 'active' : '' ?>">
-            <div class="nav-ind"></div>
-            <i data-lucide="monitor" class="w-5 h-5 text-stone-400"></i>
-            <span class="text-[10px] font-serif tracking-tight text-stone-400">Antrean</span>
+        <a href="?page=antrean" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $page === 'antrean' ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <i data-lucide="monitor" class="outline-icon w-6 h-6"></i>
+            <i data-lucide="monitor" class="solid-icon w-6 h-6"></i>
+            <span class="nav-label text-[10px] font-serif font-bold tracking-tight leading-none mt-0.5">Antrean</span>
         </a>
+
         <!-- Layanan -->
-        <a href="?page=layanan" class="admin-mob-nav flex flex-col items-center gap-0.5 px-2 py-1 min-w-[56px] rounded-xl transition-all relative <?= $page === 'layanan' ? 'active' : '' ?>">
-            <div class="nav-ind"></div>
-            <i data-lucide="scissors" class="w-5 h-5 text-stone-400"></i>
-            <span class="text-[10px] font-serif tracking-tight text-stone-400">Layanan</span>
+        <a href="?page=layanan" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $page === 'layanan' ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <i data-lucide="scissors" class="outline-icon w-6 h-6"></i>
+            <i data-lucide="scissors" class="solid-icon w-6 h-6"></i>
+            <span class="nav-label text-[10px] font-serif font-bold tracking-tight leading-none mt-0.5">Layanan</span>
         </a>
+
         <!-- Transaksi -->
-        <a href="?page=transaksi" class="admin-mob-nav flex flex-col items-center gap-0.5 px-2 py-1 min-w-[56px] rounded-xl transition-all relative <?= $page === 'transaksi' ? 'active' : '' ?>">
-            <div class="nav-ind"></div>
-            <i data-lucide="receipt-text" class="w-5 h-5 text-stone-400"></i>
-            <span class="text-[10px] font-serif tracking-tight text-stone-400">Transaksi</span>
+        <a href="?page=transaksi" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $page === 'transaksi' ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <i data-lucide="receipt-text" class="outline-icon w-6 h-6"></i>
+            <i data-lucide="receipt-text" class="solid-icon w-6 h-6"></i>
+            <span class="nav-label text-[10px] font-serif font-bold tracking-tight leading-none mt-0.5">Transaksi</span>
         </a>
+
         <!-- Akun -->
-        <a href="?page=akun" class="admin-mob-nav flex flex-col items-center gap-0.5 px-2 py-1 min-w-[56px] rounded-xl transition-all relative <?= $page === 'akun' ? 'active' : '' ?>">
-            <div class="nav-ind"></div>
-            <i data-lucide="users" class="w-5 h-5 text-stone-400"></i>
-            <span class="text-[10px] font-serif tracking-tight text-stone-400">Akun</span>
+        <a href="?page=akun" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $page === 'akun' ? 'active' : '' ?>">
+            <div class="nav-indicator"></div>
+            <i data-lucide="users" class="outline-icon w-6 h-6"></i>
+            <i data-lucide="users" class="solid-icon w-6 h-6"></i>
+            <span class="nav-label text-[10px] font-serif font-bold tracking-tight leading-none mt-0.5">Akun</span>
         </a>
     </nav>
-</script>
 </body>
 </html>

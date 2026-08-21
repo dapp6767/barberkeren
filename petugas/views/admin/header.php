@@ -246,6 +246,60 @@
         }
         .page-transition { animation: fadeSlideUp 0.4s ease-out forwards; }
 
+        /* Mobile Bottom Navigation Item Styles (Matching Pelanggan & Barber) */
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+            color: #9ca3af; text-decoration: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; padding: 6px 12px; border-radius: 12px;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            outline: none !important;
+            background-color: transparent !important;
+        }
+        .nav-item:focus,
+        .nav-item:active,
+        .nav-item:focus-visible,
+        .nav-item:focus-within {
+            outline: none !important;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        .nav-item:hover { color: #fcd34d; }
+        .nav-item .solid-icon { display: none; color: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
+        .nav-item .outline-icon { display: block; color: #9ca3af; transition: color 0.2s ease, transform 0.2s ease; }
+        .nav-item:hover .outline-icon { color: #fcd34d; transform: translateY(-1px); }
+        .nav-item.active { color: #f59e0b; }
+        .nav-item.active .solid-icon { display: block; animation: iconPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nav-item.active .outline-icon { display: none; }
+        .nav-item.active .nav-label { color: #fbbf24; font-weight: 700; text-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
+        
+        .nav-item .nav-indicator {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0px;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            border-radius: 9999px;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item.active .nav-indicator {
+            opacity: 1;
+            width: 24px;
+        }
+
+        @keyframes iconPop {
+            0% { transform: scale(0.6); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
         /* ============ CARDS ============ */
         .stat-card {
             background: linear-gradient(135deg, #1e1408 0%, #120e06 100%);
