@@ -302,15 +302,30 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             color: #9ca3af;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            outline: none !important;
+            background-color: transparent !important;
+        }
+        .nav-item:focus,
+        .nav-item:active,
+        .nav-item:focus-visible,
+        .nav-item:focus-within {
+            outline: none !important;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
         .nav-item:hover { color: #fcd34d; }
         .nav-item.active { color: #F59E0B; }
-        .nav-item .solid-icon { display: none; filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6)); }
+        .nav-item .solid-icon { display: none; color: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
         .nav-item .outline-icon { display: block; color: #9ca3af; transition: color 0.2s ease, transform 0.2s ease; }
         .nav-item:hover .outline-icon { color: #fcd34d; transform: translateY(-1px); }
         .nav-item.active .solid-icon { display: block; animation: iconPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .nav-item.active .outline-icon { display: none; }
-        .nav-item.active .nav-label { color: #F59E0B; font-weight: 700; }
+        .nav-item.active .nav-label { color: #fbbf24; font-weight: 700; text-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
         
         .nav-item .nav-indicator {
             position: absolute;
