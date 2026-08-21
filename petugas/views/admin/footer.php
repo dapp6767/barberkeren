@@ -835,6 +835,9 @@
     });
 </script>
 
+        </main>
+    </div>
+
     <!-- Mobile Fixed Admin Bottom Navigation Bar (Identical to Pelanggan & Barber System) -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 backdrop-blur-md border-t border-amber-500/20 flex justify-around items-center shadow-[0_-4px_25px_rgba(0,0,0,0.8)] transform-gpu"
          style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">

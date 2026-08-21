@@ -752,5 +752,4 @@
 
     }); // end DOMContentLoaded
     </script>
-</div>
 <?php endif; ?>
