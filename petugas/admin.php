@@ -51,7 +51,7 @@ handle_admin_post_actions();
 // Fetch Data Master
 $barbers = $pdo->query("SELECT * FROM barber ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
 $layanan = $pdo->query("SELECT * FROM layanan ORDER BY harga DESC, id DESC")->fetchAll(PDO::FETCH_ASSOC);
-$transaksi = $pdo->query("SELECT t.*, COALESCE(NULLIF(a.no_antrean, ''), CONCAT('A-', LPAD(a.id, 2, '0')), CONCAT('A-', LPAD(t.antrian_id, 2, '0'))) as no_antrean, COALESCE(NULLIF(u.username, ''), NULLIF(u.nama_lengkap, ''), 'Guest') as pelanggan FROM transaksi t LEFT JOIN antrian a ON t.antrian_id = a.id LEFT JOIN users u ON a.pelanggan_id = u.id_user ORDER BY t.id DESC")->fetchAll(PDO::FETCH_ASSOC);
+$transaksi = $pdo->query("SELECT t.*, a.no_antrean, COALESCE(NULLIF(u.username, ''), NULLIF(u.fullname, ''), 'Guest') as pelanggan FROM transaksi t LEFT JOIN antrian a ON t.antrian_id = a.id LEFT JOIN users u ON a.pelanggan_id = u.id_user ORDER BY t.id DESC")->fetchAll(PDO::FETCH_ASSOC);
 $users = $pdo->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch current logged in user
