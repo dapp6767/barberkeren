@@ -437,14 +437,14 @@ $topSpendingList = $topSpendingStmt ? $topSpendingStmt->fetchAll(PDO::FETCH_ASSO
         <div>
             <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-900/30">
                 <div>
-                    <h3 class="text-xl font-bold tracking-wide flex items-center gap-2" style="color:#e8d5a3;">
-                        <i data-lucide="wallet" class="w-5 h-5 text-amber-400"></i>
+                    <h3 class="text-xl font-serif font-bold tracking-wide flex items-center gap-2" style="color:#f0d375;">
+                        <i data-lucide="crown" class="w-5 h-5 text-amber-400"></i>
                         Top Pengeluaran Pelanggan
                     </h3>
                     <p class="text-xs text-stone-400 mt-0.5">Pelanggan dengan kontribusi transaksi terbesar</p>
                 </div>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                    💎 VIP Top Spending
+                <span class="px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                    👑 VIP Gentlemen Club
                 </span>
             </div>
 
@@ -470,21 +470,21 @@ $topSpendingList = $topSpendingStmt ? $topSpendingStmt->fetchAll(PDO::FETCH_ASSO
                                 <?php if ($hasRealPhoto): ?>
                                     <img src="<?= $userPhotoPath ?>" alt="<?= htmlspecialchars($cust['nama']) ?>" class="w-11 h-11 rounded-full object-cover ring-2 ring-amber-500/40 shadow-md">
                                 <?php else: ?>
-                                    <!-- Default Initial Avatar Circle (Tanpa Paksaan Foto Dummy) -->
-                                    <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-800 to-stone-900 border border-amber-600/40 flex items-center justify-center text-amber-200 font-bold text-base shadow-md">
+                                    <!-- Default Initial Avatar Circle -->
+                                    <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-800 to-stone-900 border border-amber-600/40 flex items-center justify-center text-amber-200 font-serif font-bold text-base shadow-md">
                                         <?= $initial ?>
                                     </div>
                                 <?php endif; ?>
                                 
-                                <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold <?= $rank === 1 ? 'bg-amber-400 text-zinc-950 ring-2 ring-amber-300' : ($rank === 2 ? 'bg-slate-300 text-zinc-950' : ($rank === 3 ? 'bg-amber-700 text-white' : 'bg-stone-700 text-stone-300')) ?>">
+                                <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold <?= $rank === 1 ? 'bg-gradient-to-r from-amber-300 to-yellow-500 text-zinc-950 ring-2 ring-amber-300' : ($rank === 2 ? 'bg-slate-300 text-zinc-950' : ($rank === 3 ? 'bg-amber-700 text-white' : 'bg-stone-700 text-stone-300')) ?>">
                                     <?= $rank ?>
                                 </span>
                             </div>
                             <!-- Name & Last Transaction Date -->
                             <div>
-                                <h4 class="font-bold text-sm text-stone-100 flex items-center gap-1.5">
+                                <h4 class="font-serif font-bold text-sm text-[#f8f4e9] flex items-center gap-1.5">
                                     <?= htmlspecialchars($cust['nama']) ?>
-                                    <span class="text-xs font-normal text-amber-400/80">(@<?= htmlspecialchars($cust['username']) ?>)</span>
+                                    <span class="font-sans text-xs font-normal text-amber-400/80">(@<?= htmlspecialchars($cust['username']) ?>)</span>
                                 </h4>
                                 <p class="text-xs text-stone-400 mt-0.5 flex items-center gap-2">
                                     <span><?= $cust['total_transaksi'] ?>x Berlayanan</span>

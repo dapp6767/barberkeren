@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - Elite Barber</title>
+    <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans-Serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,17 +16,21 @@
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
                     colors: {
                         adminlte: {
-                            sidebar: '#0e0a08',      // Deep dark brown-black
-                            bg: '#0a0805',           // Almost black with brown tint
-                            card: '#1a1208',         // Very dark warm card
-                            primary: '#3d2b1a',      // Dark rich brown
+                            sidebar: '#0d0805',      // Espresso mahogany black
+                            bg: '#080503',           // Dark mahogany
+                            card: '#160e08',         // Dark warm mahogany card
+                            primary: '#4a321a',      // Rich mahogany brown
                             success: '#1e3a1e',
-                            warning: '#e8d5a3',
+                            warning: '#e5c158',
                             danger: '#4a1e1e',
                             info: '#1e2a3a',
-                            accent: '#c9a03a',       // Gold accent
+                            accent: '#d4af37',       // Antique brass accent
                         }
                     }
                 }
@@ -275,7 +284,7 @@
         <div id="brand-logo-container" class="h-16 flex items-center justify-between md:justify-start px-6 overflow-hidden shrink-0" style="border-bottom: 1px solid #3a2510;">
             <div class="flex items-center">
                 <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
-                <span id="brand-text" class="text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Admin</span></span>
+                <span id="brand-text" class="text-xl font-serif font-extrabold tracking-wide whitespace-nowrap" style="color:#f0d375;">Dashboard <span class="font-sans font-normal text-amber-500/80">Admin</span></span>
             </div>
             <!-- Mobile Close Button -->
             <button id="sidebar-close-btn" class="md:hidden text-amber-400/80 hover:text-amber-200 p-1 focus:outline-none">
@@ -341,7 +350,7 @@
                 <button id="sidebar-toggle" class="p-1.5 rounded-lg transition-colors hover:text-amber-400 active:scale-95 focus:outline-none shrink-0" style="color:#8a6030;">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
-                <h1 class="text-sm sm:text-base md:text-xl font-bold text-white capitalize truncate max-w-[130px] sm:max-w-xs md:max-w-none">
+                <h1 class="text-sm sm:text-base md:text-xl font-serif font-bold text-[#f8f4e9] tracking-wide capitalize truncate max-w-[130px] sm:max-w-xs md:max-w-none">
                     <?= $page === 'dashboard' ? 'Dashboard Overview' : str_replace('_', ' ', $page) ?>
                 </h1>
             </div>

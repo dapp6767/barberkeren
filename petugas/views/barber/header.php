@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Barber - Elite Barber</title>
+    <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans-Serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Tailwind CSS -->
@@ -13,17 +18,21 @@
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
                     colors: {
                         adminlte: {
-                            sidebar: '#0e0a08',
-                            bg: '#0a0805',
-                            card: '#1a1208',
-                            primary: '#3d2b1a',
+                            sidebar: '#0d0805',
+                            bg: '#080503',
+                            card: '#160e08',
+                            primary: '#4a321a',
                             success: '#1e3a1e',
-                            warning: '#e8d5a3',
+                            warning: '#e5c158',
                             danger: '#4a1e1e',
                             info: '#1e2a3a',
-                            accent: '#c9a03a',
+                            accent: '#d4af37',
                         }
                     }
                 }

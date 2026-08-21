@@ -256,7 +256,7 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
     <!-- Tabel Users -->
     <div class="bg-[#18120b] rounded-lg border border-white/10 shadow-md overflow-hidden">
         <div class="px-6 py-4 border-b border-white/10 bg-[#22180f]">
-            <h3 class="font-semibold text-amber-100">Daftar Akun Pengguna</h3>
+            <h3 class="font-serif font-bold text-[#f0d375] tracking-wide text-lg">Daftar Akun Pengguna</h3>
         </div>
         <div class="tabulator-wrapper">
             <div class="tabulator-controls">

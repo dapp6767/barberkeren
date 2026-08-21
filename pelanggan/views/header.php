@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elite Barber - Sistem Antrean Langsung</title>
+    <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans-Serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,17 +16,21 @@
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
                     colors: {
                         adminlte: {
-                            sidebar: '#0e0a08',      // Deep dark brown-black
-                            bg: '#0a0805',           // Almost black with brown tint
-                            card: '#1a1208',         // Very dark warm card
-                            primary: '#3d2b1a',      // Dark rich brown
+                            sidebar: '#0d0805',      // Espresso mahogany black
+                            bg: '#080503',           // Dark mahogany
+                            card: '#160e08',         // Dark warm mahogany card
+                            primary: '#4a321a',      // Rich mahogany brown
                             success: '#1e3a1e',
-                            warning: '#e8d5a3',
+                            warning: '#e5c158',
                             danger: '#4a1e1e',
                             info: '#1e2a3a',
-                            accent: '#c9a03a',       // Gold accent
+                            accent: '#d4af37',       // Antique brass accent
                         }
                     }
                 }
