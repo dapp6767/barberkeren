@@ -384,12 +384,12 @@
         </div>
         <div class="tabulator-wrapper"><div class="tabulator-controls"><div class="flex gap-2"><button class="tabulator-btn" onclick="exportData('table-transaksi', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button></div><input type="text" class="tabulator-search" id="search-transaksi" placeholder="Filter rows..."></div><table id="table-transaksi" class="w-full text-left border-collapse"><thead>
                     <tr class="bg-zinc-900/60 text-zinc-300 text-sm border-b border-white/10">
-                        <th class="px-6 py-3.5 font-semibold">ID Transaksi</th>
-                        <th class="px-6 py-3.5 font-semibold">No. Tiket</th>
-                        <th class="px-6 py-3.5 font-semibold">Pelanggan</th>
-                        <th class="px-6 py-3.5 font-semibold">Total Bayar</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-formatter="html">Status</th>
-                        <th class="px-6 py-3.5 font-semibold">Waktu Bayar</th>
+                        <th class="px-6 py-3.5 font-semibold" tabulator-field="id_transaksi" tabulator-formatter="html">ID Transaksi</th>
+                        <th class="px-6 py-3.5 font-semibold" tabulator-field="no_tiket" tabulator-formatter="html">No. Tiket</th>
+                        <th class="px-6 py-3.5 font-semibold" tabulator-field="pelanggan" tabulator-formatter="html">Pelanggan</th>
+                        <th class="px-6 py-3.5 font-semibold" tabulator-field="total_bayar" tabulator-formatter="html">Total Bayar</th>
+                        <th class="px-6 py-3.5 font-semibold" tabulator-field="status" tabulator-formatter="html">Status</th>
+                        <th class="px-6 py-3.5 font-semibold" tabulator-field="waktu_bayar" tabulator-formatter="html">Waktu Bayar</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
