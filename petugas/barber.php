@@ -297,21 +297,48 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         ::-webkit-scrollbar-thumb { background: #3d2b1a; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #c9a03a; }
 
-        /* Mobile Bottom Nav Bar — Matched with Pelanggan UI/UX */
-        .nav-item { color: #78716c; }
+        /* Mobile Bottom Nav Bar — Premium Modern Dark Gold Theme */
+        .nav-item {
+            color: #9ca3af;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
         .nav-item:hover { color: #fcd34d; }
         .nav-item.active { color: #F59E0B; }
-        .nav-item .solid-icon { display: none; }
-        .nav-item .active-pulse { display: none; }
-        .nav-item.active .solid-icon { display: block; }
-        .nav-item.active .active-pulse { display: block; }
+        .nav-item .solid-icon { display: none; filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6)); }
+        .nav-item .outline-icon { display: block; color: #9ca3af; transition: color 0.2s ease, transform 0.2s ease; }
+        .nav-item:hover .outline-icon { color: #fcd34d; transform: translateY(-1px); }
+        .nav-item.active .solid-icon { display: block; animation: iconPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .nav-item.active .outline-icon { display: none; }
+        .nav-item.active .nav-label { color: #F59E0B; font-weight: 700; }
         
-        .nav-item.active .nav-label { color: #F59E0B; }
+        .nav-item .nav-indicator {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0px;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            border-radius: 9999px;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item.active .nav-indicator {
+            opacity: 1;
+            width: 24px;
+        }
         
         /* Profile Image Styles */
         .nav-item.active .profile-img { border-color: #F59E0B; box-shadow: 0 0 12px rgba(245,158,11,0.7); opacity: 1; }
         .nav-item:not(.active) .profile-img { border-color: #57534e; opacity: 0.8; }
+
+        @keyframes iconPop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="text-amber-50 font-sans antialiased overflow-x-hidden flex h-screen">
@@ -351,6 +378,10 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     <i data-lucide="pie-chart" class="w-5 h-5"></i>
                     <span>Statistik (Charts)</span>
                 </a>
+                <a href="javascript:void(0)" onclick="switchBarberTab('tab-kursi', 'kursi', this); if(window.innerWidth<768) toggleMobileSidebar();" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $current_page === 'kursi' ? 'bg-adminlte-primary text-white mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
+                    <i data-lucide="armchair" class="w-5 h-5"></i>
+                    <span>Kursi (Stasiun Kerja)</span>
+                </a>
 
                 <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Sistem</p>
@@ -387,7 +418,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
                 <h1 class="text-base sm:text-xl font-semibold text-white capitalize truncate max-w-[150px] sm:max-w-none">
-                    <?= $current_page === 'dashboard' ? 'Panel Kerja Barber' : ($current_page === 'charts' ? 'Statistik & Analisis Performa' : ($current_page === 'profil' ? 'Profil Barber Saya' : str_replace('_', ' ', $current_page))) ?>
+                    <?= $current_page === 'dashboard' ? 'Panel Kerja Barber' : ($current_page === 'charts' ? 'Statistik & Analisis Performa' : ($current_page === 'kursi' ? 'Stasiun & Manajemen Kursi' : ($current_page === 'profil' ? 'Profil Barber Saya' : str_replace('_', ' ', $current_page)))) ?>
                 </h1>
 
                 <!-- Kursi Tugas Hari Ini Badge -->
@@ -965,6 +996,159 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                         </div>
                     </form>
                 </div>
+            <!-- TAB 4: KURSI & STASIUN KERJA BARBER -->
+            <div id="tab-kursi" class="tab-content <?= $current_page === 'kursi' ? 'active' : '' ?>">
+                <div class="max-w-6xl mx-auto space-y-6">
+                    <!-- Header Banner -->
+                    <div class="p-6 rounded-2xl bg-gradient-to-r from-[#1e1408] via-[#2a1c0a] to-[#120e06] border border-amber-500/30 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 text-2xl shadow-inner">
+                                    💈
+                                </div>
+                                <div>
+                                    <h2 class="text-xl sm:text-2xl font-bold text-amber-100 tracking-tight">Manajemen Stasiun Kursi Barber</h2>
+                                    <p class="text-xs sm:text-sm text-zinc-300">Pilih atau ubah kursi tugas harian Anda agar antrean pelanggan langsung terhubung ke stasiun Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Current Status Badge Card -->
+                        <div class="relative z-10 shrink-0 bg-black/40 border border-amber-500/30 rounded-xl p-4 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                                <i data-lucide="armchair" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] uppercase tracking-wider font-semibold text-zinc-400">Status Tugas Hari Ini</span>
+                                <?php if ($has_selected_chair_today && $barber): ?>
+                                    <div class="text-sm font-bold text-amber-300 flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10B981]"></span>
+                                        <?= htmlspecialchars($barber['kursi']) ?> <span class="text-xs text-emerald-400 font-medium">(Aktif)</span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="text-sm font-bold text-rose-400 flex items-center gap-1.5 animate-pulse">
+                                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                        Belum Memilih Kursi
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chair Cards Grid (Kursi A, B, C) -->
+                    <?php
+                    $chairs_info = [
+                        'Kursi A' => ['letter' => 'A', 'station' => 'Stasiun 1 (Kiri)', 'desc' => 'Stasiun Kiri dekat cermin utama & pencahayaan LED warm.'],
+                        'Kursi B' => ['letter' => 'B', 'station' => 'Stasiun 2 (Tengah)', 'desc' => 'Stasiun Utama (Tengah) dilengkapi dudukan premium hydraulic.'],
+                        'Kursi C' => ['letter' => 'C', 'station' => 'Stasiun 3 (Kanan)', 'desc' => 'Stasiun Kanan dengan akses stopkontak langsung & perlengkapan steril.']
+                    ];
+                    ?>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <?php foreach ($chairs_info as $k_name => $k_info): 
+                            $is_my_chair = ($has_selected_chair_today && isset($barber['kursi']) && $barber['kursi'] === $k_name);
+                            $is_occupied = isset($occupied_chairs[$k_name]);
+                            $occupant_name = $occupied_chairs[$k_name] ?? '';
+                            
+                            // Count queue on this chair today
+                            $chair_letter = $k_info['letter'];
+                            $chair_queue_count = 0;
+                            $chair_waiting_count = 0;
+                            if (isset($queues) && is_array($queues)) {
+                                foreach ($queues as $q_item) {
+                                    if (substr($q_item['ticket_number'] ?? '', 0, 1) === $chair_letter) {
+                                        $chair_queue_count++;
+                                        if (($q_item['status_antrean'] ?? '') === 'waiting') $chair_waiting_count++;
+                                    }
+                                }
+                            }
+                        ?>
+                            <div class="rounded-2xl p-6 transition-all duration-300 relative flex flex-col justify-between overflow-hidden shadow-xl border <?= $is_my_chair ? 'bg-gradient-to-b from-[#2a1c0a] to-[#18120b] border-amber-500 shadow-amber-500/10 ring-2 ring-amber-500/30' : ($is_occupied ? 'bg-[#120e06]/80 border-white/5 opacity-80' : 'bg-[#18120b] border-white/10 hover:border-amber-500/50 hover:-translate-y-1') ?>">
+                                <div>
+                                    <!-- Header Card -->
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-2xl shadow-lg border <?= $is_my_chair ? 'bg-gradient-to-br from-amber-500 to-amber-700 text-amber-950 border-amber-300' : 'bg-zinc-800 text-amber-400 border-white/10' ?>">
+                                                <?= $k_info['letter'] ?>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-white tracking-tight"><?= $k_name ?></h3>
+                                                <p class="text-xs text-amber-400/90 font-medium"><?= $k_info['station'] ?></p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status Badge -->
+                                        <?php if ($is_my_chair): ?>
+                                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold tracking-wide uppercase flex items-center gap-1 shadow">
+                                                ✓ Kursi Anda
+                                            </span>
+                                        <?php elseif ($is_occupied): ?>
+                                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-[10px] font-bold tracking-wide uppercase flex items-center gap-1">
+                                                Terisi
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-semibold tracking-wide uppercase">
+                                                Tersedia
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <p class="text-xs text-zinc-400 mb-4 leading-relaxed"><?= $k_info['desc'] ?></p>
+
+                                    <!-- Metrics for this chair -->
+                                    <div class="grid grid-cols-2 gap-2 mb-5 p-3 rounded-xl bg-black/40 border border-white/5 text-xs">
+                                        <div>
+                                            <span class="text-zinc-500 block text-[10px]">Total Antrean</span>
+                                            <strong class="text-amber-200 font-bold text-sm"><?= $chair_queue_count ?> Tiket</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-zinc-500 block text-[10px]">Menunggu Saat Ini</span>
+                                            <strong class="text-emerald-400 font-bold text-sm"><?= $chair_waiting_count ?> Orang</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Occupant Info -->
+                                    <?php if ($is_occupied && !$is_my_chair): ?>
+                                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-800/30 text-xs text-rose-200 mb-4 flex items-center gap-2">
+                                            <i data-lucide="user-x" class="w-4 h-4 text-rose-400 shrink-0"></i>
+                                            <span>Saat ini dipakai oleh <strong class="text-white"><?= htmlspecialchars($occupant_name) ?></strong></span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <!-- Action Form / Button -->
+                                <div>
+                                    <?php if ($is_my_chair): ?>
+                                        <div class="w-full py-2.5 px-4 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold text-center flex items-center justify-center gap-2">
+                                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Stasiun Bertugas Anda Saat Ini
+                                        </div>
+                                    <?php elseif ($is_occupied): ?>
+                                        <button type="button" disabled class="w-full py-2.5 px-4 rounded-xl bg-zinc-800/80 text-zinc-500 text-xs font-bold cursor-not-allowed border border-zinc-700/50">
+                                            Kursi Sedang Digunakan
+                                        </button>
+                                    <?php else: ?>
+                                        <form action="barber.php?page=kursi" method="POST">
+                                            <input type="hidden" name="action" value="select_kursi">
+                                            <input type="hidden" name="kursi" value="<?= $k_name ?>">
+                                            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-amber-950 font-bold text-xs transition-all shadow-lg shadow-amber-600/30 flex items-center justify-center gap-2 cursor-pointer active:scale-98">
+                                                <i data-lucide="check" class="w-4 h-4"></i> Pilih <?= $k_name ?> Sekarang
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Info & Guidelines Card -->
+                    <div class="p-5 rounded-2xl bg-[#18120b] border border-white/10 shadow-lg text-xs text-zinc-300 space-y-2">
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-1">
+                            <i data-lucide="info" class="w-4 h-4"></i> Petunjuk Stasiun Kerja & Tiket Antrean
+                        </div>
+                        <p>• Pemilihan kursi bertugas bersifat harian (berlaku 24 jam s/d pergantian hari).</p>
+                        <p>• Kode tiket pelanggan dibuat berdasarkan huruf depan kursi: <strong>A-xxx</strong> untuk Kursi A, <strong>B-xxx</strong> untuk Kursi B, dan <strong>C-xxx</strong> untuk Kursi C.</p>
+                        <p>• Jika Anda ingin berpindah stasiun kerja, Anda dapat memilih kursi lain yang tersedia kapan saja dari halaman ini.</p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1315,11 +1499,9 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
     <div id="selectKursiModal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 pb-20 md:pb-4 transition-all duration-300 <?= ($current_page === 'dashboard' && !$has_selected_chair_today) ? '' : 'hidden' ?>">
         <div class="bg-gradient-to-b from-[#1c140b] to-[#120d07] border-2 border-amber-500/40 rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white relative max-h-[85vh] overflow-y-auto">
             
-            <?php if ($has_selected_chair_today): ?>
-                <button type="button" onclick="closeSelectKursiModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            <?php endif; ?>
+            <button type="button" onclick="closeSelectKursiModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors" title="Tutup Modal">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
 
             <div class="text-center mb-6">
                 <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-3xl mx-auto mb-3 shadow-inner">
@@ -1397,19 +1579,30 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         </div>
     </div>
 
-    <!-- Mobile Fixed Bottom Navigation Bar — Identical UI/UX to Pelanggan -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 border-t border-amber-900/40 flex justify-around items-center shadow-2xl transform-gpu"
+    <?php
+        $b_has_custom_pic = false;
+        $b_profile_pic_url = '';
+        if (isset($user_id)) {
+            $b_profile_files = glob(__DIR__ . '/../asset/image/profile_' . $user_id . '.*');
+            if (!empty($b_profile_files)) {
+                $b_has_custom_pic = true;
+                $b_profile_pic_url = '../asset/image/' . basename($b_profile_files[0]) . '?v=' . filemtime($b_profile_files[0]);
+            }
+        }
+    ?>
+    <!-- Mobile Fixed Bottom Navigation Bar — Premium Modern Dark Gold Theme -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 backdrop-blur-md border-t border-amber-500/20 flex justify-around items-center shadow-[0_-4px_25px_rgba(0,0,0,0.8)] transform-gpu"
          style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">
 
         <!-- Panel -->
-        <a href="?page=dashboard" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= ($current_page === 'dashboard' || empty($current_page)) ? 'active' : '' ?>">
+        <a href="?page=dashboard" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= ($current_page === 'dashboard' || empty($current_page)) ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
-            <!-- Solid (Active) -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400 transform -rotate-45">
-                <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zm-3.64 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0-10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM19 3l-6 6 2 2 7-7V3h-3z"/>
+            <!-- Solid (Active Scissors) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M6 2a4 4 0 1 0 2.828 6.828l3.172 3.172-3.172 3.172A4 4 0 1 0 6 22a4 4 0 0 0 2.828-6.828L12 12l5.5-5.5a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 0 1.414-1.414L20.5 5.25a1 1 0 0 0-1.414 0L14 10.343l-2.828-2.828A4 4 0 0 0 6 2zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0 14a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>
             </svg>
-            <!-- Outline (Inactive) -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="outline-icon w-6 h-6 transform -rotate-45">
+            <!-- Outline (Inactive Scissors) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="outline-icon w-6 h-6">
                 <circle cx="6" cy="6" r="3"></circle>
                 <circle cx="6" cy="18" r="3"></circle>
                 <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
@@ -1417,43 +1610,43 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
             </svg>
             <?php if ($total_waiting > 0): ?>
-                <span class="absolute -top-1 -right-1 bg-amber-500 text-amber-950 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                <span class="absolute top-0 right-1 bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg border border-amber-300/40 animate-pulse">
                     <?= $total_waiting ?>
                 </span>
             <?php endif; ?>
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Panel</span>
         </a>
 
         <!-- Statistik -->
-        <a href="?page=charts" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= $current_page === 'charts' ? 'active' : '' ?>">
+        <a href="?page=charts" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $current_page === 'charts' ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
-            <!-- Solid (Active) -->
+            <!-- Solid (Active Charts) -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
                 <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c-1.036 0-1.875.84-1.875 1.875v9.375c0 1.036.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V10.5c0-1.036-.84-1.875-1.875-1.875h-.75zM3 15c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v3c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 18v-3z"/>
             </svg>
-            <!-- Outline (Inactive) -->
+            <!-- Outline (Inactive Charts) -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
             </svg>
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Statistik</span>
         </a>
 
         <!-- Kursi -->
-        <a href="javascript:void(0)" id="btn-nav-kursi" onclick="openSelectKursiModal()" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= (!$has_selected_chair_today && ($current_page === 'dashboard' || empty($current_page))) ? 'active' : '' ?>">
+        <a href="javascript:void(0)" id="btn-nav-kursi" onclick="switchBarberTab('tab-kursi', 'kursi', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= ($current_page === 'kursi' || (!$has_selected_chair_today && ($current_page === 'dashboard' || empty($current_page)))) ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
-            <!-- Solid (Active) -->
+            <!-- Solid (Active Barber Chair) -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
-                <path d="M7 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1H7z" />
-                <path d="M4 12a2 2 0 00-2 2v2a2 2 0 002 2h16a2 2 0 002-2v-2a2 2 0 00-2-2H4z" />
-                <path d="M6 18v3a1 1 0 102 0v-3H6zm10 0v3a1 1 0 102 0v-3h-2z" />
+                <path d="M7 4a2 2 0 0 0-2 2v3h14V6a2 2 0 0 0-2-2H7z"/>
+                <path d="M3 11a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5z"/>
+                <path d="M6 18v2a1 1 0 1 0 2 0v-2H6zm10 0v2a1 1 0 1 0 2 0v-2h-2z"/>
             </svg>
-            <!-- Outline (Inactive) -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 4v7h10V4H7zM4 12h16v4H4v-4zM6 16v4M18 16v4" />
+            <!-- Outline (Inactive Barber Chair) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="outline-icon w-6 h-6">
+                <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"></path>
+                <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v5z"></path>
+                <path d="M5 18v2"></path>
+                <path d="M19 18v2"></path>
             </svg>
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-1 right-3"></span>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">
                 <span>Kursi</span>
                 <?php if ($has_selected_chair_today && $barber): ?>
@@ -1463,16 +1656,30 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         </a>
 
         <!-- Profil -->
-        <a href="javascript:void(0)" onclick="switchBarberTab('tab-profil', 'profil', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-2 min-w-[60px] rounded-xl transition-colors duration-200 relative <?= in_array($current_page, ['profil', 'profile']) ? 'active' : '' ?>">
+        <a href="javascript:void(0)" onclick="switchBarberTab('tab-profil', 'profil', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= in_array($current_page, ['profil', 'profile']) ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
-            <img src="<?= $nav_profile_url ?>" alt="Foto Profil" class="profile-img w-7 h-7 rounded-full object-cover border-2 transition-all">
-            <span class="active-pulse w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#F59E0B] absolute top-0 right-3"></span>
+            <?php if ($b_has_custom_pic): ?>
+                <img src="<?= $b_profile_pic_url ?>" alt="Foto Profil" class="profile-img w-6 h-6 rounded-full object-cover border-2 transition-all">
+            <?php else: ?>
+                <!-- Solid Profile (Active) -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-7 18a7 7 0 0 1 14 0 1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z" />
+                </svg>
+                <!-- Outline Profile (Inactive) -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="outline-icon w-6 h-6">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            <?php endif; ?>
             <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Profil</span>
         </a>
     </nav>
 
     <script>
         function switchBarberTab(targetTabId, pageName, navElement) {
+            // Always close select kursi modal overlay when switching tabs
+            closeSelectKursiModal();
+
             const currentTab = document.querySelector('.tab-content.active');
             const targetTab = document.getElementById(targetTabId);
 
@@ -1521,6 +1728,9 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             } else if (targetTabId === 'tab-charts') {
                 const nav = document.querySelector('.nav-item[onclick*="tab-charts"]');
                 if (nav) nav.classList.add('active');
+            } else if (targetTabId === 'tab-kursi') {
+                const nav = document.getElementById('btn-nav-kursi');
+                if (nav) nav.classList.add('active');
             } else if (targetTabId === 'tab-profil') {
                 const nav = document.querySelector('.nav-item[onclick*="tab-profil"]');
                 if (nav) nav.classList.add('active');
@@ -1542,6 +1752,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             if (headerTitle) {
                 if (pageName === 'dashboard') headerTitle.textContent = 'Panel Kerja Barber';
                 else if (pageName === 'charts') headerTitle.textContent = 'Statistik & Analisis Performa';
+                else if (pageName === 'kursi') headerTitle.textContent = 'Stasiun & Manajemen Kursi';
                 else if (pageName === 'profil') headerTitle.textContent = 'Profil Barber Saya';
             }
         }
@@ -1549,7 +1760,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         window.addEventListener('popstate', function(event) {
             const params = new URLSearchParams(window.location.search);
             const page = params.get('page') || 'dashboard';
-            const tabId = page === 'charts' ? 'tab-charts' : (page === 'profil' ? 'tab-profil' : 'tab-dashboard');
+            const tabId = page === 'charts' ? 'tab-charts' : (page === 'kursi' ? 'tab-kursi' : (page === 'profil' ? 'tab-profil' : 'tab-dashboard'));
             
             const currentTab = document.querySelector('.tab-content.active');
             const targetTab = document.getElementById(tabId);

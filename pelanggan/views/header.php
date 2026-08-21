@@ -242,24 +242,44 @@
 
         /* Mobile Bottom Navigation Item Styles */
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            color: #9ca3af;
-            text-decoration: none;
-            transition: all 0.2s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+            color: #9ca3af; text-decoration: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; padding: 6px 12px; border-radius: 12px;
         }
-        .nav-item .solid-icon { display: none; }
-        .nav-item .outline-icon { display: block; color: #9ca3af; }
-        .nav-item .active-pulse { display: none; }
-        .nav-item .profile-img { border-color: transparent; }
-
-        .nav-item.active .solid-icon { display: block; }
+        .nav-item:hover { color: #fcd34d; }
+        .nav-item .solid-icon { display: none; filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6)); }
+        .nav-item .outline-icon { display: block; color: #9ca3af; transition: color 0.2s ease, transform 0.2s ease; }
+        .nav-item:hover .outline-icon { color: #fcd34d; transform: translateY(-1px); }
+        .nav-item.active .solid-icon { display: block; animation: iconPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .nav-item.active .outline-icon { display: none; }
-        .nav-item.active .active-pulse { display: block; }
         .nav-item.active .nav-label { color: #f59e0b; font-weight: 700; }
-        .nav-item.active .profile-img { border-color: #f59e0b; }
+        
+        .nav-item .nav-indicator {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0px;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            border-radius: 9999px;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item.active .nav-indicator {
+            opacity: 1;
+            width: 24px;
+        }
+        
+        .nav-item .profile-img { border-color: rgba(255, 255, 255, 0.15); transition: all 0.25s ease; }
+        .nav-item.active .profile-img { border-color: #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.7); }
+
+        @keyframes iconPop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="text-amber-50 bg-adminlte-bg font-sans antialiased overflow-x-hidden flex h-screen">
