@@ -1,4 +1,21 @@
 <?php if ($page === 'dashboard' || empty($page)): ?>
+
+<!-- MOBILE QUICK ACTION SHORTCUTS (Visible only on mobile screens < 768px) -->
+<div class="md:hidden mb-4 grid grid-cols-3 gap-2">
+    <button type="button" onclick="openAddLayananModal()" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-gradient-to-b from-[#1f140b] to-[#120b05] border border-[#8c6721]/50 text-amber-300 hover:border-amber-400 active:scale-95 transition-all shadow-md">
+        <i data-lucide="plus-circle" class="w-5 h-5 text-amber-400 mb-1"></i>
+        <span class="text-[11px] font-serif font-bold text-center leading-tight">+ Layanan</span>
+    </button>
+    <button type="button" onclick="openAddUserModal()" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-gradient-to-b from-[#1f140b] to-[#120b05] border border-[#8c6721]/50 text-amber-300 hover:border-amber-400 active:scale-95 transition-all shadow-md">
+        <i data-lucide="user-plus" class="w-5 h-5 text-amber-400 mb-1"></i>
+        <span class="text-[11px] font-serif font-bold text-center leading-tight">+ Akun</span>
+    </button>
+    <a href="?page=antrean" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-gradient-to-b from-[#1f140b] to-[#120b05] border border-[#8c6721]/50 text-amber-300 hover:border-amber-400 active:scale-95 transition-all shadow-md">
+        <i data-lucide="monitor" class="w-5 h-5 text-emerald-400 mb-1"></i>
+        <span class="text-[11px] font-serif font-bold text-center leading-tight">Live Antrean</span>
+    </a>
+</div>
+
 <!-- DASHBOARD METRIC CARDS (LUXURY DARK GOLD THEME CONNECTED TO DB) -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6">
     <!-- Card 1: Antrean Hari Ini -->

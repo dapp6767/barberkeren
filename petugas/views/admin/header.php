@@ -406,5 +406,5 @@
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 page-transition w-full max-w-full min-w-0">
+        <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-24 md:pb-6 page-transition w-full max-w-full min-w-0">
             <?php if (function_exists('display_flash')) display_flash(); ?>
