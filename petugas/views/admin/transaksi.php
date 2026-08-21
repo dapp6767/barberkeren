@@ -399,7 +399,7 @@
                         <?php foreach ($transaksi as $t): ?>
                         <tr class="hover:bg-amber-500/10 transition-colors">
                             <td class="px-6 py-4 font-mono text-amber-200/90 font-medium">#TRX-<?= $t['id'] ?></td>
-                            <td class="px-6 py-4 font-bold text-white"><?= htmlspecialchars($t['no_antrean']) ?></td>
+                            <td class="px-6 py-4 font-bold text-amber-400 font-mono"><?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?></td>
                             <td class="px-6 py-4 text-zinc-200 font-medium"><?= htmlspecialchars($t['pelanggan'] ?? 'Guest') ?></td>
                             <td class="px-6 py-4 text-amber-400 font-bold">Rp <?= number_format($t['total_harga'], 0, ',', '.') ?></td>
                             <td class="px-6 py-4">
