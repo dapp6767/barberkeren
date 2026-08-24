@@ -73,6 +73,27 @@ if (!function_exists('handle_admin_ajax_notifications')) {
                 echo json_encode(['status' => true]);
                 exit;
             }
+            if ($_GET['action'] === 'verify_old_password') {
+                header('Content-Type: application/json');
+                $user_id = $_SESSION['user_id'] ?? 0;
+                $old_pass = $_POST['old_password'] ?? $_GET['old_password'] ?? '';
+                
+                if (empty($user_id) || empty($old_pass)) {
+                    echo json_encode(['status' => false, 'message' => 'Password lama tidak boleh kosong.']);
+                    exit;
+                }
+                
+                $stmt = $pdo->prepare("SELECT password FROM users WHERE id_user = ? LIMIT 1");
+                $stmt->execute([$user_id]);
+                $u = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($u && (password_verify($old_pass, $u['password']) || $old_pass === $u['password'])) {
+                    echo json_encode(['status' => true, 'message' => 'Password lama terverifikasi!']);
+                } else {
+                    echo json_encode(['status' => false, 'message' => 'Password lama Anda tidak sesuai.']);
+                }
+                exit;
+            }
         }
     }
 }
