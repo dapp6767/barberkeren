@@ -268,7 +268,46 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
                 </div>
                 <input type="text" class="tabulator-search" id="search-users" placeholder="Filter rows...">
             </div>
-            <table id="table-users" class="w-full text-left border-collapse">
+            <!-- Mobile Card View (< 768px) -->
+            <div class="md:hidden space-y-3 mb-4">
+                <?php foreach ($users as $u): ?>
+                <div class="bg-[#1a1208] border border-amber-900/40 rounded-xl p-4 shadow-md flex flex-col gap-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h4 class="text-white font-bold text-sm sm:text-base"><?= !empty($u['fullname']) ? htmlspecialchars($u['fullname']) : htmlspecialchars($u['username']) ?></h4>
+                            <span class="text-xs text-amber-300/80 font-mono">@<?= htmlspecialchars($u['username']) ?></span>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $u['role'] === 'admin' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : ($u['role'] === 'barber' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30') ?>">
+                            <?= htmlspecialchars($u['role']) ?>
+                        </span>
+                    </div>
+                    <div class="space-y-1 text-xs text-zinc-300">
+                        <?php if (!empty($u['email'])): ?>
+                            <div class="flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i><span><?= htmlspecialchars($u['email']) ?></span></div>
+                        <?php endif; ?>
+                        <?php if (!empty($u['phone'])): ?>
+                            <div class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i><span><?= htmlspecialchars($u['phone']) ?></span></div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-amber-900/30">
+                        <button type="button" onclick="openEditUserModal(<?= $u['id_user'] ?>, '<?= htmlspecialchars($u['fullname'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['username'], ENT_QUOTES) ?>', '<?= htmlspecialchars($u['email'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['phone'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['role'], ENT_QUOTES) ?>')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-amber-500/20 transition-colors">
+                            <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit Akun
+                        </button>
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="form_type" value="delete_user">
+                            <input type="hidden" name="current_page" value="akun">
+                            <input type="hidden" name="id_user" value="<?= $u['id_user'] ?>">
+                            <button type="submit" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-rose-500/20 transition-colors" onclick="return confirm('Hapus user ini?')">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Desktop Table View (>= 768px) -->
+            <table id="table-users" class="hidden md:table w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-zinc-900/60 text-zinc-300 text-sm border-b border-white/10">
                         <th class="px-4 py-3.5 font-semibold text-center" tabulator-field="no" width="70" tabulator-formatter="rownum">No.</th>

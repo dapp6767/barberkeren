@@ -37,11 +37,11 @@
 </div>
 
 <!-- Modal Tambah Layanan -->
-<div id="addLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
+<div id="addLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-2 sm:p-4 mobile-bottom-sheet">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-full sm:w-[92vw] max-w-[420px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto custom-scroll rounded-t-2xl sm:rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-adminlte-primary"></i> Tambah Layanan</h3>
-            <button onclick="closeAddLayananModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="closeAddLayananModal()" class="text-zinc-400 hover:text-white transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <form action="admin.php" method="POST" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="form_type" value="add_layanan">
@@ -70,8 +70,8 @@
                 <input type="checkbox" name="is_terbaik" id="add_is_terbaik" value="1" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900">
                 <label for="add_is_terbaik" class="text-xs font-semibold text-amber-400 cursor-pointer select-none">Tandai sebagai Layanan TERBAIK (Badge "TERBAIK")</label>
             </div>
-            <div class="pt-2">
-                <button type="submit" class="w-full bg-adminlte-primary hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2">
+            <div class="pt-2 sticky bottom-0 bg-[#160e08] pb-1">
+                <button type="submit" class="w-full bg-adminlte-primary hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2 shadow-lg">
                     <i data-lucide="save" class="w-4 h-4"></i> Simpan Layanan
                 </button>
             </div>
@@ -80,11 +80,11 @@
 </div>
 
 <!-- Modal Edit Layanan -->
-<div id="editLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
+<div id="editLayananModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-2 sm:p-4 mobile-bottom-sheet">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-full sm:w-[92vw] max-w-[420px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto custom-scroll rounded-t-2xl sm:rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="edit" class="w-5 h-5 text-blue-400"></i> Edit Layanan</h3>
-            <button onclick="closeEditLayananModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="closeEditLayananModal()" class="text-zinc-400 hover:text-white transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <form action="admin.php" method="POST" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="form_type" value="edit_layanan">
@@ -114,8 +114,8 @@
                 <input type="checkbox" name="is_terbaik" id="edit_is_terbaik" value="1" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900">
                 <label for="edit_is_terbaik" class="text-xs font-semibold text-amber-400 cursor-pointer select-none">Tandai sebagai Layanan TERBAIK (Badge "TERBAIK")</label>
             </div>
-            <div class="pt-2">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2">
+            <div class="pt-2 sticky bottom-0 bg-[#160e08] pb-1">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2 shadow-lg">
                     <i data-lucide="save" class="w-4 h-4"></i> Update Layanan
                 </button>
             </div>
@@ -124,11 +124,11 @@
 </div>
 
 <!-- Modal Tambah Akun -->
-<div id="addUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
+<div id="addUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-2 sm:p-4 mobile-bottom-sheet">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-full sm:w-[92vw] max-w-[420px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto custom-scroll rounded-t-2xl sm:rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="user-plus" class="w-5 h-5 text-adminlte-primary"></i> Tambah User Baru</h3>
-            <button onclick="closeAddUserModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="closeAddUserModal()" class="text-zinc-400 hover:text-white transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <form action="admin.php" method="POST" class="space-y-4">
             <input type="hidden" name="form_type" value="add_user">
@@ -161,8 +161,8 @@
                     <option value="pelanggan">Pelanggan</option>
                 </select>
             </div>
-            <div class="pt-2">
-                <button type="submit" class="w-full bg-adminlte-primary hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2">
+            <div class="pt-2 sticky bottom-0 bg-[#160e08] pb-1">
+                <button type="submit" class="w-full bg-adminlte-primary hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2 shadow-lg">
                     <i data-lucide="save" class="w-4 h-4"></i> Simpan User
                 </button>
             </div>
@@ -171,11 +171,11 @@
 </div>
 
 <!-- Modal Edit Akun -->
-<div id="editUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-4">
-    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-[92vw] max-w-[420px] max-h-[90vh] overflow-y-auto custom-scroll rounded-lg shadow-2xl">
+<div id="editUserModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-[9999] p-2 sm:p-4 mobile-bottom-sheet">
+    <div class="bg-adminlte-card border border-zinc-700 text-zinc-200 p-4 sm:p-6 w-full sm:w-[92vw] max-w-[420px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto custom-scroll rounded-t-2xl sm:rounded-lg shadow-2xl">
         <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-3">
             <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="edit" class="w-5 h-5 text-blue-400"></i> Edit User</h3>
-            <button onclick="closeEditUserModal()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="closeEditUserModal()" class="text-zinc-400 hover:text-white transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <form action="admin.php" method="POST" class="space-y-4">
             <input type="hidden" name="form_type" value="edit_user">
@@ -209,8 +209,8 @@
                 <label class="block text-sm font-medium text-zinc-400 mb-1">Password Baru (Biarkan kosong jika tidak diganti)</label>
                 <input type="password" name="password" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary" placeholder="••••••••">
             </div>
-            <div class="pt-2">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2">
+            <div class="pt-2 sticky bottom-0 bg-[#160e08] pb-1">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition-colors flex justify-center items-center gap-2 shadow-lg">
                     <i data-lucide="save" class="w-4 h-4"></i> Update User
                 </button>
             </div>

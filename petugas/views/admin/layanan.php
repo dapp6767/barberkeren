@@ -46,7 +46,61 @@
                 </div>
                 <input type="text" class="tabulator-search" id="search-layanan" placeholder="Filter rows...">
             </div>
-            <table id="table-layanan" class="w-full text-left border-collapse display">
+            <!-- Mobile Card View (< 768px) -->
+            <div class="md:hidden space-y-3 mb-4">
+                <?php foreach ($layanan as $l): 
+                    $files = glob(__DIR__ . '/../../asset/image/layanan_' . $l['id'] . '.*');
+                    $nama_lower = strtolower($l['nama_layanan']);
+                    $default_images = [
+                        'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                        'pangkas rambut luar biasa' => '../asset/image/maxcut.png',
+                        'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                        'maxcut' => '../asset/image/maxcut.png',
+                        'hair coloring' => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        'hairlight' => '../asset/image/hairlight.png',
+                        'full hairlight' => '../asset/image/full_hairlight.png',
+                        'hair tattoo' => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        'shave' => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        'korean wave' => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                    ];
+                    $img_url = !empty($files) ? '../asset/image/' . basename($files[0]) : ($default_images[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+                    $desc_text = !empty(trim($l['deskripsi'] ?? '')) ? htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], addslashes($l['deskripsi'])), ENT_QUOTES) : 'Belum ada informasi tambahan untuk layanan ini.';
+                ?>
+                <div class="bg-[#1a1208] border border-amber-900/40 rounded-xl p-4 shadow-md flex flex-col gap-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-white font-bold text-sm sm:text-base"><?= htmlspecialchars($l['nama_layanan']) ?></span>
+                                <?php if (!empty($l['is_terbaik'])): ?>
+                                    <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Terbaik</span>
+                                <?php endif; ?>
+                            </div>
+                            <span class="text-xs text-amber-400/90 font-medium block mt-1"><i data-lucide="clock" class="w-3 h-3 inline mr-1"></i><?= htmlspecialchars($l['durasi'] ?? 0) ?> Menit</span>
+                        </div>
+                        <span class="text-amber-300 font-extrabold text-sm sm:text-base whitespace-nowrap bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-lg">Rp <?= number_format($l['harga'], 0, ',', '.') ?></span>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-amber-900/30">
+                        <button type="button" onclick="openDescModal('<?= htmlspecialchars(addslashes($l['nama_layanan']), ENT_QUOTES) ?>', '<?= $desc_text ?>', '<?= htmlspecialchars($l['durasi'] ?? 0) ?>', 'Rp <?= number_format($l['harga'], 0, ',', '.') ?>', '<?= $img_url ?>')" class="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-blue-500/20 transition-colors">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail
+                        </button>
+                        <button type="button" onclick="openEditLayananModal(<?= $l['id'] ?>, '<?= htmlspecialchars($l['nama_layanan'], ENT_QUOTES) ?>', <?= $l['harga'] ?>, <?= $l['durasi'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], $l['deskripsi'] ?? ''), ENT_QUOTES) ?>', <?= (int)($l['is_terbaik'] ?? 0) ?>)" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-amber-500/20 transition-colors">
+                            <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+                        </button>
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="form_type" value="delete_layanan">
+                            <input type="hidden" name="current_page" value="layanan">
+                            <input type="hidden" name="id" value="<?= $l['id'] ?>">
+                            <button type="submit" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-rose-500/20 transition-colors" onclick="return confirm('Hapus layanan ini?')">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Desktop Table View (>= 768px) -->
+            <table id="table-layanan" class="hidden md:table w-full text-left border-collapse display">
                 <thead>
                     <tr class="bg-zinc-800/50 text-zinc-400 text-sm border-b border-zinc-700">
                         <th class="px-4 py-3 font-medium text-center" tabulator-field="no" width="70" tabulator-formatter="rownum">No.</th>

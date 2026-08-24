@@ -317,6 +317,29 @@
         ::-webkit-scrollbar-track { background: #0e0a08; }
         ::-webkit-scrollbar-thumb { background: #3d2b1a; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #c9a03a; }
+
+        /* Mobile Utility & Bottom Sheet Adjustments */
+        @media (max-width: 767px) {
+            .mobile-bottom-sheet {
+                align-items: flex-end !important;
+                padding: 0 !important;
+            }
+            .mobile-bottom-sheet > div {
+                border-bottom-left-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+                border-top-left-radius: 1.25rem !important;
+                border-top-right-radius: 1.25rem !important;
+                max-height: 88vh !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .tabulator-wrapper {
+                padding: 0.5rem !important;
+            }
+            .stat-card {
+                padding: 0.875rem !important;
+            }
+        }
     </style>
 </head>
 <body class="text-amber-50 font-sans antialiased overflow-x-hidden flex h-screen">

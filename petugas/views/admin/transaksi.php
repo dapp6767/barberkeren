@@ -392,7 +392,40 @@
         <div class="px-6 py-4 border-b border-white/10 bg-[#22180f]">
             <h3 class="font-serif font-bold text-[#f0d375] tracking-wide text-lg">Laporan Riwayat Transaksi Lunas</h3>
         </div>
-        <div class="tabulator-wrapper"><div class="tabulator-controls"><div class="flex gap-2"><button class="tabulator-btn" onclick="exportData('table-transaksi', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button></div><input type="text" class="tabulator-search" id="search-transaksi" placeholder="Filter rows..."></div><table id="table-transaksi" class="w-full text-left border-collapse"><thead>
+        <div class="tabulator-wrapper"><div class="tabulator-controls"><div class="flex gap-2"><button class="tabulator-btn" onclick="exportData('table-transaksi', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button></div><input type="text" class="tabulator-search" id="search-transaksi" placeholder="Filter rows..."></div>
+            <!-- Mobile Card View (< 768px) -->
+            <div class="md:hidden space-y-3 mb-4 p-4">
+                <?php if (empty($transaksi)): ?>
+                    <div class="text-center py-6 text-zinc-400 text-xs">Belum ada data transaksi lunas.</div>
+                <?php else: ?>
+                    <?php foreach ($transaksi as $t): ?>
+                    <div class="bg-[#1a1208] border border-amber-900/40 rounded-xl p-4 shadow-md flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between border-b border-amber-900/30 pb-2">
+                            <span class="font-mono text-xs font-bold text-amber-200/90">#TRX-<?= $t['id'] ?></span>
+                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                                <?= strtoupper($t['status_pembayaran']) ?>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="text-white font-bold text-sm"><?= htmlspecialchars($t['pelanggan'] ?? 'Guest') ?></h5>
+                                <span class="text-xs text-amber-400/90 font-mono">Tiket: <?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?></span>
+                            </div>
+                            <span class="text-amber-300 font-extrabold text-sm sm:text-base">Rp <?= number_format($t['total_harga'], 0, ',', '.') ?></span>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-amber-900/30">
+                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-amber-400"></i> <?= $t['waktu_bayar'] ?></span>
+                            <button type="button" onclick="printStruk('<?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?>', '<?= htmlspecialchars(addslashes($t['pelanggan'] ?? 'Guest')) ?>', '<?= htmlspecialchars(addslashes($t['layanan_list'] ?? 'Layanan Barber')) ?>', <?= $t['total_harga'] ?>, '<?= htmlspecialchars($t['metode_pembayaran'] ?? 'Cash') ?>', <?= $t['antrian_id'] ?? 'null' ?>)" class="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30">
+                                <i data-lucide="printer" class="w-3 h-3"></i> Cetak Struk
+                            </button>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <!-- Desktop Table View (>= 768px) -->
+            <table id="table-transaksi" class="hidden md:table w-full text-left border-collapse"><thead>
                     <tr class="bg-zinc-900/60 text-zinc-300 text-sm border-b border-white/10">
                         <th class="px-6 py-3.5 font-semibold" tabulator-field="id_transaksi" tabulator-formatter="html">ID Transaksi</th>
                         <th class="px-6 py-3.5 font-semibold" tabulator-field="no_tiket" tabulator-formatter="html">No. Tiket</th>

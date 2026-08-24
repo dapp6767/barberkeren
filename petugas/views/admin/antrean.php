@@ -130,16 +130,25 @@
                     </div>
                 </div>
 
-                <!-- Bottom Row: Barber & Estimated Wait Time -->
-                <div class="flex justify-between items-center text-xs text-zinc-400 pt-2 border-t border-white/5">
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="scissors" class="w-3.5 h-3.5 text-amber-400"></i>
-                        <span>Barber: <?= htmlspecialchars($q['barber_name'] ?? 'Bebas') ?></span>
+                <!-- Bottom Row: Barber, Estimated Wait Time & Action -->
+                <div class="flex flex-wrap justify-between items-center text-xs text-zinc-400 pt-2 border-t border-white/5 gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="scissors" class="w-3.5 h-3.5 text-amber-400"></i>
+                            <span><?= htmlspecialchars($q['barber_name'] ?? 'Bebas') ?></span>
+                        </div>
+                        <div class="flex items-center gap-1 text-amber-300/90 font-mono">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                            <span><?= (int)$q['estimated_wait_min'] ?>m</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-1 text-amber-300/90 font-mono">
-                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                        <span><?= (int)$q['estimated_wait_min'] ?> Menit Est.</span>
-                    </div>
+                    <form method="POST" action="" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus/membatalkan antrean ini?');">
+                        <input type="hidden" name="form_type" value="delete_antrian">
+                        <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
+                        <button type="submit" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[11px] font-medium transition-all flex items-center gap-1" title="Hapus Antrean">
+                            <i data-lucide="trash-2" class="w-3 h-3 text-rose-400"></i> Hapus
+                        </button>
+                    </form>
                 </div>
             </div>
             <?php endforeach; ?>
