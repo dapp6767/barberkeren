@@ -470,7 +470,17 @@
                     </button>
 
                     <!-- Profile Dropdown Menu -->
-                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl divide-y divide-amber-900/40">
+                        <div class="p-3 bg-[#1e1408]">
+                            <span class="text-xs font-bold text-amber-200 block truncate"><?= htmlspecialchars($current_user['fullname'] ?: $current_user['username']) ?></span>
+                            <span class="text-[10px] text-amber-400/80 font-mono capitalize">Role: <?= htmlspecialchars($_SESSION['role'] ?? 'admin') ?></span>
+                        </div>
+                        <div class="py-1">
+                            <a href="?page=profil" class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-amber-200 hover:bg-amber-500/20 hover:text-amber-100 transition-colors">
+                                <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+                                <span>Profil Saya</span>
+                            </a>
+                        </div>
                         <div class="py-1 bg-rose-950/10">
                             <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
                                 <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
