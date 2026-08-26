@@ -39,8 +39,10 @@ if (!function_exists('handle_crud_layanan')) {
             $durasi = (int)($_POST['durasi'] ?? 0);
             $deskripsi = trim($_POST['deskripsi'] ?? '');
             $is_terbaik = isset($_POST['is_terbaik']) ? 1 : 0;
-            $stmt = $pdo->prepare("INSERT INTO layanan (nama_layanan, harga, durasi, deskripsi, is_terbaik) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$nama_layanan, $harga, $durasi, $deskripsi, $is_terbaik]);
+            $gambar_url = trim($_POST['gambar_url'] ?? '');
+
+            $stmt = $pdo->prepare("INSERT INTO layanan (nama_layanan, harga, durasi, deskripsi, is_terbaik, gambar) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$nama_layanan, $harga, $durasi, $deskripsi, $is_terbaik, $gambar_url]);
             $lastId = $pdo->lastInsertId();
             
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
@@ -69,10 +71,16 @@ if (!function_exists('handle_crud_layanan')) {
             $durasi = (int)($_POST['durasi'] ?? 0);
             $deskripsi = trim($_POST['deskripsi'] ?? '');
             $is_terbaik = isset($_POST['is_terbaik']) ? 1 : 0;
+            $gambar_url = trim($_POST['gambar_url'] ?? '');
             
             $stmt = $pdo->prepare("UPDATE layanan SET nama_layanan = ?, harga = ?, durasi = ?, deskripsi = ?, is_terbaik = ? WHERE id = ?");
             $stmt->execute([$nama_layanan, $harga, $durasi, $deskripsi, $is_terbaik, $id]);
             
+            if (!empty($gambar_url)) {
+                $stmtImgUrl = $pdo->prepare("UPDATE layanan SET gambar = ? WHERE id = ?");
+                $stmtImgUrl->execute([$gambar_url, $id]);
+            }
+
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
                 $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
                 $filename = 'layanan_' . $id . '.' . strtolower($ext);

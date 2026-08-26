@@ -17,7 +17,7 @@
         }
     }
 
-    function openEditLayananModal(id, name, price, durasi, deskripsi, is_terbaik = 0) {
+    function openEditLayananModal(id, name, price, durasi, deskripsi, is_terbaik = 0, gambar_url = '') {
         document.getElementById('editLayananModal').style.display = 'flex';
         document.body.style.overflow = 'hidden';
         document.getElementById('edit_layanan_id').value = id;
@@ -25,6 +25,8 @@
         document.getElementById('edit_layanan_harga').value = price;
         document.getElementById('edit_layanan_durasi').value = durasi;
         document.getElementById('edit_layanan_deskripsi').value = deskripsi;
+        const gInput = document.getElementById('edit_layanan_gambar_url');
+        if (gInput) gInput.value = gambar_url;
         const cb = document.getElementById('edit_is_terbaik');
         if (cb) cb.checked = (parseInt(is_terbaik) === 1);
     }

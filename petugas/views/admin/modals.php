@@ -63,8 +63,9 @@
                 <textarea name="deskripsi" rows="3" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary" placeholder="Fitur layanan (pisahkan dengan Enter)"></textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-zinc-400 mb-1">Gambar Layanan</label>
-                <input type="file" name="gambar" accept="image/*" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-adminlte-primary file:text-white hover:file:bg-blue-600">
+                <label class="block text-sm font-medium text-zinc-400 mb-1">Gambar Layanan (Upload File atau URL)</label>
+                <input type="file" name="gambar" accept="image/*" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-adminlte-primary file:text-white hover:file:bg-blue-600 mb-2">
+                <input type="text" name="gambar_url" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white text-xs focus:outline-none focus:border-adminlte-primary" placeholder="Atau tempel URL gambar / path (misal: asset/image/keren.jpg atau https://...)">
             </div>
             <div class="flex items-center gap-2 pt-1 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-md">
                 <input type="checkbox" name="is_terbaik" id="add_is_terbaik" value="1" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900">
@@ -107,8 +108,9 @@
                 <textarea name="deskripsi" id="edit_layanan_deskripsi" rows="3" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary" placeholder="Fitur layanan (pisahkan dengan Enter)"></textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-zinc-400 mb-1">Update Gambar Layanan (Biarkan kosong jika tidak diubah)</label>
-                <input type="file" name="gambar" accept="image/*" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600">
+                <label class="block text-sm font-medium text-zinc-400 mb-1">Update Gambar Layanan (Upload File atau URL Database)</label>
+                <input type="file" name="gambar" accept="image/*" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-adminlte-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 mb-2">
+                <input type="text" name="gambar_url" id="edit_layanan_gambar_url" class="w-full bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white text-xs focus:outline-none focus:border-adminlte-primary" placeholder="Atau ketik/tempel URL/Path Gambar di Database (misal: asset/image/keren.jpg atau https://...)">
             </div>
             <div class="flex items-center gap-2 pt-1 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-md">
                 <input type="checkbox" name="is_terbaik" id="edit_is_terbaik" value="1" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900">

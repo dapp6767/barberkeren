@@ -204,23 +204,30 @@ if (!function_exists('create_admin_notification')) {
 }
 
 /**
- * Get Service Image URL consistently across Index, Pelanggan, and Admin
+ * Get Service Image URL consistently across Index, Pelanggan, and Admin (Fully Dynamic from DB)
  */
 if (!function_exists('get_service_image_url')) {
     function get_service_image_url($layanan, $prefix = '') {
         $id = (int)($layanan['id'] ?? $layanan['id_service'] ?? 0);
-        $name = trim(strtolower($layanan['nama_layanan'] ?? $layanan['service_name'] ?? ''));
         $db_gambar = trim($layanan['gambar'] ?? '');
 
-        // 1. DB gambar column
+        // 1. DB gambar column (full URL or relative filename)
         if (!empty($db_gambar)) {
-            $local_path = __DIR__ . '/../asset/image/' . $db_gambar;
-            if (is_file($local_path)) {
-                return $prefix . 'asset/image/' . $db_gambar;
+            if (preg_match('/^https?:\/\//i', $db_gambar) || strpos($db_gambar, 'data:') === 0) {
+                return $db_gambar;
             }
+            // Strip leading ./ or ../ if present
+            $clean_path = preg_replace('/^(\.\.\/|\.\/)+/', '', $db_gambar);
+            if (file_exists(__DIR__ . '/../' . $clean_path)) {
+                return $prefix . $clean_path;
+            }
+            if (file_exists(__DIR__ . '/../asset/image/' . $clean_path)) {
+                return $prefix . 'asset/image/' . $clean_path;
+            }
+            return $prefix . $clean_path;
         }
 
-        // 2. Check glob for layanan_{id}.*
+        // 2. Check glob for uploaded file layanan_{id}.*
         if ($id > 0) {
             $files = glob(__DIR__ . '/../asset/image/layanan_' . $id . '.*');
             if (!empty($files)) {
@@ -228,23 +235,12 @@ if (!function_exists('get_service_image_url')) {
             }
         }
 
-        // 3. Fallback default images mapping
-        $default_images = [
-            'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'maxcut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'hair coloring' => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            'hairlight' => $prefix . 'asset/image/hairlight.png',
-            'full hairlight' => $prefix . 'asset/image/full_hairlight.png',
-            'hair tattoo' => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            'shave' => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            'korean wave' => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-        ];
+        // 3. Fallback default
+        if (file_exists(__DIR__ . '/../asset/image/keren.jpg')) {
+            return $prefix . 'asset/image/keren.jpg';
+        }
 
-        return $default_images[$name] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+        return 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
     }
 }
 ?>
