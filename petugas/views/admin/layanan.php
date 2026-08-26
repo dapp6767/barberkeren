@@ -49,23 +49,7 @@
             <!-- Mobile Card View (< 768px) -->
             <div class="md:hidden space-y-3 mb-4">
                 <?php foreach ($layanan as $l): 
-                    $files = glob(__DIR__ . '/../../asset/image/layanan_' . $l['id'] . '.*');
-                    $nama_lower = trim(strtolower($l['nama_layanan']));
-                    $default_images = [
-                        'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        'maxcut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        'hair coloring' => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                        'hairlight' => '../asset/image/hairlight.png',
-                        'full hairlight' => '../asset/image/full_hairlight.png',
-                        'hair tattoo' => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                        'shave' => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                        'korean wave' => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    ];
-                    $img_url = !empty($files) ? '../asset/image/' . basename($files[0]) : ($default_images[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+                    $img_url = get_service_image_url($l, '../');
                     $desc_text = !empty(trim($l['deskripsi'] ?? '')) ? htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], addslashes($l['deskripsi'])), ENT_QUOTES) : 'Belum ada informasi tambahan untuk layanan ini.';
                 ?>
                 <div class="bg-[#1a1208] border border-amber-900/40 rounded-xl p-4 shadow-md flex flex-col gap-3">
@@ -130,23 +114,7 @@
                                 <span class="font-medium">Rp <?= number_format($l['harga'], 0, ',', '.') ?></span>
                                 <div class="flex items-center gap-2">
                                 <?php 
-                                    $files = glob(__DIR__ . '/../../asset/image/layanan_' . $l['id'] . '.*');
-                                    $nama_lower = trim(strtolower($l['nama_layanan']));
-                                    $default_images = [
-                                        'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                        'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                        'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                        'maxcut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                        'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                        'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                        'hair coloring' => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                                        'hairlight' => '../asset/image/hairlight.png',
-                                        'full hairlight' => '../asset/image/full_hairlight.png',
-                                        'hair tattoo' => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                                        'shave' => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                                        'korean wave' => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                                    ];
-                                    $img_url = !empty($files) ? '../asset/image/' . basename($files[0]) : ($default_images[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+                                    $img_url = get_service_image_url($l, '../');
                                     $desc_text = !empty(trim($l['deskripsi'] ?? '')) ? htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], addslashes($l['deskripsi'])), ENT_QUOTES) : 'Belum ada informasi tambahan untuk layanan ini.';
                                 ?>
                                     <button type="button" onclick="openDescModal('<?= htmlspecialchars(addslashes($l['nama_layanan']), ENT_QUOTES) ?>', '<?= $desc_text ?>', '<?= htmlspecialchars($l['durasi'] ?? 0) ?>', 'Rp <?= number_format($l['harga'], 0, ',', '.') ?>', '<?= $img_url ?>')" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-400/10 transition-colors" title="Lihat Lebih Lengkap">

@@ -63,10 +63,7 @@
                 $s_durasi = '45 Menit';
             }
 
-            $files = glob(__DIR__ . "/../../asset/image/layanan_{$s_id}.*");
-            $img = !empty($files)
-                ? '../asset/image/' . basename($files[0])
-                : ($default_images_layanan[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            $img = get_service_image_url($srv, '../');
 
             $price_formatted = 'Rp ' . number_format($s_price, 0, ',', '.');
         ?>

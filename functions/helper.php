@@ -202,4 +202,49 @@ if (!function_exists('create_admin_notification')) {
         return false;
     }
 }
+
+/**
+ * Get Service Image URL consistently across Index, Pelanggan, and Admin
+ */
+if (!function_exists('get_service_image_url')) {
+    function get_service_image_url($layanan, $prefix = '') {
+        $id = (int)($layanan['id'] ?? $layanan['id_service'] ?? 0);
+        $name = trim(strtolower($layanan['nama_layanan'] ?? $layanan['service_name'] ?? ''));
+        $db_gambar = trim($layanan['gambar'] ?? '');
+
+        // 1. DB gambar column
+        if (!empty($db_gambar)) {
+            $local_path = __DIR__ . '/../asset/image/' . $db_gambar;
+            if (is_file($local_path)) {
+                return $prefix . 'asset/image/' . $db_gambar;
+            }
+        }
+
+        // 2. Check glob for layanan_{id}.*
+        if ($id > 0) {
+            $files = glob(__DIR__ . '/../asset/image/layanan_' . $id . '.*');
+            if (!empty($files)) {
+                return $prefix . 'asset/image/' . basename($files[0]);
+            }
+        }
+
+        // 3. Fallback default images mapping
+        $default_images = [
+            'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'maxcut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'hair coloring' => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'hairlight' => $prefix . 'asset/image/hairlight.png',
+            'full hairlight' => $prefix . 'asset/image/full_hairlight.png',
+            'hair tattoo' => 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'shave' => 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            'korean wave' => 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+        ];
+
+        return $default_images[$name] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    }
+}
 ?>

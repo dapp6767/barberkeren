@@ -25,6 +25,14 @@ if (!function_exists('handle_crud_layanan')) {
     function handle_crud_layanan($type) {
         $pdo = get_koneksi();
 
+        // Ensure gambar column exists
+        try {
+            $chkGmb = $pdo->query("SHOW COLUMNS FROM layanan LIKE 'gambar'");
+            if (!$chkGmb || $chkGmb->rowCount() === 0) {
+                $pdo->exec("ALTER TABLE layanan ADD COLUMN gambar VARCHAR(255) DEFAULT NULL");
+            }
+        } catch (Exception $e) {}
+
         if ($type === 'add_layanan') {
             $nama_layanan = trim($_POST['nama_layanan']);
             $harga = (float)$_POST['harga'];
@@ -37,8 +45,12 @@ if (!function_exists('handle_crud_layanan')) {
             
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
                 $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
-                $dest = __DIR__ . '/../asset/image/layanan_' . $lastId . '.' . $ext;
-                move_uploaded_file($_FILES['gambar']['tmp_name'], $dest);
+                $filename = 'layanan_' . $lastId . '.' . strtolower($ext);
+                $dest = __DIR__ . '/../asset/image/' . $filename;
+                if (move_uploaded_file($_FILES['gambar']['tmp_name'], $dest)) {
+                    $stmtImg = $pdo->prepare("UPDATE layanan SET gambar = ? WHERE id = ?");
+                    $stmtImg->execute([$filename, $lastId]);
+                }
             }
             if (function_exists('create_admin_notification')) {
                 create_admin_notification(
@@ -63,10 +75,14 @@ if (!function_exists('handle_crud_layanan')) {
             
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
                 $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
-                $dest = __DIR__ . '/../asset/image/layanan_' . $id . '.' . $ext;
+                $filename = 'layanan_' . $id . '.' . strtolower($ext);
+                $dest = __DIR__ . '/../asset/image/' . $filename;
                 $oldFiles = glob(__DIR__ . '/../asset/image/layanan_' . $id . '.*');
                 foreach ($oldFiles as $f) { if (is_file($f)) unlink($f); }
-                move_uploaded_file($_FILES['gambar']['tmp_name'], $dest);
+                if (move_uploaded_file($_FILES['gambar']['tmp_name'], $dest)) {
+                    $stmtImg = $pdo->prepare("UPDATE layanan SET gambar = ? WHERE id = ?");
+                    $stmtImg->execute([$filename, $id]);
+                }
             }
             
             set_flash('success', 'Layanan berhasil diupdate!');
