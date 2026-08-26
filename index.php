@@ -438,9 +438,9 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                             $nama_lower = strtolower($p['nama_layanan']);
                             $default_images = [
                                 'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'pangkas rambut luar biasa' => 'asset/image/maxcut.png',
+                                'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                                 'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'maxcut' => 'asset/image/maxcut.png',
+                                'maxcut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                                 'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                                 'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                             ];
