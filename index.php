@@ -441,8 +441,8 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                                 'pangkas rambut luar biasa' => 'asset/image/maxcut.png',
                                 'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                                 'maxcut' => 'asset/image/maxcut.png',
-                                'paket cukur sultan' => 'asset/image/layanan_10.jpg',
-                                'paket cukur segar' => 'asset/image/layanan_10.jpg',
+                                'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                                'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                             ];
                             $img = !empty($files) ? 'asset/image/' . basename($files[0]) : ($default_images[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
                             $features = array_filter(array_map('trim', explode("\n", $p['deskripsi'])));
