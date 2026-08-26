@@ -21,12 +21,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="service-list-container">
         <?php 
         $default_images_layanan = [
-            'pangkas rambut biasa'      => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'pridecut'                  => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'maxcut'                    => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'paket cukur sultan'        => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            'paket cukur segar'         => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'pangkas rambut biasa'      => '../asset/image/keren.jpg',
+            'pangkas rambut luar biasa' => '../asset/image/keren.jpg',
+            'pridecut'                  => '../asset/image/keren.jpg',
+            'maxcut'                    => '../asset/image/keren.jpg',
+            'paket cukur sultan'        => '../asset/image/keren.jpg',
+            'paket cukur segar'         => '../asset/image/keren.jpg',
             'hair coloring'             => 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
             'hairlight'                 => '../asset/image/hairlight.png',
             'full hairlight'            => '../asset/image/full_hairlight.png',
@@ -66,7 +66,7 @@
             $files = glob(__DIR__ . "/../../asset/image/layanan_{$s_id}.*");
             $img = !empty($files)
                 ? '../asset/image/' . basename($files[0])
-                : ($default_images_layanan[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+                : ($default_images_layanan[$nama_lower] ?? '../asset/image/keren.jpg');
 
             $price_formatted = 'Rp ' . number_format($s_price, 0, ',', '.');
         ?>

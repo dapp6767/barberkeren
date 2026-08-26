@@ -437,14 +437,14 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                             $files = glob(__DIR__ . "/asset/image/layanan_{$p['id']}.*");
                             $nama_lower = strtolower($p['nama_layanan']);
                             $default_images = [
-                                'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'pangkas rambut luar biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'pridecut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'maxcut' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'paket cukur sultan' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                                'paket cukur segar' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                                'pangkas rambut biasa' => 'asset/image/keren.jpg',
+                                'pangkas rambut luar biasa' => 'asset/image/keren.jpg',
+                                'pridecut' => 'asset/image/keren.jpg',
+                                'maxcut' => 'asset/image/keren.jpg',
+                                'paket cukur sultan' => 'asset/image/keren.jpg',
+                                'paket cukur segar' => 'asset/image/keren.jpg',
                             ];
-                            $img = !empty($files) ? 'asset/image/' . basename($files[0]) : ($default_images[$nama_lower] ?? 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+                            $img = !empty($files) ? 'asset/image/' . basename($files[0]) : ($default_images[$nama_lower] ?? 'asset/image/keren.jpg');
                             $features = array_filter(array_map('trim', explode("\n", $p['deskripsi'])));
                         ?>
                         <div class="snap-start shrink-0 w-[350px] md:w-[450px] group relative bg-zinc-900/30 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-500 flex flex-col backdrop-blur-sm">
