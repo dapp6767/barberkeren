@@ -210,5 +210,7 @@ switch ($page) {
         break;
 }
 
+echo '</main>';
+
 require_once __DIR__ . '/views/admin/modals.php';
 require_once __DIR__ . '/views/admin/footer.php';

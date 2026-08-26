@@ -19,6 +19,7 @@
 
     function openEditLayananModal(id, name, price, durasi, deskripsi, is_terbaik = 0) {
         document.getElementById('editLayananModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         document.getElementById('edit_layanan_id').value = id;
         document.getElementById('edit_layanan_nama').value = name;
         document.getElementById('edit_layanan_harga').value = price;
@@ -30,18 +31,22 @@
 
     function closeEditLayananModal() {
         document.getElementById('editLayananModal').style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     function openAddUserModal() {
         document.getElementById('addUserModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
 
     function closeAddUserModal() {
         document.getElementById('addUserModal').style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     function openEditUserModal(id, fullname, username, email, phone, role) {
         document.getElementById('editUserModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         document.getElementById('edit_user_id').value = id;
         document.getElementById('edit_user_fullname').value = fullname;
         document.getElementById('edit_user_username').value = username;
@@ -52,6 +57,7 @@
 
     function closeEditUserModal() {
         document.getElementById('editUserModal').style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     function openDescModal(title, text, durasi, harga, imgUrl) {
@@ -68,6 +74,7 @@
         
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
         
         setTimeout(() => {
             modal.classList.remove('opacity-0');
@@ -89,15 +96,18 @@
         setTimeout(() => {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+            document.body.style.overflow = '';
         }, 300);
     }
 
     function openAddLayananModal() {
         document.getElementById('addLayananModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
     
     function closeAddLayananModal() {
         document.getElementById('addLayananModal').style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     function openCardModal(modalId) {
@@ -132,12 +142,37 @@
                 }
             });
         }
+
+        const backdropIds = ['editLayananModal', 'addLayananModal', 'addUserModal', 'editUserModal', 'receiptModal', 'descModal'];
+        backdropIds.forEach(id => {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        if (id === 'editLayananModal') closeEditLayananModal();
+                        else if (id === 'addLayananModal') closeAddLayananModal();
+                        else if (id === 'addUserModal') closeAddUserModal();
+                        else if (id === 'editUserModal') closeEditUserModal();
+                        else if (id === 'receiptModal') closeStruk();
+                        else if (id === 'descModal') closeDescModal();
+                    }
+                });
+            }
+        });
+
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                closeEditLayananModal();
+                closeAddLayananModal();
+                closeAddUserModal();
+                closeEditUserModal();
+                closeStruk();
+                closeDescModal();
                 closeCardModal();
             }
         });
     });
+
 
     function printStruk(tiket, nama, layanan, total, metode, antrian_id = null, is_new_payment = false) {
         document.getElementById('r_tiket').innerText = tiket;
@@ -154,10 +189,12 @@
             document.getElementById('form_confirm_paid').style.display = 'none';
         }
         document.getElementById('receiptModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
     
     function closeStruk() {
         document.getElementById('receiptModal').style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     let notifiedTickets = [];
@@ -837,7 +874,6 @@
     });
 </script>
 
-        </main>
     </div>
 
     <!-- Mobile Fixed Admin Bottom Navigation Bar (Identical to Pelanggan & Barber System) -->
