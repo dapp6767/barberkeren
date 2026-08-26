@@ -50,7 +50,7 @@
             <div class="md:hidden space-y-3 mb-4">
                 <?php foreach ($layanan as $l): 
                     $files = glob(__DIR__ . '/../../asset/image/layanan_' . $l['id'] . '.*');
-                    $nama_lower = strtolower($l['nama_layanan']);
+                    $nama_lower = trim(strtolower($l['nama_layanan']));
                     $default_images = [
                         'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                         'pangkas rambut luar biasa' => '../asset/image/maxcut.png',
@@ -131,7 +131,7 @@
                                 <div class="flex items-center gap-2">
                                 <?php 
                                     $files = glob(__DIR__ . '/../../asset/image/layanan_' . $l['id'] . '.*');
-                                    $nama_lower = strtolower($l['nama_layanan']);
+                                    $nama_lower = trim(strtolower($l['nama_layanan']));
                                     $default_images = [
                                         'pangkas rambut biasa' => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                                         'pangkas rambut luar biasa' => '../asset/image/maxcut.png',
