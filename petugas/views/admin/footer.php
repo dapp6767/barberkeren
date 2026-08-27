@@ -418,7 +418,7 @@
                 alert("Library XLSX (SheetJS) tidak tersedia.");
             }
         }
-        else if (format === 'print' || format === 'pdf') {
+        else if (format === 'print') {
             // Judul Laporan Resmi
             let rawTitle = tableId.replace('table-', '').replace('-', ' ').toUpperCase();
             let reportTitle = "LAPORAN DATA " + rawTitle;
@@ -508,13 +508,11 @@
                             background-color: #fff;
                             font-size: 12px;
                         }
-                        
-                        /* Kop Surat Standard */
                         .kop-container {
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
-                            padding-bottom: 10px;
+                            padding-bottom: 8px;
                         }
                         .kop-brand {
                             display: flex;
@@ -522,15 +520,15 @@
                             gap: 12px;
                         }
                         .kop-logo {
-                            width: 48px;
-                            height: 48px;
+                            width: 46px;
+                            height: 46px;
                             background-color: #1a1a1a;
                             color: #f59e0b;
                             border-radius: 8px;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            font-size: 26px;
+                            font-size: 24px;
                             font-weight: bold;
                             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                             -webkit-print-color-adjust: exact !important;
@@ -538,7 +536,7 @@
                         }
                         .kop-title {
                             margin: 0;
-                            font-size: 24px;
+                            font-size: 22px;
                             font-weight: 800;
                             letter-spacing: 1.5px;
                             color: #1a1a1a;
@@ -550,7 +548,6 @@
                             font-size: 11px;
                             color: #555;
                             font-style: italic;
-                            letter-spacing: 0.5px;
                         }
                         .kop-contact {
                             text-align: right;
@@ -562,13 +559,12 @@
                         .kop-divider {
                             border-bottom: 3px double #000;
                             margin-top: 5px;
-                            margin-bottom: 20px;
+                            margin-bottom: 18px;
                         }
 
-                        /* Judul Laporan */
                         .report-title-section {
                             text-align: center;
-                            margin-bottom: 20px;
+                            margin-bottom: 18px;
                         }
                         .report-main-title {
                             margin: 0;
@@ -584,7 +580,6 @@
                             color: #555;
                         }
 
-                        /* Standarisasi Tabel */
                         table.report-table {
                             width: 100%;
                             border-collapse: collapse;
@@ -595,7 +590,7 @@
                             background-color: #1a1a1a !important;
                             color: #ffffff !important;
                             font-weight: 700;
-                            padding: 9px 10px;
+                            padding: 8px 10px;
                             border: 1px solid #000;
                             text-transform: uppercase;
                             font-size: 10.5px;
@@ -626,7 +621,6 @@
                             print-color-adjust: exact !important;
                         }
 
-                        /* Area Tanda Tangan */
                         .signature-wrapper {
                             margin-top: 35px;
                             display: flex;
@@ -634,20 +628,16 @@
                             page-break-inside: avoid;
                         }
                         .signature-box {
-                            width: 260px;
+                            width: 250px;
                             text-align: center;
                             font-size: 12px;
                             color: #111;
                         }
                         .sig-date { margin: 0 0 4px 0; }
                         .sig-role { margin: 0; font-weight: 700; }
-                        .sig-space { height: 65px; }
+                        .sig-space { height: 60px; }
                         .sig-name { margin: 0; font-weight: 700; }
 
-                        /* CSS Print A4 Optimizations */
-                        .report-wrapper {
-                            margin-top: 65px;
-                        }
                         @page {
                             size: A4 portrait;
                             margin: 12mm 15mm 15mm 15mm;
@@ -661,126 +651,273 @@
                                 -webkit-print-color-adjust: exact !important;
                                 print-color-adjust: exact !important;
                             }
-                            .report-wrapper {
-                                margin-top: 0 !important;
-                                padding-top: 0 !important;
-                            }
-                            .no-print, button, .tabulator-controls, .print-toolbar {
-                                display: none !important;
-                            }
                             table.report-table th, table.report-table tbody tr:nth-child(even), table.report-table tfoot td {
                                 -webkit-print-color-adjust: exact !important;
                                 print-color-adjust: exact !important;
                             }
-                            table.report-table {
-                                page-break-inside: auto;
-                            }
-                            table.report-table tr {
-                                page-break-inside: avoid;
-                                page-break-after: auto;
-                            }
-                            .signature-wrapper {
-                                page-break-inside: avoid;
-                            }
+                            table.report-table { page-break-inside: auto; }
+                            table.report-table tr { page-break-inside: avoid; page-break-after: auto; }
+                            .signature-wrapper { page-break-inside: avoid; }
                         }
                     </style>
                 </head>
                 <body>
-                    <!-- Toolbar Kontrol Cetak (Hanya tampil di layar preview, tersembunyi saat dicetak) -->
-                    <div class="print-toolbar no-print" style="position: fixed; top: 0; left: 0; right: 0; background: #18120b; color: #f59e0b; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f59e0b; font-family: sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 99999;">
-                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px;">
-                            <span>🖨️ Pratinjau Cetak Laporan A4 (${reportTitle})</span>
+                    <!-- Kop Surat Resmi -->
+                    <div class="kop-container">
+                        <div class="kop-brand">
+                            <div class="kop-logo">✂</div>
+                            <div>
+                                <h1 class="kop-title">ELITE BARBER</h1>
+                                <p class="kop-sub">Executive Barbershop & Grooming Studio</p>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="window.print()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: bold; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                                🖨️ Cetak / Simpan PDF
-                            </button>
-                            <button onclick="window.close()" style="background: #3f3f46; color: #fff; border: 1px solid #52525b; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
-                                ✕ Tutup
-                            </button>
+                        <div class="kop-contact">
+                            <p><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
+                            <p>Bandar Lampung, Lampung 35141</p>
+                            <p>Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
                         </div>
                     </div>
+                    <div class="kop-divider"></div>
 
-                    <!-- Pembungkus Dokumen Laporan Resmi -->
-                    <div class="report-wrapper">
-                        <!-- Kop Surat Resmi -->
-                        <div class="kop-container">
-                            <div class="kop-brand">
-                                <div class="kop-logo">✂</div>
-                                <div>
-                                    <h1 class="kop-title">ELITE BARBER</h1>
-                                    <p class="kop-sub">Executive Barbershop & Grooming Studio</p>
-                                </div>
-                            </div>
-                            <div class="kop-contact">
-                                <p><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
-                                <p>Bandar Lampung, Lampung 35141</p>
-                                <p>Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
-                            </div>
-                        </div>
-                        <div class="kop-divider"></div>
+                    <!-- Judul Dokumen Laporan -->
+                    <div class="report-title-section">
+                        <h2 class="report-main-title">${reportTitle}</h2>
+                        <p class="report-sub-meta">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
+                    </div>
 
-                        <!-- Judul Dokumen Laporan -->
-                        <div class="report-title-section">
-                            <h2 class="report-main-title">${reportTitle}</h2>
-                            <p class="report-sub-meta">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
-                        </div>
-
-                        <!-- Data Tabel -->
-                        <table class="report-table">
-                            <thead>
+                    <!-- Data Tabel -->
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                ${headers.map((h, i) => `<th style="text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map(r => `
                                 <tr>
-                                    ${headers.map((h, i) => `<th style="text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
+                                    ${r.map((v, i) => `<td style="text-align: ${colAlignments[i]};">${v}</td>`).join('')}
                                 </tr>
-                            </thead>
-                            <tbody>
-                                ${rows.map(r => `
-                                    <tr>
-                                        ${r.map((v, i) => `<td style="text-align: ${colAlignments[i]};">${v}</td>`).join('')}
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                            <tfoot>
-                                ${tfootHtml}
-                            </tfoot>
-                        </table>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            ${tfootHtml}
+                        </tfoot>
+                    </table>
 
-                        <!-- Area Tanda Tangan & Validasi -->
-                        <div class="signature-wrapper">
-                            <div class="signature-box">
-                                <p class="sig-date">Bandar Lampung, ${formattedDateIndo}</p>
-                                <p class="sig-role">Admin / Pemilik Elite Barber</p>
-                                <div class="sig-space"></div>
-                                <p class="sig-name">( .................................... )</p>
-                            </div>
+                    <!-- Area Tanda Tangan & Validasi -->
+                    <div class="signature-wrapper">
+                        <div class="signature-box">
+                            <p class="sig-date">Bandar Lampung, ${formattedDateIndo}</p>
+                            <p class="sig-role">Admin / Pemilik Elite Barber</p>
+                            <div class="sig-space"></div>
+                            <p class="sig-name">( .................................... )</p>
                         </div>
                     </div>
-
-                    <script>
-                        function triggerBrowserPrint() {
-                            try {
-                                window.focus();
-                                window.print();
-                            } catch(e) {
-                                console.log("Print trigger error:", e);
-                            }
-                        }
-                        if (document.readyState === 'complete') {
-                            setTimeout(triggerBrowserPrint, 350);
-                        } else {
-                            window.addEventListener('load', function() {
-                                setTimeout(triggerBrowserPrint, 350);
-                            });
-                        }
-                    </' + '/script>
                 </body>
                 </html>
             `;
-            let blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
-            let blobUrl = URL.createObjectURL(blob);
-            let printWin = window.open(blobUrl, '_blank');
-            if (printWin) {
-                printWin.focus();
+
+            // Cetak langsung memicu dialog window.print() via invisible iframe
+            let printIframe = document.createElement('iframe');
+            printIframe.style.position = 'fixed';
+            printIframe.style.right = '0';
+            printIframe.style.bottom = '0';
+            printIframe.style.width = '0';
+            printIframe.style.height = '0';
+            printIframe.style.border = '0';
+            document.body.appendChild(printIframe);
+
+            let doc = printIframe.contentWindow.document;
+            doc.open();
+            doc.write(html);
+            doc.close();
+
+            setTimeout(function() {
+                try {
+                    printIframe.contentWindow.focus();
+                    printIframe.contentWindow.print();
+                } catch(e) {
+                    console.error("Print error:", e);
+                }
+                setTimeout(function() {
+                    if (printIframe.parentNode) {
+                        printIframe.parentNode.removeChild(printIframe);
+                    }
+                }, 2000);
+            }, 350);
+        }
+        else if (format === 'pdf') {
+            // Judul Laporan Resmi
+            let rawTitle = tableId.replace('table-', '').replace('-', ' ').toUpperCase();
+            let reportTitle = "LAPORAN DATA " + rawTitle;
+            if (tableId === 'table-transaksi') reportTitle = "LAPORAN TRANSAKSI PENJUALAN & PEMBAYARAN";
+            else if (tableId === 'table-layanan') reportTitle = "LAPORAN DAFTAR LAYANAN & HARGA";
+            else if (tableId === 'table-users') reportTitle = "LAPORAN DATA PENGGUNA & HAK AKSES";
+            else if (tableId === 'table-antrean') reportTitle = "LAPORAN STATUS ANTREAN PELANGGAN";
+            else if (tableId.includes('barber')) reportTitle = "LAPORAN DAFTAR ANTREAN TUGAS BARBER";
+
+            // Alignment & Tipe Kolom
+            let colAlignments = [];
+            let isMoneyCol = [];
+            headers.forEach((h, colIdx) => {
+                let hLower = h.toLowerCase();
+                let isNo = (colIdx === 0 && (hLower.includes('no') || hLower === '#' || hLower.includes('id')));
+                let isMoney = (hLower.includes('harga') || hLower.includes('total') || hLower.includes('bayar') || hLower.includes('nominal') || hLower.includes('biaya') || hLower.includes('tarif') || hLower.includes('rp') || hLower.includes('jumlah'));
+                
+                if (isNo) {
+                    colAlignments.push('center');
+                } else if (isMoney) {
+                    colAlignments.push('right');
+                } else if (hLower.includes('status') || hLower.includes('waktu') || hLower.includes('tanggal') || hLower.includes('est')) {
+                    colAlignments.push('center');
+                } else {
+                    colAlignments.push('left');
+                }
+                isMoneyCol.push(isMoney);
+            });
+
+            // Hitung Ringkasan Data (Tfoot)
+            let moneyTotals = headers.map(() => 0);
+            let hasMoneyTotal = false;
+
+            rows.forEach(r => {
+                r.forEach((val, cIdx) => {
+                    if (isMoneyCol[cIdx]) {
+                        let cleanNum = String(val).replace(/[^0-9]/g, '');
+                        if (cleanNum) {
+                            moneyTotals[cIdx] += parseFloat(cleanNum);
+                            hasMoneyTotal = true;
+                        }
+                    }
+                });
+            });
+
+            let tfootHtml = '';
+            if (hasMoneyTotal) {
+                let firstMoneyIdx = isMoneyCol.findIndex(m => m === true);
+                tfootHtml += '<tr>';
+                if (firstMoneyIdx > 0) {
+                    tfootHtml += `<td colspan="${firstMoneyIdx}" style="text-align: right; font-weight: bold; background-color: #f0f0f0; border-top: 2px solid #000; border-bottom: 2px solid #000; border-left: 1px solid #ccc; border-right: 1px solid #ccc; padding: 8px 10px; font-size: 11px;">TOTAL KESELURUHAN (${rows.length} Data)</td>`;
+                }
+                headers.forEach((h, cIdx) => {
+                    if (cIdx >= firstMoneyIdx) {
+                        if (isMoneyCol[cIdx]) {
+                            let formattedSum = 'Rp ' + new Intl.NumberFormat('id-ID').format(moneyTotals[cIdx]);
+                            tfootHtml += `<td style="text-align: right; font-weight: bold; background-color: #f0f0f0; border-top: 2px solid #000; border-bottom: 2px solid #000; border-left: 1px solid #ccc; border-right: 1px solid #ccc; padding: 8px 10px; font-size: 11px;">${formattedSum}</td>`;
+                        } else {
+                            tfootHtml += `<td style="background-color: #f0f0f0; border-top: 2px solid #000; border-bottom: 2px solid #000; border-left: 1px solid #ccc; border-right: 1px solid #ccc; padding: 8px 10px;"></td>`;
+                        }
+                    }
+                });
+                tfootHtml += '</tr>';
+            } else {
+                tfootHtml = `<tr><td colspan="${headers.length}" style="text-align: left; font-weight: bold; background-color: #f0f0f0; border-top: 2px solid #000; border-bottom: 2px solid #000; border-left: 1px solid #ccc; border-right: 1px solid #ccc; padding: 8px 10px; font-size: 11px;">TOTAL DATA: ${rows.length} Baris Data</td></tr>`;
+            }
+
+            // Tanggal Indonesia Dinamis
+            const now = new Date();
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDateIndo = now.toLocaleDateString('id-ID', dateOptions);
+            const formattedTimeIndo = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+            // Generate PDF via html2pdf jika tersedia
+            if (typeof html2pdf !== 'undefined') {
+                let tempDiv = document.createElement('div');
+                tempDiv.style.fontFamily = "'Segoe UI', Arial, Helvetica, sans-serif";
+                tempDiv.style.padding = "20px";
+                tempDiv.style.color = "#111";
+                tempDiv.style.backgroundColor = "#ffffff";
+                tempDiv.style.fontSize = "12px";
+                tempDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 44px; height: 44px; background-color: #1a1a1a; color: #f59e0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">✂</div>
+                            <div>
+                                <h1 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 1.5px; color: #1a1a1a; text-transform: uppercase; line-height: 1.1;">ELITE BARBER</h1>
+                                <p style="margin: 3px 0 0 0; font-size: 11px; color: #555; font-style: italic;">Executive Barbershop & Grooming Studio</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 11px; color: #333; line-height: 1.4;">
+                            <p style="margin: 0;"><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
+                            <p style="margin: 0;">Bandar Lampung, Lampung 35141</p>
+                            <p style="margin: 0;">Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
+                        </div>
+                    </div>
+                    <div style="border-bottom: 3px double #000; margin-top: 5px; margin-bottom: 18px;"></div>
+                    <div style="text-align: center; margin-bottom: 18px;">
+                        <h2 style="margin: 0; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111;">${reportTitle}</h2>
+                        <p style="margin: 4px 0 0 0; font-size: 11px; color: #555;">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;">
+                        <thead>
+                            <tr>
+                                ${headers.map((h, i) => `<th style="background-color: #1a1a1a; color: #ffffff; font-weight: 700; padding: 8px 10px; border: 1px solid #000; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map((r, rIdx) => `
+                                <tr style="${rIdx % 2 === 1 ? 'background-color: #f8f9fa;' : ''}">
+                                    ${r.map((v, i) => `<td style="padding: 7px 10px; border: 1px solid #ccc; color: #1a1a1a; text-align: ${colAlignments[i]}; font-size: 11px;">${v}</td>`).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            ${tfootHtml}
+                        </tfoot>
+                    </table>
+                    <div style="margin-top: 35px; display: flex; justify-content: flex-end; page-break-inside: avoid;">
+                        <div style="width: 250px; text-align: center; font-size: 12px; color: #111;">
+                            <p style="margin: 0 0 4px 0;">Bandar Lampung, ${formattedDateIndo}</p>
+                            <p style="margin: 0; font-weight: 700;">Admin / Pemilik Elite Barber</p>
+                            <div style="height: 60px;"></div>
+                            <p style="margin: 0; font-weight: 700;">( .................................... )</p>
+                        </div>
+                    </div>
+                `;
+
+                tempDiv.style.position = 'fixed';
+                tempDiv.style.left = '-9999px';
+                tempDiv.style.top = '0';
+                tempDiv.style.width = '780px';
+                document.body.appendChild(tempDiv);
+
+                let opt = {
+                    margin:       [10, 10, 10, 10],
+                    filename:     fileName + '.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(tempDiv).save().then(function() {
+                    if (tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
+                }).catch(function(err) {
+                    console.error("PDF generation error:", err);
+                    if (tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
+                });
+            } else {
+                // Fallback jsPDF autotable
+                const jsPDFObj = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF || null);
+                if (jsPDFObj) {
+                    const doc = new jsPDFObj({ orientation: 'portrait', format: 'a4' });
+                    doc.setFontSize(14);
+                    doc.text("ELITE BARBER - " + reportTitle, 14, 15);
+                    doc.setFontSize(9);
+                    doc.text("Bandar Lampung | Tanggal: " + formattedDateIndo, 14, 22);
+                    
+                    doc.autoTable({
+                        head: [headers],
+                        body: rows,
+                        startY: 28,
+                        styles: { fontSize: 9, cellPadding: 3 },
+                        headStyles: { fillColor: [26, 26, 26], textColor: [255, 255, 255], fontStyle: 'bold' },
+                        alternateRowStyles: { fillColor: [248, 249, 250] }
+                    });
+
+                    doc.save(fileName + '.pdf');
+                } else {
+                    alert("Library PDF tidak tersedia.");
+                }
             }
         }
     }
