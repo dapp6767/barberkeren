@@ -732,18 +732,52 @@
                         </div>
                     </div>
 
+                    <!-- Toolbar Kontrol Cetak (Hanya tampil di layar, tersembunyi saat dicetak) -->
+                    <div class="print-toolbar no-print" style="position: fixed; top: 0; left: 0; right: 0; background: #18120b; color: #f59e0b; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f59e0b; font-family: sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 99999;">
+                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px;">
+                            <span>🖨️ Pratinjau Cetak Laporan A4 (${reportTitle})</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="window.print()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: bold; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                🖨️ Cetak / Simpan PDF
+                            </button>
+                            <button onclick="window.close()" style="background: #3f3f46; color: #fff; border: 1px solid #52525b; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                                ✕ Tutup
+                            </button>
+                        </div>
+                    </div>
+                    <div class="no-print" style="height: 50px;"></div>
+
                     <script>
-                        window.onload = function() {
-                            window.print();
-                            setTimeout(function(){ window.close(); }, 500);
-                        };
-                    <' + '/script>
+                        function triggerBrowserPrint() {
+                            try {
+                                window.focus();
+                                window.print();
+                            } catch(e) {
+                                console.log("Print trigger error:", e);
+                            }
+                        }
+                        if (document.readyState === 'complete') {
+                            setTimeout(triggerBrowserPrint, 300);
+                        } else {
+                            window.addEventListener('load', function() {
+                                setTimeout(triggerBrowserPrint, 300);
+                            });
+                        }
+                    </' + '/script>
                 </body>
                 </html>
             `;
             printWin.document.open();
             printWin.document.write(html);
             printWin.document.close();
+
+            setTimeout(function() {
+                try {
+                    printWin.focus();
+                    printWin.print();
+                } catch(e) {}
+            }, 400);
         }
     }
 
