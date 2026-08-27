@@ -112,24 +112,24 @@
 </div>
 
 <!-- Floating Action Bar — hidden until service is selected -->
-<div id="layanan-action-bar" class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none transform-gpu">
+<div id="layanan-action-bar" class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-3 sm:px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none transform-gpu">
     <div class="md:pl-64 lg:pl-64 transition-all duration-300" id="fab-inner-wrapper">
-        <div class="max-w-2xl mx-auto bg-[#1a1209]/95 border border-amber-500/50 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-2xl relative overflow-hidden">
-            <div class="relative z-10 flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-500/30 flex items-center justify-center shrink-0">
-                    <i data-lucide="scissors" class="w-5 h-5 text-amber-400"></i>
+        <div class="max-w-2xl mx-auto bg-[#1a1209]/95 backdrop-blur-md border border-amber-500/50 rounded-2xl p-3 sm:px-5 sm:py-3.5 flex justify-between items-center gap-2.5 sm:gap-4 shadow-2xl relative overflow-hidden">
+            <div class="relative z-10 flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-400/20 border border-amber-500/30 flex items-center justify-center shrink-0">
+                    <i data-lucide="scissors" class="w-4 h-4 sm:w-5 sm:h-5 text-amber-400"></i>
                 </div>
-                <div>
-                    <p class="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Layanan Dipilih</p>
-                    <p id="fab-name" class="text-white font-bold text-sm leading-tight truncate max-w-[200px] md:max-w-xs"></p>
-                    <p id="fab-price" class="text-amber-400 font-black text-base leading-none"></p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[9px] sm:text-[10px] text-zinc-400 font-medium uppercase tracking-wider truncate">Layanan Dipilih</p>
+                    <p id="fab-name" class="text-white font-bold text-xs sm:text-sm leading-tight truncate"></p>
+                    <p id="fab-price" class="text-amber-400 font-black text-xs sm:text-base leading-tight mt-0.5"></p>
                 </div>
             </div>
             <button id="fab-next-btn" onclick="openBarberStep()"
-               class="relative z-10 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-lg flex items-center gap-2 whitespace-nowrap active:scale-95">
-                <i data-lucide="user-check" class="w-4 h-4"></i>
-                Pilih Barber
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+               class="relative z-10 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-xs sm:text-sm px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all shadow-lg flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 active:scale-95">
+                <i data-lucide="user-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                <span>Pilih Barber</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </button>
         </div>
     </div>
@@ -353,28 +353,28 @@
     </div>
 
     <!-- Sticky Bottom Action Bar — Submit Form -->
-    <div class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none transform-gpu" id="barber-submit-bar">
+    <div class="fixed bottom-24 md:bottom-6 left-0 right-0 z-50 px-3 sm:px-6 transition-all duration-300 translate-y-4 opacity-0 pointer-events-none transform-gpu" id="barber-submit-bar">
         <div class="md:pl-64 lg:pl-64 transition-all duration-300">
-            <div class="max-w-2xl mx-auto bg-[#18120b]/95 border border-amber-500/60 rounded-2xl px-5 py-3.5 flex justify-between items-center shadow-2xl relative overflow-hidden">
-                <div class="relative z-10 flex items-center gap-3.5 min-w-0">
-                    <div class="w-11 h-11 rounded-xl bg-amber-400/20 border border-amber-500/40 flex items-center justify-center shrink-0 shadow-inner text-amber-400">
-                        <i data-lucide="ticket" class="w-6 h-6"></i>
+            <div class="max-w-2xl mx-auto bg-[#18120b]/95 backdrop-blur-md border border-amber-500/60 rounded-2xl p-3 sm:px-5 sm:py-3.5 flex justify-between items-center gap-2.5 sm:gap-4 shadow-2xl relative overflow-hidden">
+                <div class="relative z-10 flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-400/20 border border-amber-500/40 flex items-center justify-center shrink-0 shadow-inner text-amber-400">
+                        <i data-lucide="ticket" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </div>
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider">Konfirmasi Pilihan Barber</p>
-                        <p id="submit-barber-name" class="text-white font-bold text-sm truncate leading-tight"></p>
-                        <p id="submit-barber-kursi" class="text-amber-400 text-xs font-semibold leading-none mt-0.5 truncate"></p>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[9px] sm:text-[10px] text-zinc-400 font-semibold uppercase tracking-wider truncate">Konfirmasi Barber</p>
+                        <p id="submit-barber-name" class="text-white font-bold text-xs sm:text-sm truncate leading-tight"></p>
+                        <p id="submit-barber-kursi" class="text-amber-400 text-[11px] sm:text-xs font-semibold leading-none mt-0.5 truncate"></p>
                     </div>
                 </div>
 
-                <form id="form-ambil-antrian" action="dashboard.php" method="POST" class="relative z-10 shrink-0 ml-3">
+                <form id="form-ambil-antrian" action="dashboard.php" method="POST" class="relative z-10 shrink-0 ml-1 sm:ml-3">
                     <input type="hidden" name="action" value="take_ticket">
                     <input type="hidden" name="service_id" id="hidden-service-id" value="">
                     <input type="hidden" name="barber_id" id="hidden-barber-id" value="">
                     <button type="submit" id="btn-final-submit"
-                        class="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 active:scale-95 text-amber-950 font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-lg flex items-center gap-2 whitespace-nowrap border border-amber-300/50">
+                        class="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 active:scale-95 text-amber-950 font-extrabold text-xs sm:text-sm px-3.5 sm:px-6 py-2 sm:py-3 rounded-xl transition-all shadow-lg flex items-center gap-1.5 sm:gap-2 whitespace-nowrap border border-amber-300/50">
                         <span>Ambil Antrean</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3]"></i>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]"></i>
                     </button>
                 </form>
             </div>
