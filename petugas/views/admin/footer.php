@@ -492,7 +492,6 @@
             const formattedDateIndo = now.toLocaleDateString('id-ID', dateOptions);
             const formattedTimeIndo = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
 
-            let printWin = window.open('', '_blank', 'width=1000,height=800');
             let html = `
                 <!DOCTYPE html>
                 <html lang="id">
@@ -758,26 +757,22 @@
                             }
                         }
                         if (document.readyState === 'complete') {
-                            setTimeout(triggerBrowserPrint, 300);
+                            setTimeout(triggerBrowserPrint, 350);
                         } else {
                             window.addEventListener('load', function() {
-                                setTimeout(triggerBrowserPrint, 300);
+                                setTimeout(triggerBrowserPrint, 350);
                             });
                         }
                     </' + '/script>
                 </body>
                 </html>
             `;
-            printWin.document.open();
-            printWin.document.write(html);
-            printWin.document.close();
-
-            setTimeout(function() {
-                try {
-                    printWin.focus();
-                    printWin.print();
-                } catch(e) {}
-            }, 400);
+            let blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
+            let blobUrl = URL.createObjectURL(blob);
+            let printWin = window.open(blobUrl, '_blank');
+            if (printWin) {
+                printWin.focus();
+            }
         }
     }
 
