@@ -418,63 +418,320 @@
                 alert("Library XLSX (SheetJS) tidak tersedia.");
             }
         }
-        else if (format === 'pdf') {
-            const jsPDFObj = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF || null);
-            if (jsPDFObj) {
-                const doc = new jsPDFObj({ orientation: 'landscape' });
-                doc.setFontSize(14);
-                doc.text("Laporan Data " + tableId.replace('table-', '').toUpperCase(), 14, 15);
-                doc.setFontSize(10);
-                doc.text("Tanggal: " + new Date().toLocaleDateString('id-ID'), 14, 22);
-                
-                doc.autoTable({
-                    head: [headers],
-                    body: rows,
-                    startY: 28,
-                    styles: { fontSize: 9, cellPadding: 3 },
-                    headStyles: { fillColor: [40, 30, 20], textColor: [232, 213, 163], fontStyle: 'bold' },
-                    alternateRowStyles: { fillColor: [245, 245, 245] }
-                });
+        else if (format === 'print' || format === 'pdf') {
+            // Judul Laporan Resmi
+            let rawTitle = tableId.replace('table-', '').replace('-', ' ').toUpperCase();
+            let reportTitle = "LAPORAN DATA " + rawTitle;
+            if (tableId === 'table-transaksi') reportTitle = "LAPORAN TRANSAKSI PENJUALAN & PEMBAYARAN";
+            else if (tableId === 'table-layanan') reportTitle = "LAPORAN DAFTAR LAYANAN & HARGA";
+            else if (tableId === 'table-users') reportTitle = "LAPORAN DATA PENGGUNA & HAK AKSES";
+            else if (tableId === 'table-antrean') reportTitle = "LAPORAN STATUS ANTREAN PELANGGAN";
+            else if (tableId.includes('barber')) reportTitle = "LAPORAN DAFTAR ANTREAN TUGAS BARBER";
 
-                const blob = doc.output('blob');
-                const pdfUrl = URL.createObjectURL(blob);
-                window.open(pdfUrl, '_blank');
+            // Alignment & Tipe Kolom
+            let colAlignments = [];
+            let isMoneyCol = [];
+            headers.forEach((h, colIdx) => {
+                let hLower = h.toLowerCase();
+                let isNo = (colIdx === 0 && (hLower.includes('no') || hLower === '#' || hLower.includes('id')));
+                let isMoney = (hLower.includes('harga') || hLower.includes('total') || hLower.includes('bayar') || hLower.includes('nominal') || hLower.includes('biaya') || hLower.includes('tarif') || hLower.includes('rp') || hLower.includes('jumlah'));
+                
+                if (isNo) {
+                    colAlignments.push('center');
+                } else if (isMoney) {
+                    colAlignments.push('right');
+                } else if (hLower.includes('status') || hLower.includes('waktu') || hLower.includes('tanggal') || hLower.includes('est')) {
+                    colAlignments.push('center');
+                } else {
+                    colAlignments.push('left');
+                }
+                isMoneyCol.push(isMoney);
+            });
+
+            // Hitung Ringkasan Data (Tfoot)
+            let moneyTotals = headers.map(() => 0);
+            let hasMoneyTotal = false;
+
+            rows.forEach(r => {
+                r.forEach((val, cIdx) => {
+                    if (isMoneyCol[cIdx]) {
+                        let cleanNum = String(val).replace(/[^0-9]/g, '');
+                        if (cleanNum) {
+                            moneyTotals[cIdx] += parseFloat(cleanNum);
+                            hasMoneyTotal = true;
+                        }
+                    }
+                });
+            });
+
+            let tfootHtml = '';
+            if (hasMoneyTotal) {
+                let firstMoneyIdx = isMoneyCol.findIndex(m => m === true);
+                tfootHtml += '<tr>';
+                if (firstMoneyIdx > 0) {
+                    tfootHtml += `<td colspan="${firstMoneyIdx}" style="text-align: right; font-weight: bold; background-color: #f0f0f0;">TOTAL KESELURUHAN (${rows.length} Data)</td>`;
+                }
+                headers.forEach((h, cIdx) => {
+                    if (cIdx >= firstMoneyIdx) {
+                        if (isMoneyCol[cIdx]) {
+                            let formattedSum = 'Rp ' + new Intl.NumberFormat('id-ID').format(moneyTotals[cIdx]);
+                            tfootHtml += `<td style="text-align: right; font-weight: bold; background-color: #f0f0f0;">${formattedSum}</td>`;
+                        } else {
+                            tfootHtml += `<td style="background-color: #f0f0f0;"></td>`;
+                        }
+                    }
+                });
+                tfootHtml += '</tr>';
             } else {
-                alert("Library jsPDF tidak tersedia.");
+                tfootHtml = `<tr><td colspan="${headers.length}" style="text-align: left; font-weight: bold; background-color: #f0f0f0;">TOTAL DATA: ${rows.length} Baris Data</td></tr>`;
             }
-        }
-        else if (format === 'print') {
-            let printWin = window.open('', '_blank', 'width=950,height=700');
+
+            // Tanggal Indonesia Dinamis
+            const now = new Date();
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDateIndo = now.toLocaleDateString('id-ID', dateOptions);
+            const formattedTimeIndo = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+            let printWin = window.open('', '_blank', 'width=1000,height=800');
             let html = `
                 <!DOCTYPE html>
-                <html>
+                <html lang="id">
                 <head>
-                    <title>Cetak Data ${tableId}</title>
+                    <meta charset="UTF-8">
+                    <title>${reportTitle} - Elite Barber</title>
                     <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; color: #111; }
-                        h2 { margin-bottom: 5px; color: #333; }
-                        p { font-size: 12px; color: #666; margin-top: 0; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-                        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; font-size: 12px; }
-                        th { background-color: #2a1e12; color: #e8d5a3; font-weight: bold; }
-                        tr:nth-child(even) { background-color: #f9f9f9; }
+                        * { box-sizing: border-box; }
+                        body {
+                            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+                            margin: 0;
+                            padding: 20px;
+                            color: #111;
+                            background-color: #fff;
+                            font-size: 12px;
+                        }
+                        
+                        /* Kop Surat Standard */
+                        .kop-container {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding-bottom: 10px;
+                        }
+                        .kop-brand {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                        }
+                        .kop-logo {
+                            width: 48px;
+                            height: 48px;
+                            background-color: #1a1a1a;
+                            color: #f59e0b;
+                            border-radius: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 26px;
+                            font-weight: bold;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        .kop-title {
+                            margin: 0;
+                            font-size: 24px;
+                            font-weight: 800;
+                            letter-spacing: 1.5px;
+                            color: #1a1a1a;
+                            text-transform: uppercase;
+                            line-height: 1.1;
+                        }
+                        .kop-sub {
+                            margin: 3px 0 0 0;
+                            font-size: 11px;
+                            color: #555;
+                            font-style: italic;
+                            letter-spacing: 0.5px;
+                        }
+                        .kop-contact {
+                            text-align: right;
+                            font-size: 11px;
+                            color: #333;
+                            line-height: 1.4;
+                        }
+                        .kop-contact p { margin: 0; }
+                        .kop-divider {
+                            border-bottom: 3px double #000;
+                            margin-top: 5px;
+                            margin-bottom: 20px;
+                        }
+
+                        /* Judul Laporan */
+                        .report-title-section {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .report-main-title {
+                            margin: 0;
+                            font-size: 16px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.8px;
+                            color: #111;
+                        }
+                        .report-sub-meta {
+                            margin: 4px 0 0 0;
+                            font-size: 11px;
+                            color: #555;
+                        }
+
+                        /* Standarisasi Tabel */
+                        table.report-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 10px;
+                            font-size: 11px;
+                        }
+                        table.report-table th {
+                            background-color: #1a1a1a !important;
+                            color: #ffffff !important;
+                            font-weight: 700;
+                            padding: 9px 10px;
+                            border: 1px solid #000;
+                            text-transform: uppercase;
+                            font-size: 10.5px;
+                            letter-spacing: 0.5px;
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        table.report-table td {
+                            padding: 7px 10px;
+                            border: 1px solid #ccc;
+                            color: #1a1a1a;
+                            line-height: 1.35;
+                        }
+                        table.report-table tbody tr:nth-child(even) {
+                            background-color: #f8f9fa !important;
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        table.report-table tfoot td {
+                            padding: 8px 10px;
+                            border-top: 2px solid #000;
+                            border-bottom: 2px solid #000;
+                            border-left: 1px solid #ccc;
+                            border-right: 1px solid #ccc;
+                            color: #000;
+                            font-size: 11px;
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+
+                        /* Area Tanda Tangan */
+                        .signature-wrapper {
+                            margin-top: 35px;
+                            display: flex;
+                            justify-content: flex-end;
+                            page-break-inside: avoid;
+                        }
+                        .signature-box {
+                            width: 260px;
+                            text-align: center;
+                            font-size: 12px;
+                            color: #111;
+                        }
+                        .sig-date { margin: 0 0 4px 0; }
+                        .sig-role { margin: 0; font-weight: 700; }
+                        .sig-space { height: 65px; }
+                        .sig-name { margin: 0; font-weight: 700; }
+
+                        /* CSS Print A4 Optimizations */
+                        @page {
+                            size: A4 portrait;
+                            margin: 12mm 15mm 15mm 15mm;
+                        }
                         @media print {
-                            body { padding: 0; }
-                            @page { size: landscape; margin: 1cm; }
+                            body {
+                                padding: 0;
+                                margin: 0;
+                                background: #fff;
+                                color: #000;
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                            .no-print, button, .tabulator-controls {
+                                display: none !important;
+                            }
+                            table.report-table th, table.report-table tbody tr:nth-child(even), table.report-table tfoot td {
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                            table.report-table {
+                                page-break-inside: auto;
+                            }
+                            table.report-table tr {
+                                page-break-inside: avoid;
+                                page-break-after: auto;
+                            }
+                            .signature-wrapper {
+                                page-break-inside: avoid;
+                            }
                         }
                     </style>
                 </head>
                 <body>
-                    <h2>Laporan Data ${tableId.replace('table-', '').toUpperCase()}</h2>
-                    <p>Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
-                    <table>
+                    <!-- Kop Surat Resmi -->
+                    <div class="kop-container">
+                        <div class="kop-brand">
+                            <div class="kop-logo">✂</div>
+                            <div>
+                                <h1 class="kop-title">ELITE BARBER</h1>
+                                <p class="kop-sub">Executive Barbershop & Grooming Studio</p>
+                            </div>
+                        </div>
+                        <div class="kop-contact">
+                            <p><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
+                            <p>Bandar Lampung, Lampung 35141</p>
+                            <p>Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
+                        </div>
+                    </div>
+                    <div class="kop-divider"></div>
+
+                    <!-- Judul Dokumen Laporan -->
+                    <div class="report-title-section">
+                        <h2 class="report-main-title">${reportTitle}</h2>
+                        <p class="report-sub-meta">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
+                    </div>
+
+                    <!-- Data Tabel -->
+                    <table class="report-table">
                         <thead>
-                            <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+                            <tr>
+                                ${headers.map((h, i) => `<th style="text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
+                            </tr>
                         </thead>
                         <tbody>
-                            ${rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join('')}</tr>`).join('')}
+                            ${rows.map(r => `
+                                <tr>
+                                    ${r.map((v, i) => `<td style="text-align: ${colAlignments[i]};">${v}</td>`).join('')}
+                                </tr>
+                            `).join('')}
                         </tbody>
+                        <tfoot>
+                            ${tfootHtml}
+                        </tfoot>
                     </table>
+
+                    <!-- Area Tanda Tangan & Validasi -->
+                    <div class="signature-wrapper">
+                        <div class="signature-box">
+                            <p class="sig-date">Bandar Lampung, ${formattedDateIndo}</p>
+                            <p class="sig-role">Admin / Pemilik Elite Barber</p>
+                            <div class="sig-space"></div>
+                            <p class="sig-name">( .................................... )</p>
+                        </div>
+                    </div>
+
                     <script>
                         window.onload = function() {
                             window.print();
