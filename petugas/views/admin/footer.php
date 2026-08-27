@@ -645,6 +645,9 @@
                         .sig-name { margin: 0; font-weight: 700; }
 
                         /* CSS Print A4 Optimizations */
+                        .report-wrapper {
+                            margin-top: 65px;
+                        }
                         @page {
                             size: A4 portrait;
                             margin: 12mm 15mm 15mm 15mm;
@@ -658,7 +661,11 @@
                                 -webkit-print-color-adjust: exact !important;
                                 print-color-adjust: exact !important;
                             }
-                            .no-print, button, .tabulator-controls {
+                            .report-wrapper {
+                                margin-top: 0 !important;
+                                padding-top: 0 !important;
+                            }
+                            .no-print, button, .tabulator-controls, .print-toolbar {
                                 display: none !important;
                             }
                             table.report-table th, table.report-table tbody tr:nth-child(even), table.report-table tfoot td {
@@ -679,59 +686,7 @@
                     </style>
                 </head>
                 <body>
-                    <!-- Kop Surat Resmi -->
-                    <div class="kop-container">
-                        <div class="kop-brand">
-                            <div class="kop-logo">✂</div>
-                            <div>
-                                <h1 class="kop-title">ELITE BARBER</h1>
-                                <p class="kop-sub">Executive Barbershop & Grooming Studio</p>
-                            </div>
-                        </div>
-                        <div class="kop-contact">
-                            <p><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
-                            <p>Bandar Lampung, Lampung 35141</p>
-                            <p>Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
-                        </div>
-                    </div>
-                    <div class="kop-divider"></div>
-
-                    <!-- Judul Dokumen Laporan -->
-                    <div class="report-title-section">
-                        <h2 class="report-main-title">${reportTitle}</h2>
-                        <p class="report-sub-meta">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
-                    </div>
-
-                    <!-- Data Tabel -->
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                ${headers.map((h, i) => `<th style="text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${rows.map(r => `
-                                <tr>
-                                    ${r.map((v, i) => `<td style="text-align: ${colAlignments[i]};">${v}</td>`).join('')}
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                        <tfoot>
-                            ${tfootHtml}
-                        </tfoot>
-                    </table>
-
-                    <!-- Area Tanda Tangan & Validasi -->
-                    <div class="signature-wrapper">
-                        <div class="signature-box">
-                            <p class="sig-date">Bandar Lampung, ${formattedDateIndo}</p>
-                            <p class="sig-role">Admin / Pemilik Elite Barber</p>
-                            <div class="sig-space"></div>
-                            <p class="sig-name">( .................................... )</p>
-                        </div>
-                    </div>
-
-                    <!-- Toolbar Kontrol Cetak (Hanya tampil di layar, tersembunyi saat dicetak) -->
+                    <!-- Toolbar Kontrol Cetak (Hanya tampil di layar preview, tersembunyi saat dicetak) -->
                     <div class="print-toolbar no-print" style="position: fixed; top: 0; left: 0; right: 0; background: #18120b; color: #f59e0b; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f59e0b; font-family: sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 99999;">
                         <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px;">
                             <span>🖨️ Pratinjau Cetak Laporan A4 (${reportTitle})</span>
@@ -745,7 +700,61 @@
                             </button>
                         </div>
                     </div>
-                    <div class="no-print" style="height: 50px;"></div>
+
+                    <!-- Pembungkus Dokumen Laporan Resmi -->
+                    <div class="report-wrapper">
+                        <!-- Kop Surat Resmi -->
+                        <div class="kop-container">
+                            <div class="kop-brand">
+                                <div class="kop-logo">✂</div>
+                                <div>
+                                    <h1 class="kop-title">ELITE BARBER</h1>
+                                    <p class="kop-sub">Executive Barbershop & Grooming Studio</p>
+                                </div>
+                            </div>
+                            <div class="kop-contact">
+                                <p><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
+                                <p>Bandar Lampung, Lampung 35141</p>
+                                <p>Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
+                            </div>
+                        </div>
+                        <div class="kop-divider"></div>
+
+                        <!-- Judul Dokumen Laporan -->
+                        <div class="report-title-section">
+                            <h2 class="report-main-title">${reportTitle}</h2>
+                            <p class="report-sub-meta">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
+                        </div>
+
+                        <!-- Data Tabel -->
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    ${headers.map((h, i) => `<th style="text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows.map(r => `
+                                    <tr>
+                                        ${r.map((v, i) => `<td style="text-align: ${colAlignments[i]};">${v}</td>`).join('')}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                ${tfootHtml}
+                            </tfoot>
+                        </table>
+
+                        <!-- Area Tanda Tangan & Validasi -->
+                        <div class="signature-wrapper">
+                            <div class="signature-box">
+                                <p class="sig-date">Bandar Lampung, ${formattedDateIndo}</p>
+                                <p class="sig-role">Admin / Pemilik Elite Barber</p>
+                                <div class="sig-space"></div>
+                                <p class="sig-name">( .................................... )</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <script>
                         function triggerBrowserPrint() {
