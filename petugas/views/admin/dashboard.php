@@ -1,126 +1,166 @@
 <?php if ($page === 'dashboard' || empty($page)): ?>
 
-<!-- DASHBOARD METRIC CARDS (LUXURY DARK GOLD THEME CONNECTED TO DB) -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6">
-    <!-- Card 1: Antrean Hari Ini -->
-    <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
-        <div class="relative z-10">
-            <!-- Header -->
-            <div class="flex items-center justify-between text-zinc-300 mb-2">
-                <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Antrean Hari Ini</span>
-                <button type="button" onclick="openCardModal('todayQueueModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Antrean Hari Ini">i</button>
-            </div>
-            <!-- Big Metric Value -->
-            <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-3">
-                <?= number_format($today_antrian_total) ?> <span class="text-sm font-normal text-amber-400/90">Antrean</span>
-            </div>
-            <!-- Status Indicators -->
-            <div class="space-y-1.5 text-xs text-zinc-300 mb-2">
-                <div class="flex items-center justify-between">
-                    <span>Menunggu (Waiting)</span>
-                    <span class="text-amber-400 font-bold"><?= $today_antrian_waiting ?> Orang</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span>Sedang Dilayani / Selesai</span>
-                    <span class="text-emerald-400 font-bold"><?= $today_antrian_serving + $today_antrian_completed ?> Orang</span>
-                </div>
-            </div>
-        </div>
+<!-- DASHBOARD METRIC CARDS (HORIZONTAL SCROLL ON MOBILE, GRID ON TABLET/DESKTOP) -->
+<div class="relative mb-6">
+    <!-- Header helper badge on mobile -->
+    <div class="flex sm:hidden items-center justify-between px-1 mb-2">
+        <span class="text-xs font-semibold text-amber-300/90 flex items-center gap-1.5 font-serif">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-amber-400"></i> Ringkasan Utama
+        </span>
+        <span class="text-[10px] text-amber-300/90 bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-mono">
+            <i data-lucide="chevrons-left-right" class="w-3 h-3 text-amber-300 animate-pulse"></i> Geser Samping
+        </span>
     </div>
 
-    <!-- Card 2: Pendapatan Perhari -->
-    <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
-        <div class="relative z-10">
-            <!-- Header -->
-            <div class="flex items-center justify-between text-zinc-300 mb-1">
-                <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Pendapatan Perhari</span>
-                <button type="button" onclick="openCardModal('dailyRevenueModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Pendapatan Perhari">i</button>
-            </div>
-            <!-- Big Metric Value -->
-            <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
-                Rp <?= number_format($sales_today_val, 0, ',', '.') ?>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card 3: Top Layanan Terlaris -->
-    <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
-        <div class="relative z-10">
-            <!-- Header -->
-            <div class="flex items-center justify-between text-zinc-300 mb-1">
-                <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Top Layanan Terlaris</span>
-                <button type="button" onclick="openCardModal('topLayananModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Top Layanan">i</button>
-            </div>
-            <?php 
-            $top_single = $modal_top_layanan[0] ?? null;
-            $top_name = $top_single['nama_layanan'] ?? 'Gentleman Cut';
-            $top_count = (int)($top_single['count_trx'] ?? 0);
-            ?>
-            <!-- Big Metric Value: Nama Layanan Terfavorit -->
-            <div class="text-lg lg:text-xl font-bold text-amber-300 tracking-tight truncate my-1" title="<?= htmlspecialchars($top_name) ?>">
-                <?= htmlspecialchars($top_name) ?>
-            </div>
-            <div class="text-xs text-zinc-400 mb-2 flex items-center gap-1">
-                <span class="font-bold text-emerald-400"><?= number_format($top_count) ?>x</span> dipesan oleh pelanggan
-            </div>
-            
-            <!-- Top 3 Layanan Mini Progress Bar -->
-            <div class="space-y-1.5 pt-2 border-t border-white/5">
-                <?php 
-                $top_3_items = array_slice($modal_top_layanan, 0, 3);
-                $max_cnt = !empty($top_3_items) ? max(array_column($top_3_items, 'count_trx')) : 1;
-                if (empty($top_3_items)):
-                ?>
-                    <div class="text-[11px] text-zinc-500 italic">Belum ada data transaksi</div>
-                <?php 
-                else:
-                    foreach ($top_3_items as $titem): 
-                        $pct = $max_cnt > 0 ? round(($titem['count_trx'] / $max_cnt) * 100) : 0;
-                ?>
-                    <div class="flex flex-col gap-0.5">
-                        <div class="flex justify-between items-center text-[11px] text-zinc-300">
-                            <span class="truncate max-w-[140px]"><?= htmlspecialchars($titem['nama_layanan']) ?></span>
-                            <span class="text-amber-400 font-semibold text-[10px]"><?= $titem['count_trx'] ?>x</span>
-                        </div>
-                        <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full" style="width: <?= max(10, $pct) ?>%;"></div>
-                        </div>
+    <!-- Cards Scroll Track -->
+    <div id="adminMetricCardsTrack" class="flex overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 -mx-3 px-3 sm:mx-0 sm:px-0 pb-2 sm:pb-0 snap-x snap-mandatory custom-scroll scroll-smooth" style="-webkit-overflow-scrolling: touch;">
+        <!-- Card 1: Antrean Hari Ini -->
+        <div class="w-[82vw] xs:w-[75vw] sm:w-auto min-w-[270px] sm:min-w-0 max-w-[320px] sm:max-w-none flex-shrink-0 snap-start bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden min-h-[185px]">
+            <div class="relative z-10 flex flex-col justify-between h-full">
+                <div>
+                    <!-- Header -->
+                    <div class="flex items-center justify-between text-zinc-300 mb-2">
+                        <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Antrean Hari Ini</span>
+                        <button type="button" onclick="openCardModal('todayQueueModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Antrean Hari Ini">i</button>
                     </div>
-                <?php 
-                    endforeach; 
-                endif;
-                ?>
+                    <!-- Big Metric Value -->
+                    <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-3">
+                        <?= number_format($today_antrian_total) ?> <span class="text-sm font-normal text-amber-400/90">Antrean</span>
+                    </div>
+                </div>
+                <!-- Status Indicators -->
+                <div class="space-y-1.5 text-xs text-zinc-300 mb-1">
+                    <div class="flex items-center justify-between">
+                        <span>Menunggu (Waiting)</span>
+                        <span class="text-amber-400 font-bold"><?= $today_antrian_waiting ?> Orang</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Sedang Dilayani / Selesai</span>
+                        <span class="text-emerald-400 font-bold"><?= $today_antrian_serving + $today_antrian_completed ?> Orang</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Pendapatan Perhari -->
+        <div class="w-[82vw] xs:w-[75vw] sm:w-auto min-w-[270px] sm:min-w-0 max-w-[320px] sm:max-w-none flex-shrink-0 snap-start bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden min-h-[185px]">
+            <div class="relative z-10 flex flex-col justify-between h-full">
+                <div>
+                    <!-- Header -->
+                    <div class="flex items-center justify-between text-zinc-300 mb-1">
+                        <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Pendapatan Perhari</span>
+                        <button type="button" onclick="openCardModal('dailyRevenueModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Pendapatan Perhari">i</button>
+                    </div>
+                    <!-- Big Metric Value -->
+                    <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
+                        Rp <?= number_format($sales_today_val, 0, ',', '.') ?>
+                    </div>
+                </div>
+                <!-- Status Indicators -->
+                <div class="space-y-1.5 text-xs text-zinc-300 mb-1">
+                    <div class="flex items-center justify-between">
+                        <span>Transaksi Selesai</span>
+                        <span class="text-amber-400 font-bold"><?= $today_antrian_completed ?> Trx</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Status Kasir</span>
+                        <span class="text-emerald-400 font-bold">Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Top Layanan Terlaris -->
+        <div class="w-[82vw] xs:w-[75vw] sm:w-auto min-w-[270px] sm:min-w-0 max-w-[320px] sm:max-w-none flex-shrink-0 snap-start bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden min-h-[185px]">
+            <div class="relative z-10 flex flex-col justify-between h-full">
+                <div>
+                    <!-- Header -->
+                    <div class="flex items-center justify-between text-zinc-300 mb-1">
+                        <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Top Layanan Terlaris</span>
+                        <button type="button" onclick="openCardModal('topLayananModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Top Layanan">i</button>
+                    </div>
+                    <?php 
+                    $top_single = $modal_top_layanan[0] ?? null;
+                    $top_name = $top_single['nama_layanan'] ?? 'Gentleman Cut';
+                    $top_count = (int)($top_single['count_trx'] ?? 0);
+                    ?>
+                    <!-- Big Metric Value: Nama Layanan Terfavorit -->
+                    <div class="text-lg lg:text-xl font-bold text-amber-300 tracking-tight truncate my-0.5" title="<?= htmlspecialchars($top_name) ?>">
+                        <?= htmlspecialchars($top_name) ?>
+                    </div>
+                    <div class="text-xs text-zinc-400 mb-1.5 flex items-center gap-1">
+                        <span class="font-bold text-emerald-400"><?= number_format($top_count) ?>x</span> dipesan oleh pelanggan
+                    </div>
+                </div>
+                
+                <!-- Top 3 Layanan Mini Progress Bar -->
+                <div class="space-y-1 pt-1.5 border-t border-white/5">
+                    <?php 
+                    $top_3_items = array_slice($modal_top_layanan, 0, 3);
+                    $max_cnt = !empty($top_3_items) ? max(array_column($top_3_items, 'count_trx')) : 1;
+                    if (empty($top_3_items)):
+                    ?>
+                        <div class="text-[11px] text-zinc-500 italic">Belum ada data transaksi</div>
+                    <?php 
+                    else:
+                        foreach ($top_3_items as $titem): 
+                            $pct = $max_cnt > 0 ? round(($titem['count_trx'] / $max_cnt) * 100) : 0;
+                    ?>
+                        <div class="flex flex-col gap-0.5">
+                            <div class="flex justify-between items-center text-[11px] text-zinc-300">
+                                <span class="truncate max-w-[140px]"><?= htmlspecialchars($titem['nama_layanan']) ?></span>
+                                <span class="text-amber-400 font-semibold text-[10px]"><?= $titem['count_trx'] ?>x</span>
+                            </div>
+                            <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full" style="width: <?= max(10, $pct) ?>%;"></div>
+                            </div>
+                        </div>
+                    <?php 
+                        endforeach; 
+                    endif;
+                    ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Users & Barber -->
+        <div class="w-[82vw] xs:w-[75vw] sm:w-auto min-w-[270px] sm:min-w-0 max-w-[320px] sm:max-w-none flex-shrink-0 snap-start bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden min-h-[185px]">
+            <div class="relative z-10 flex flex-col justify-between h-full">
+                <div>
+                    <!-- Header -->
+                    <div class="flex items-center justify-between text-zinc-300 mb-1">
+                        <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Users & Barber</span>
+                        <button type="button" onclick="openCardModal('usersModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Users & Barber">i</button>
+                    </div>
+                    <!-- Big Metric Value -->
+                    <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
+                        <?= number_format($total_users_count) ?>
+                    </div>
+                </div>
+                <!-- Status Gauge / Activity Sparkline -->
+                <div class="h-12 w-full flex flex-col justify-center gap-1.5 px-1">
+                    <div class="flex justify-between items-center text-[11px] text-zinc-300 font-medium">
+                        <span>Barber Aktif</span>
+                        <span class="text-emerald-400 font-bold"><?= $total_barbers_active ?> Active</span>
+                    </div>
+                    <div class="w-full bg-zinc-800/90 h-2 rounded-full overflow-hidden p-0.5 border border-zinc-700/50">
+                        <div class="bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 100%;"></div>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] text-zinc-300">
+                        <span>Kapasitas Layanan</span>
+                        <span class="text-amber-300 font-semibold">100% Ready</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Card 4: Users & Barber -->
-    <div class="bg-[#18120b] border border-white/10 hover:border-amber-500/50 rounded-xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/60 group relative overflow-hidden">
-        <div class="relative z-10">
-            <!-- Header -->
-            <div class="flex items-center justify-between text-zinc-300 mb-1">
-                <span class="text-sm font-medium tracking-wide group-hover:text-[#fde68a] transition-colors">Users & Barber</span>
-                <button type="button" onclick="openCardModal('usersModal')" class="w-6 h-6 rounded-full border border-amber-500/40 flex items-center justify-center text-xs font-serif text-amber-300 hover:text-amber-200 hover:border-amber-400 hover:bg-amber-400/10 cursor-pointer transition-all duration-200" title="Buka Detail Users & Barber">i</button>
-            </div>
-            <!-- Big Metric Value -->
-            <div class="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
-                <?= number_format($total_users_count) ?>
-            </div>
-            <!-- Status Gauge / Activity Sparkline -->
-            <div class="h-12 w-full flex flex-col justify-center gap-1.5 px-1">
-                <div class="flex justify-between items-center text-[11px] text-zinc-300 font-medium">
-                    <span>Barber Aktif</span>
-                    <span class="text-emerald-400 font-bold"><?= $total_barbers_active ?> Active</span>
-                </div>
-                <div class="w-full bg-zinc-800/90 h-2 rounded-full overflow-hidden p-0.5 border border-zinc-700/50">
-                    <div class="bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 100%;"></div>
-                </div>
-                <div class="flex justify-between items-center text-[10px] text-zinc-300">
-                    <span>Kapasitas Layanan</span>
-                    <span class="text-amber-300 font-semibold">100% Ready</span>
-                </div>
-            </div>
-        </div>
+    <!-- Mobile Scroll Dots Pagination Indicator -->
+    <div class="flex sm:hidden justify-center items-center gap-1.5 mt-2.5" id="metricCardsDots">
+        <button type="button" onclick="scrollMetricCardToIndex(0)" class="metric-scroll-dot w-6 h-1.5 rounded-full bg-amber-400 transition-all duration-300" data-index="0" aria-label="Lihat Box 1"></button>
+        <button type="button" onclick="scrollMetricCardToIndex(1)" class="metric-scroll-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300" data-index="1" aria-label="Lihat Box 2"></button>
+        <button type="button" onclick="scrollMetricCardToIndex(2)" class="metric-scroll-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300" data-index="2" aria-label="Lihat Box 3"></button>
+        <button type="button" onclick="scrollMetricCardToIndex(3)" class="metric-scroll-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300" data-index="3" aria-label="Lihat Box 4"></button>
     </div>
 </div>
 
@@ -813,6 +853,39 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         plugins: [topLabelPlugin]
     });
+});
+
+// Horizontal Metric Cards Mobile Dot Indicator Sync
+function scrollMetricCardToIndex(index) {
+    const track = document.getElementById('adminMetricCardsTrack');
+    if (!track) return;
+    const cards = track.children;
+    if (cards[index]) {
+        cards[index].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('adminMetricCardsTrack');
+    const dots = document.querySelectorAll('.metric-scroll-dot');
+    if (track && dots.length > 0) {
+        let scrollTimeout;
+        track.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const scrollLeft = track.scrollLeft;
+                const cardWidth = track.firstElementChild ? track.firstElementChild.offsetWidth : 280;
+                const activeIndex = Math.round(scrollLeft / (cardWidth + 12));
+                dots.forEach((dot, idx) => {
+                    if (idx === Math.min(activeIndex, dots.length - 1)) {
+                        dot.className = 'metric-scroll-dot w-6 h-1.5 rounded-full bg-amber-400 transition-all duration-300';
+                    } else {
+                        dot.className = 'metric-scroll-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300';
+                    }
+                });
+            }, 40);
+        }, { passive: true });
+    }
 });
 </script>
 <?php endif; ?>
