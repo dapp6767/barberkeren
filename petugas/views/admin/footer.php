@@ -849,118 +849,182 @@
                 `);
             }
 
-            // Generate PDF via html2pdf jika tersedia
-            if (typeof html2pdf !== 'undefined') {
-                let tempDiv = document.createElement('div');
-                tempDiv.style.fontFamily = "'Segoe UI', Arial, Helvetica, sans-serif";
-                tempDiv.style.padding = "20px";
-                tempDiv.style.color = "#111";
-                tempDiv.style.backgroundColor = "#ffffff";
-                tempDiv.style.fontSize = "12px";
-                tempDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 44px; height: 44px; background-color: #1a1a1a; color: #f59e0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">✂</div>
-                            <div>
-                                <h1 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 1.5px; color: #1a1a1a; text-transform: uppercase; line-height: 1.1;">ELITE BARBER</h1>
-                                <p style="margin: 3px 0 0 0; font-size: 11px; color: #555; font-style: italic;">Executive Barbershop & Grooming Studio</p>
-                            </div>
-                        </div>
-                        <div style="text-align: right; font-size: 11px; color: #333; line-height: 1.4;">
-                            <p style="margin: 0;"><strong>Jl. Z.A. Pagar Alam No. 45, Kedaton</strong></p>
-                            <p style="margin: 0;">Bandar Lampung, Lampung 35141</p>
-                            <p style="margin: 0;">Telp/WA: 0812-3456-7890 | Email: info@elitebarber.com</p>
-                        </div>
-                    </div>
-                    <div style="border-bottom: 3px double #000; margin-top: 5px; margin-bottom: 18px;"></div>
-                    <div style="text-align: center; margin-bottom: 18px;">
-                        <h2 style="margin: 0; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111;">${reportTitle}</h2>
-                        <p style="margin: 4px 0 0 0; font-size: 11px; color: #555;">Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber</p>
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;">
-                        <thead>
-                            <tr>
-                                ${headers.map((h, i) => `<th style="background-color: #1a1a1a; color: #ffffff; font-weight: 700; padding: 8px 10px; border: 1px solid #000; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; text-align: ${colAlignments[i]}; ${colAlignments[i] === 'center' && i === 0 ? 'width: 6%;' : ''}">${h}</th>`).join('')}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${rows.map((r, rIdx) => `
-                                <tr style="${rIdx % 2 === 1 ? 'background-color: #f8f9fa;' : ''}">
-                                    ${r.map((v, i) => `<td style="padding: 7px 10px; border: 1px solid #ccc; color: #1a1a1a; text-align: ${colAlignments[i]}; font-size: 11px;">${v}</td>`).join('')}
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                        <tfoot>
-                            ${tfootHtml}
-                        </tfoot>
-                    </table>
-                    <div style="margin-top: 35px; display: flex; justify-content: flex-end; page-break-inside: avoid;">
-                        <div style="width: 250px; text-align: center; font-size: 12px; color: #111;">
-                            <p style="margin: 0 0 4px 0;">Bandar Lampung, ${formattedDateIndo}</p>
-                            <p style="margin: 0; font-weight: 700;">Admin / Pemilik Elite Barber</p>
-                            <div style="height: 60px;"></div>
-                            <p style="margin: 0; font-weight: 700;">( .................................... )</p>
-                        </div>
-                    </div>
-                `;
+            // Generate PDF menggunakan jsPDF + AutoTable (Native Vector PDF - anti blank & resolusi tinggi)
+            const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF || null);
+            if (jsPDFClass) {
+                try {
+                    const isLandscape = headers.length > 5;
+                    const pageWidth = isLandscape ? 297 : 210;
+                    const pageHeight = isLandscape ? 210 : 297;
+                    const rightMargin = pageWidth - 14;
+                    const centerX = pageWidth / 2;
 
-                tempDiv.style.position = 'fixed';
-                tempDiv.style.left = '-9999px';
-                tempDiv.style.top = '0';
-                tempDiv.style.width = '780px';
-                document.body.appendChild(tempDiv);
+                    const doc = new jsPDFClass({
+                        orientation: isLandscape ? 'landscape' : 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
 
-                let opt = {
-                    margin:       [10, 10, 10, 10],
-                    filename:     fileName + '.pdf',
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
+                    // 1. Kop Surat Resmi
+                    // Icon Badge EB
+                    doc.setFillColor(26, 26, 26);
+                    doc.roundedRect(14, 10, 13, 13, 2, 2, 'F');
+                    doc.setTextColor(245, 158, 11);
+                    doc.setFontSize(11);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("EB", 20.5, 18.5, { align: "center" });
 
-                html2pdf().set(opt).from(tempDiv).outputPdf('bloburl').then(function(pdfUrl) {
-                    if (tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
-                    if (previewWindow && !previewWindow.closed) {
-                        previewWindow.location.href = pdfUrl;
+                    // Judul Brand
+                    doc.setTextColor(26, 26, 26);
+                    doc.setFontSize(15);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("ELITE BARBER", 30, 16);
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "italic");
+                    doc.setTextColor(110, 110, 110);
+                    doc.text("Executive Barbershop & Grooming Studio", 30, 20.5);
+
+                    // Alamat & Kontak (Kanan)
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(50, 50, 50);
+                    doc.text("Jl. Z.A. Pagar Alam No. 45, Kedaton", rightMargin, 13, { align: "right" });
+                    doc.text("Bandar Lampung, Lampung 35141", rightMargin, 17, { align: "right" });
+                    doc.text("Telp/WA: 0812-3456-7890 | info@elitebarber.com", rightMargin, 21, { align: "right" });
+
+                    // Garis Dobel Pembatas Kop
+                    doc.setDrawColor(0, 0, 0);
+                    doc.setLineWidth(0.6);
+                    doc.line(14, 25.5, rightMargin, 25.5);
+                    doc.setLineWidth(0.2);
+                    doc.line(14, 26.5, rightMargin, 26.5);
+
+                    // 2. Judul Dokumen Laporan
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(11);
+                    doc.setTextColor(17, 17, 17);
+                    doc.text(reportTitle, centerX, 33, { align: "center" });
+
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`Dicetak pada: ${formattedDateIndo}, ${formattedTimeIndo} | Dokumen Resmi Elite Barber`, centerX, 37.5, { align: "center" });
+
+                    // 3. Konfigurasi Kolom & Ringkasan Footer
+                    let columnStyles = {};
+                    colAlignments.forEach((align, idx) => {
+                        columnStyles[idx] = { halign: align };
+                        let hLower = headers[idx].toLowerCase();
+                        if (idx === 0 && (hLower.includes('no') || hLower === '#' || hLower.includes('id'))) {
+                            columnStyles[idx].cellWidth = 10;
+                            columnStyles[idx].halign = 'center';
+                        }
+                    });
+
+                    let footRows = [];
+                    if (hasMoneyTotal) {
+                        let firstMoneyIdx = isMoneyCol.findIndex(m => m === true);
+                        let footRow = [];
+                        headers.forEach((h, cIdx) => {
+                            if (cIdx === 0 && firstMoneyIdx > 0) {
+                                footRow.push({ content: `TOTAL KESELURUHAN (${rows.length} Data)`, colSpan: firstMoneyIdx, styles: { halign: 'right', fontStyle: 'bold' } });
+                            } else if (cIdx < firstMoneyIdx) {
+                                // dihandle colSpan
+                            } else if (isMoneyCol[cIdx]) {
+                                let formattedSum = 'Rp ' + new Intl.NumberFormat('id-ID').format(moneyTotals[cIdx]);
+                                footRow.push({ content: formattedSum, styles: { halign: 'right', fontStyle: 'bold' } });
+                            } else {
+                                footRow.push({ content: '', styles: { halign: 'center' } });
+                            }
+                        });
+                        footRows.push(footRow);
                     } else {
-                        window.open(pdfUrl, '_blank');
+                        footRows.push([{ content: `TOTAL DATA: ${rows.length} Baris Data`, colSpan: headers.length, styles: { fontStyle: 'bold' } }]);
                     }
-                }).catch(function(err) {
-                    console.error("PDF generation error:", err);
-                    if (tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
-                    if (previewWindow && !previewWindow.closed) {
-                        previewWindow.document.body.innerHTML = '<div style="color:#ef4444;text-align:center;padding:40px;font-family:sans-serif;"><h3>Gagal membuat preview PDF</h3><p>' + err.message + '</p></div>';
-                    }
-                });
-            } else {
-                // Fallback jsPDF autotable
-                const jsPDFObj = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF || null);
-                if (jsPDFObj) {
-                    const doc = new jsPDFObj({ orientation: 'portrait', format: 'a4' });
-                    doc.setFontSize(14);
-                    doc.text("ELITE BARBER - " + reportTitle, 14, 15);
-                    doc.setFontSize(9);
-                    doc.text("Bandar Lampung | Tanggal: " + formattedDateIndo, 14, 22);
-                    
+
+                    // 4. Render AutoTable
                     doc.autoTable({
                         head: [headers],
                         body: rows,
-                        startY: 28,
-                        styles: { fontSize: 9, cellPadding: 3 },
-                        headStyles: { fillColor: [26, 26, 26], textColor: [255, 255, 255], fontStyle: 'bold' },
-                        alternateRowStyles: { fillColor: [248, 249, 250] }
+                        foot: footRows,
+                        startY: 42,
+                        margin: { left: 14, right: 14, top: 14, bottom: 18 },
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: [26, 26, 26],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            fontSize: 8,
+                            cellPadding: 2.2,
+                            halign: 'center',
+                            valign: 'middle'
+                        },
+                        bodyStyles: {
+                            fontSize: 7.5,
+                            textColor: [30, 30, 30],
+                            cellPadding: 2,
+                            valign: 'middle'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [248, 249, 250]
+                        },
+                        footStyles: {
+                            fillColor: [240, 240, 240],
+                            textColor: [0, 0, 0],
+                            fontSize: 8,
+                            cellPadding: 2.2,
+                            fontStyle: 'bold',
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.2
+                        },
+                        columnStyles: columnStyles,
+                        styles: {
+                            lineColor: [210, 210, 210],
+                            lineWidth: 0.1,
+                            overflow: 'linebreak'
+                        },
+                        didDrawPage: function(data) {
+                            let totalPages = doc.internal.getNumberOfPages();
+                            doc.setFontSize(7);
+                            doc.setFont("helvetica", "normal");
+                            doc.setTextColor(140, 140, 140);
+                            doc.text(`Halaman ${data.pageNumber} dari ${totalPages}`, rightMargin, pageHeight - 8, { align: 'right' });
+                            doc.text('Elite Barber System - Dokumen Otentik Terverifikasi', 14, pageHeight - 8);
+                        }
                     });
 
-                    const pdfBlobUrl = doc.output('bloburl');
+                    // 5. Tanda Tangan
+                    let finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 160;
+                    if (finalY > pageHeight - 40) {
+                        doc.addPage();
+                        finalY = 20;
+                    }
+                    let sigX = rightMargin - 30;
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "normal");
+                    doc.setTextColor(20, 20, 20);
+                    doc.text(`Bandar Lampung, ${formattedDateIndo}`, sigX, finalY, { align: 'center' });
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Admin / Pemilik Elite Barber", sigX, finalY + 4.5, { align: 'center' });
+                    doc.text("( .................................... )", sigX, finalY + 22, { align: 'center' });
+
+                    // 6. Muat hasil ke tab preview
+                    const pdfBlob = doc.output('blob');
+                    const pdfBlobUrl = URL.createObjectURL(pdfBlob);
                     if (previewWindow && !previewWindow.closed) {
                         previewWindow.location.href = pdfBlobUrl;
                     } else {
                         window.open(pdfBlobUrl, '_blank');
                     }
-                } else {
-                    if (previewWindow && !previewWindow.closed) previewWindow.close();
-                    alert("Library PDF tidak tersedia.");
+                } catch(e) {
+                    console.error("PDF Generate Error:", e);
+                    if (previewWindow && !previewWindow.closed) {
+                        previewWindow.document.body.innerHTML = '<div style="color:#ef4444;text-align:center;padding:40px;font-family:sans-serif;"><h3>Gagal membuat preview PDF</h3><p>' + e.message + '</p></div>';
+                    }
                 }
+            } else {
+                if (previewWindow && !previewWindow.closed) previewWindow.close();
+                alert("Library jsPDF tidak ditemukan di browser.");
             }
         }
     }
