@@ -820,6 +820,35 @@
             const formattedDateIndo = now.toLocaleDateString('id-ID', dateOptions);
             const formattedTimeIndo = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
 
+            // Buka tab baru lebih awal dengan loading state agar tidak diblokir popup blocker
+            let previewWindow = window.open('', '_blank');
+            if (previewWindow) {
+                previewWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="id">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Memuat Preview Dokumen...</title>
+                        <style>
+                            body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: #0f172a; color: #f8fafc; }
+                            .loader-box { text-align: center; background: #1e293b; padding: 32px 40px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid #334155; }
+                            .spinner { width: 42px; height: 42px; border: 4px solid rgba(245, 158, 11, 0.2); border-top-color: #f59e0b; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 18px auto; }
+                            @keyframes spin { to { transform: rotate(360deg); } }
+                            h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 700; color: #f8fafc; letter-spacing: 0.5px; }
+                            p { margin: 0; color: #94a3b8; font-size: 13px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="loader-box">
+                            <div class="spinner"></div>
+                            <h3>MEMBUAT PREVIEW PDF</h3>
+                            <p>Menyiapkan dokumen resmi Elite Barber...</p>
+                        </div>
+                    </body>
+                    </html>
+                `);
+            }
+
             // Generate PDF via html2pdf jika tersedia
             if (typeof html2pdf !== 'undefined') {
                 let tempDiv = document.createElement('div');
@@ -889,11 +918,19 @@
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                html2pdf().set(opt).from(tempDiv).save().then(function() {
+                html2pdf().set(opt).from(tempDiv).outputPdf('bloburl').then(function(pdfUrl) {
                     if (tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
+                    if (previewWindow && !previewWindow.closed) {
+                        previewWindow.location.href = pdfUrl;
+                    } else {
+                        window.open(pdfUrl, '_blank');
+                    }
                 }).catch(function(err) {
                     console.error("PDF generation error:", err);
                     if (tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
+                    if (previewWindow && !previewWindow.closed) {
+                        previewWindow.document.body.innerHTML = '<div style="color:#ef4444;text-align:center;padding:40px;font-family:sans-serif;"><h3>Gagal membuat preview PDF</h3><p>' + err.message + '</p></div>';
+                    }
                 });
             } else {
                 // Fallback jsPDF autotable
@@ -914,8 +951,14 @@
                         alternateRowStyles: { fillColor: [248, 249, 250] }
                     });
 
-                    doc.save(fileName + '.pdf');
+                    const pdfBlobUrl = doc.output('bloburl');
+                    if (previewWindow && !previewWindow.closed) {
+                        previewWindow.location.href = pdfBlobUrl;
+                    } else {
+                        window.open(pdfBlobUrl, '_blank');
+                    }
                 } else {
+                    if (previewWindow && !previewWindow.closed) previewWindow.close();
                     alert("Library PDF tidak tersedia.");
                 }
             }
