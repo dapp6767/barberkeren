@@ -414,11 +414,15 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             </nav>
         </div>
 
-        <!-- Sidebar Footer / Bottom Home Button -->
-        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40">
+        <!-- Sidebar Footer / Bottom Home & Logout Buttons -->
+        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40 space-y-1">
             <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
                 <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
                 <span class="text-sm font-medium">Home</span>
+            </a>
+            <a href="../auth/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-rose-400 hover:text-rose-200 hover:bg-rose-500/20 transition-colors font-medium">
+                <i data-lucide="log-out" class="w-5 h-5 text-rose-400 shrink-0"></i>
+                <span class="text-sm font-medium">Logout</span>
             </a>
         </div>
     </aside>
@@ -460,18 +464,29 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             <div class="flex items-center gap-3 sm:gap-4">
                 <div id="realtime-clock" class="hidden md:block text-xs sm:text-sm text-zinc-300 font-medium tracking-wide"></div>
                 <div class="relative" id="user-profile-dropdown-container">
-                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-all p-1 sm:p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
                         <?php 
                         $nav_avatar_name = !empty($user_data['fullname']) ? urlencode($user_data['fullname']) : urlencode($_SESSION['username']);
                         $nav_profile_files = glob(__DIR__ . '/../asset/image/profile_' . $_SESSION['user_id'] . '.*');
                         $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
                         ?>
                         <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars(!empty($user_data['fullname']) ? $user_data['fullname'] : $_SESSION['username']) ?></span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
                     </button>
 
                     <!-- Profile Dropdown Menu -->
-                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl divide-y divide-amber-900/40">
+                        <div class="p-3 bg-[#1e1408]">
+                            <span class="text-xs font-bold text-amber-200 block truncate"><?= htmlspecialchars(!empty($user_data['fullname']) ? $user_data['fullname'] : $_SESSION['username']) ?></span>
+                            <span class="text-[10px] text-amber-400/80 font-mono capitalize">Role: Barber</span>
+                        </div>
+                        <div class="py-1">
+                            <a href="javascript:void(0)" onclick="switchBarberTab('tab-profil', 'profil', this); closeProfileDropdown();" class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-amber-200 hover:bg-amber-500/20 hover:text-amber-100 transition-colors">
+                                <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+                                <span>Profil Saya</span>
+                            </a>
+                        </div>
                         <div class="py-1 bg-rose-950/10">
                             <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
                                 <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
@@ -925,6 +940,12 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                                     <div class="flex items-center gap-3 text-sm text-amber-300 bg-amber-950/40 p-2.5 rounded-lg border border-amber-800/40">
                                         <i data-lucide="star" class="w-4 h-4 text-amber-400 shrink-0"></i>
                                         <span>Rating: <strong>⭐ <?= number_format($barberRating, 1) ?> / 5.0</strong></span>
+                                    </div>
+                                    <div class="pt-2">
+                                        <a href="../auth/logout.php" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-400 hover:text-rose-300 font-bold text-xs transition-colors shadow">
+                                            <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
+                                            <span>Logout dari Akun</span>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -1508,6 +1529,39 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 }
             });
         }
+
+        // Profile Dropdown Toggle
+        function toggleProfileDropdown(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const dropdown = document.getElementById('user-profile-dropdown-menu');
+            const chevron = document.getElementById('profile-dropdown-chevron');
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                dropdown.classList.toggle('hidden');
+                if (chevron) {
+                    chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            }
+        }
+
+        function closeProfileDropdown() {
+            const dropdown = document.getElementById('user-profile-dropdown-menu');
+            const chevron = document.getElementById('profile-dropdown-chevron');
+            if (dropdown && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const profileContainer = document.getElementById('user-profile-dropdown-container');
+            if (profileContainer && !profileContainer.contains(e.target)) {
+                closeProfileDropdown();
+            }
+        });
     </script>
 
     <!-- Modal Pilih Kursi Tugas Harian -->

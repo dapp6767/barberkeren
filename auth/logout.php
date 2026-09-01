@@ -45,7 +45,7 @@ if ($user_id && isset($pdo)) {
     } catch (Exception $e) {}
 }
 
-// Hapus remember token di database untuk device ini
+// Hapus cookie remember me
 if (isset($_COOKIE['remember_me'])) {
     $token = $_COOKIE['remember_me'];
     try {
@@ -55,10 +55,19 @@ if (isset($_COOKIE['remember_me'])) {
         }
     } catch (Exception $e) {}
     
-    // Hapus cookie
     setcookie('remember_me', '', time() - 3600, "/");
 }
 
+// Bersihkan session secara total
+$_SESSION = [];
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+}
 session_destroy();
+
 redirect('login.php');
 ?>
