@@ -39,6 +39,10 @@
                     <button type="button" class="tabulator-btn" style="background-color: #2563eb; color: white; border-color: #3b82f6;" onclick="openAddLayananModal()">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Layanan
                     </button>
+                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button>
+                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button>
+                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
+                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
                 </div>
                 <input type="text" class="tabulator-search" id="search-layanan" placeholder="Filter rows...">
             </div>
