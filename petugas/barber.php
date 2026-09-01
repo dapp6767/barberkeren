@@ -488,27 +488,6 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <h1 class="text-base sm:text-xl font-semibold text-white capitalize truncate max-w-[150px] sm:max-w-none">
                     <?= $current_page === 'dashboard' ? 'Panel Kerja Barber' : ($current_page === 'charts' ? 'Statistik & Analisis Performa' : ($current_page === 'kursi' ? 'Stasiun & Manajemen Kursi' : ($current_page === 'profil' ? 'Profil Barber Saya' : str_replace('_', ' ', $current_page)))) ?>
                 </h1>
-
-                <!-- Kursi Tugas Hari Ini Badge -->
-                <?php if ($barber): ?>
-                    <?php if ($has_selected_chair_today): ?>
-                        <div class="flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/40 px-2.5 py-1 rounded-xl text-amber-300 text-xs font-bold shadow-inner ml-1 sm:ml-2">
-                            <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-400"></i>
-                            <span class="hidden sm:inline">Tugas Hari Ini: </span><strong class="text-amber-200"><?= htmlspecialchars($barber['kursi']) ?></strong>
-                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors text-[10px] font-semibold border border-amber-500/30">
-                                Ubah
-                            </button>
-                        </div>
-                    <?php else: ?>
-                        <div class="flex items-center gap-1.5 bg-rose-500/20 border border-rose-500/40 px-2.5 py-1 rounded-xl text-rose-300 text-xs font-bold shadow-inner ml-1 sm:ml-2 animate-pulse">
-                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400"></i>
-                            <span class="hidden sm:inline">Belum Pilih Kursi</span>
-                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white transition-colors text-[10px] font-bold shadow">
-                                Pilih
-                            </button>
-                        </div>
-                    <?php endif; ?>
-                <?php endif; ?>
             </div>
             <div class="flex items-center gap-3 sm:gap-4">
                 <div id="realtime-clock" class="hidden md:block text-xs sm:text-sm text-zinc-300 font-medium tracking-wide"></div>
