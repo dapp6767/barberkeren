@@ -442,21 +442,10 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     <i data-lucide="pie-chart" class="w-5 h-5"></i>
                     <span>Statistik (Charts)</span>
                 </a>
-                <!-- Kursi (Stasiun Kerja) - Golden Pill Style dari Gambar 1 -->
-                <div class="my-1.5">
-                    <a href="javascript:void(0)" onclick="switchBarberTab('tab-kursi', 'kursi', this); if(window.innerWidth<768) toggleMobileSidebar();" 
-                       class="sidebar-item flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl transition-all duration-300 border <?= $current_page === 'kursi' ? 'bg-gradient-to-r from-amber-900/70 via-[#2a1c0a] to-amber-950/80 border-amber-400 text-amber-100 shadow-[0_0_18px_rgba(245,158,11,0.3)] ring-1 ring-amber-400/40' : 'bg-gradient-to-r from-[#1c1308] to-[#140e06] border-amber-500/50 hover:border-amber-400 text-amber-200 hover:bg-amber-950/50 shadow-md' ?>">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <i data-lucide="armchair" class="w-4 h-4 text-amber-400 shrink-0"></i>
-                            <span class="text-xs font-semibold text-amber-200/90 truncate">
-                                Tugas Hari Ini: <strong class="text-amber-100 font-extrabold"><?= ($barber && $has_selected_chair_today) ? htmlspecialchars($barber['kursi']) : '<span class="text-rose-400 animate-pulse">Belum Pilih</span>' ?></strong>
-                            </span>
-                        </div>
-                        <span class="px-2 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/40 text-[10px] font-bold shrink-0 transition-colors shadow-sm">
-                            <?= $has_selected_chair_today ? 'Ubah' : 'Pilih' ?>
-                        </span>
-                    </a>
-                </div>
+                <a href="javascript:void(0)" onclick="switchBarberTab('tab-kursi', 'kursi', this); if(window.innerWidth<768) toggleMobileSidebar();" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors <?= $current_page === 'kursi' ? 'bg-adminlte-primary text-white mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
+                    <i data-lucide="armchair" class="w-5 h-5"></i>
+                    <span>Kursi (Stasiun Kerja)</span>
+                </a>
 
                 <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Sistem</p>
@@ -499,6 +488,27 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <h1 class="text-base sm:text-xl font-semibold text-white capitalize truncate max-w-[150px] sm:max-w-none">
                     <?= $current_page === 'dashboard' ? 'Panel Kerja Barber' : ($current_page === 'charts' ? 'Statistik & Analisis Performa' : ($current_page === 'kursi' ? 'Stasiun & Manajemen Kursi' : ($current_page === 'profil' ? 'Profil Barber Saya' : str_replace('_', ' ', $current_page)))) ?>
                 </h1>
+
+                <!-- Kursi Tugas Hari Ini Badge -->
+                <?php if ($barber): ?>
+                    <?php if ($has_selected_chair_today): ?>
+                        <div class="flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/40 px-2.5 py-1 rounded-xl text-amber-300 text-xs font-bold shadow-inner ml-1 sm:ml-2">
+                            <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-400"></i>
+                            <span class="hidden sm:inline">Tugas Hari Ini: </span><strong class="text-amber-200"><?= htmlspecialchars($barber['kursi']) ?></strong>
+                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors text-[10px] font-semibold border border-amber-500/30">
+                                Ubah
+                            </button>
+                        </div>
+                    <?php else: ?>
+                        <div class="flex items-center gap-1.5 bg-rose-500/20 border border-rose-500/40 px-2.5 py-1 rounded-xl text-rose-300 text-xs font-bold shadow-inner ml-1 sm:ml-2 animate-pulse">
+                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400"></i>
+                            <span class="hidden sm:inline">Belum Pilih Kursi</span>
+                            <button type="button" onclick="openSelectKursiModal()" class="ml-1 px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white transition-colors text-[10px] font-bold shadow">
+                                Pilih
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
             </div>
             <div class="flex items-center gap-3 sm:gap-4">
                 <div id="realtime-clock" class="hidden md:block text-xs sm:text-sm text-zinc-300 font-medium tracking-wide"></div>
@@ -1071,6 +1081,8 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                         </div>
                     </form>
                 </div>
+            </div><!-- /tab-profil -->
+
             <!-- TAB 4: KURSI & STASIUN KERJA BARBER -->
             <div id="tab-kursi" class="tab-content <?= $current_page === 'kursi' ? 'active' : '' ?>">
                 <div class="max-w-6xl mx-auto space-y-6">
