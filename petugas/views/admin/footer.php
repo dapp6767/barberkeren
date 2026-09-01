@@ -432,15 +432,16 @@
             let colAlignments = [];
             let isMoneyCol = [];
             headers.forEach((h, colIdx) => {
-                let hLower = h.toLowerCase();
+                let hLower = h.toLowerCase().trim();
                 let isNo = (colIdx === 0 && (hLower.includes('no') || hLower === '#' || hLower.includes('id')));
-                let isMoney = (hLower.includes('harga') || hLower.includes('total') || hLower.includes('bayar') || hLower.includes('nominal') || hLower.includes('biaya') || hLower.includes('tarif') || hLower.includes('rp') || hLower.includes('jumlah'));
+                let isDateTime = (hLower.includes('waktu') || hLower.includes('tanggal') || hLower.includes('tgl') || hLower.includes('jam') || hLower.includes('date') || hLower.includes('time') || hLower.includes('created') || hLower.includes('dibuat') || hLower.includes('est'));
+                let isMoney = !isDateTime && (hLower.includes('harga') || hLower.includes('total bayar') || hLower.includes('total harga') || hLower.includes('nominal') || hLower.includes('biaya') || hLower.includes('tarif') || hLower.includes('omset') || hLower.includes('rp') || (hLower.includes('total') && !hLower.includes('antrean') && !hLower.includes('tiket')) || hLower === 'bayar');
                 
                 if (isNo) {
                     colAlignments.push('center');
                 } else if (isMoney) {
                     colAlignments.push('right');
-                } else if (hLower.includes('status') || hLower.includes('waktu') || hLower.includes('tanggal') || hLower.includes('est')) {
+                } else if (isDateTime || hLower.includes('status') || hLower.includes('role') || hLower.includes('metode')) {
                     colAlignments.push('center');
                 } else {
                     colAlignments.push('left');
@@ -455,10 +456,13 @@
             rows.forEach(r => {
                 r.forEach((val, cIdx) => {
                     if (isMoneyCol[cIdx]) {
-                        let cleanNum = String(val).replace(/[^0-9]/g, '');
-                        if (cleanNum) {
-                            moneyTotals[cIdx] += parseFloat(cleanNum);
-                            hasMoneyTotal = true;
+                        let strVal = String(val).trim();
+                        if (!strVal.includes('-') && !strVal.includes(':')) {
+                            let cleanNum = strVal.replace(/[^0-9]/g, '');
+                            if (cleanNum) {
+                                moneyTotals[cIdx] += parseFloat(cleanNum);
+                                hasMoneyTotal = true;
+                            }
                         }
                     }
                 });
@@ -760,15 +764,16 @@
             let colAlignments = [];
             let isMoneyCol = [];
             headers.forEach((h, colIdx) => {
-                let hLower = h.toLowerCase();
+                let hLower = h.toLowerCase().trim();
                 let isNo = (colIdx === 0 && (hLower.includes('no') || hLower === '#' || hLower.includes('id')));
-                let isMoney = (hLower.includes('harga') || hLower.includes('total') || hLower.includes('bayar') || hLower.includes('nominal') || hLower.includes('biaya') || hLower.includes('tarif') || hLower.includes('rp') || hLower.includes('jumlah'));
+                let isDateTime = (hLower.includes('waktu') || hLower.includes('tanggal') || hLower.includes('tgl') || hLower.includes('jam') || hLower.includes('date') || hLower.includes('time') || hLower.includes('created') || hLower.includes('dibuat') || hLower.includes('est'));
+                let isMoney = !isDateTime && (hLower.includes('harga') || hLower.includes('total bayar') || hLower.includes('total harga') || hLower.includes('nominal') || hLower.includes('biaya') || hLower.includes('tarif') || hLower.includes('omset') || hLower.includes('rp') || (hLower.includes('total') && !hLower.includes('antrean') && !hLower.includes('tiket')) || hLower === 'bayar');
                 
                 if (isNo) {
                     colAlignments.push('center');
                 } else if (isMoney) {
                     colAlignments.push('right');
-                } else if (hLower.includes('status') || hLower.includes('waktu') || hLower.includes('tanggal') || hLower.includes('est')) {
+                } else if (isDateTime || hLower.includes('status') || hLower.includes('role') || hLower.includes('metode')) {
                     colAlignments.push('center');
                 } else {
                     colAlignments.push('left');
@@ -783,10 +788,13 @@
             rows.forEach(r => {
                 r.forEach((val, cIdx) => {
                     if (isMoneyCol[cIdx]) {
-                        let cleanNum = String(val).replace(/[^0-9]/g, '');
-                        if (cleanNum) {
-                            moneyTotals[cIdx] += parseFloat(cleanNum);
-                            hasMoneyTotal = true;
+                        let strVal = String(val).trim();
+                        if (!strVal.includes('-') && !strVal.includes(':')) {
+                            let cleanNum = strVal.replace(/[^0-9]/g, '');
+                            if (cleanNum) {
+                                moneyTotals[cIdx] += parseFloat(cleanNum);
+                                hasMoneyTotal = true;
+                            }
                         }
                     }
                 });
