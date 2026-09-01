@@ -28,12 +28,6 @@
 <div class="bg-adminlte-card rounded-lg border border-zinc-700 shadow-md overflow-hidden">
     <div class="px-6 py-4 border-b border-zinc-700 bg-[#30363d] flex justify-between items-center flex-wrap gap-2">
         <h3 class="font-semibold text-white">Daftar Antrean Tugas Anda</h3>
-        <div class="flex gap-2">
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button>
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button>
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
-        </div>
     </div>
     <div class="overflow-x-auto">
         <table id="table-barber" class="w-full text-left border-collapse">

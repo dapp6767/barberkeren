@@ -264,7 +264,6 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
                     <button type="button" class="tabulator-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0e0a08; border-color: #f59e0b; font-weight: 700;" onclick="openAddUserModal()">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Akun
                     </button>
-                    <button class="tabulator-btn" onclick="exportData('table-users', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-users', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-users', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-users', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
                 </div>
                 <input type="text" class="tabulator-search" id="search-users" placeholder="Filter rows...">
             </div>

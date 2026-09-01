@@ -6,12 +6,6 @@
             <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i>
             Status Antrean Aktif Hari Ini
         </h3>
-        <div class="flex gap-2">
-            <button class="tabulator-btn" onclick="exportData('table-antrean', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button>
-            <button class="tabulator-btn" onclick="exportData('table-antrean', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button>
-            <button class="tabulator-btn" onclick="exportData('table-antrean', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-            <button class="tabulator-btn" onclick="exportData('table-antrean', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
-        </div>
     </div>
     <!-- Desktop Table View (hidden on mobile, visible md+) -->
     <div class="hidden md:block overflow-x-auto custom-scroll">

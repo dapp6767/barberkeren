@@ -392,7 +392,7 @@
         <div class="px-6 py-4 border-b border-white/10 bg-[#22180f]">
             <h3 class="font-serif font-bold text-[#f0d375] tracking-wide text-lg">Laporan Riwayat Transaksi Lunas</h3>
         </div>
-        <div class="tabulator-wrapper"><div class="tabulator-controls"><div class="flex gap-2"><button class="tabulator-btn" onclick="exportData('table-transaksi', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button></div><input type="text" class="tabulator-search" id="search-transaksi" placeholder="Filter rows..."></div>
+        <div class="tabulator-wrapper"><div class="tabulator-controls"><div class="flex gap-2"></div><input type="text" class="tabulator-search" id="search-transaksi" placeholder="Filter rows..."></div>
             <!-- Mobile Card View (< 768px) -->
             <div class="md:hidden space-y-3 mb-4 p-4">
                 <?php if (empty($transaksi)): ?>
