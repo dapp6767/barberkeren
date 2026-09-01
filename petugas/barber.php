@@ -442,23 +442,21 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                     <i data-lucide="pie-chart" class="w-5 h-5"></i>
                     <span>Statistik (Charts)</span>
                 </a>
-                <a href="javascript:void(0)" onclick="switchBarberTab('tab-kursi', 'kursi', this); if(window.innerWidth<768) toggleMobileSidebar();" class="sidebar-item flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg transition-colors <?= $current_page === 'kursi' ? 'bg-adminlte-primary text-white mt-1' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white mt-1' ?>">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <i data-lucide="armchair" class="w-5 h-5 shrink-0"></i>
-                        <span class="truncate">Kursi (Stasiun Kerja)</span>
-                    </div>
-                    <?php if ($barber): ?>
-                        <?php if ($has_selected_chair_today): ?>
-                            <span class="inline-flex items-center gap-1 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded-md text-amber-300 text-[10px] font-bold shrink-0">
-                                <?= htmlspecialchars($barber['kursi']) ?>
+                <!-- Kursi (Stasiun Kerja) - Golden Pill Style dari Gambar 1 -->
+                <div class="my-1.5">
+                    <a href="javascript:void(0)" onclick="switchBarberTab('tab-kursi', 'kursi', this); if(window.innerWidth<768) toggleMobileSidebar();" 
+                       class="sidebar-item flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl transition-all duration-300 border <?= $current_page === 'kursi' ? 'bg-gradient-to-r from-amber-900/70 via-[#2a1c0a] to-amber-950/80 border-amber-400 text-amber-100 shadow-[0_0_18px_rgba(245,158,11,0.3)] ring-1 ring-amber-400/40' : 'bg-gradient-to-r from-[#1c1308] to-[#140e06] border-amber-500/50 hover:border-amber-400 text-amber-200 hover:bg-amber-950/50 shadow-md' ?>">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <i data-lucide="armchair" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                            <span class="text-xs font-semibold text-amber-200/90 truncate">
+                                Tugas Hari Ini: <strong class="text-amber-100 font-extrabold"><?= ($barber && $has_selected_chair_today) ? htmlspecialchars($barber['kursi']) : '<span class="text-rose-400 animate-pulse">Belum Pilih</span>' ?></strong>
                             </span>
-                        <?php else: ?>
-                            <span class="inline-flex items-center gap-1 bg-rose-500/20 border border-rose-500/40 px-2 py-0.5 rounded-md text-rose-300 text-[10px] font-bold shrink-0 animate-pulse">
-                                Belum Pilih
-                            </span>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                </a>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/40 text-[10px] font-bold shrink-0 transition-colors shadow-sm">
+                            <?= $has_selected_chair_today ? 'Ubah' : 'Pilih' ?>
+                        </span>
+                    </a>
+                </div>
 
                 <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                 <p class="px-3 text-xs font-semibold uppercase tracking-wider mb-2 mt-4" style="color:#5c3d1a;">Sistem</p>
