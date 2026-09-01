@@ -18,4 +18,13 @@ db/*.sql
 .agents/
 .gemini/
 .vscode/
+
+# Environment & Sensitive Database Configurations
 .env
+.env.*
+.env.local
+!.env.example
+config/database.local.php
+config/database.custom.php
+config/db_config.php
+!config/database.local.php.example

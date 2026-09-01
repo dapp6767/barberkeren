@@ -77,7 +77,12 @@ barber_keren/
    * Impor file `db/barber_db.sql` yang ada di dalam folder proyek.
 
 3. **Konfigurasi Database** *(Opsional)*:
-   * Buka file [config/database.php](file:///d:/laragon/www/barber_keren/config/database.php) dan sesuaikan username/password MySQL lokal Anda jika berbeda (Default: `root` / tanpa password).
+   * Salin file `.env.example` menjadi `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   * Sesuaikan kredensial database (DB_HOST, DB_NAME, DB_USER, DB_PASS) di dalam `.env` jika berbeda dengan default Laragon (`127.0.0.1` / `root` / tanpa password).
+   * File `.env` sudah otomatis diabaikan oleh Git (`.gitignore`) sehingga aman dan tidak akan ter-upload ke publik/GitHub.
 
 4. **Jalankan Aplikasi**:
    * Buka browser dan kunjungi: `http://localhost/barber_keren`

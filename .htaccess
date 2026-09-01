@@ -1,0 +1,17 @@
+# ==============================================================================
+# Keamanan & Konfigurasi Server Apache (Laragon / cPanel / InfinityFree)
+# ==============================================================================
+
+# 1. Lindungi file sensitif (.env, .git, database .sql, .log) dari akses langsung via browser
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "(\.sql|\.log|\.git)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 2. Matikan Directory Browsing / List Folder
+Options -Indexes

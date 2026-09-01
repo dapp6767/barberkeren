@@ -1,0 +1,17 @@
+<?php
+/**
+ * ==============================================================================
+ * OVERRIDE KONFIGURASI DATABASE (database.local.php)
+ * ==============================================================================
+ * Jika Anda mengunggah ke hosting (InfinityFree / cPanel) dan tidak ingin memakai .env,
+ * salin file ini menjadi `config/database.local.php` lalu sesuaikan isinya.
+ * File `database.local.php` secara otomatis diabaikan oleh Git (.gitignore).
+ */
+
+return [
+    'host'     => 'sql308.infinityfree.com', // Sesuaikan dengan MySQL Hostname di vPanel
+    'port'     => 3306,
+    'dbname'   => 'if0_42597730_barber_db',  // Sesuaikan dengan Database Name
+    'username' => 'if0_42597730',            // Sesuaikan dengan MySQL Username
+    'password' => 'password_hosting_anda',   // Sesuaikan dengan Password Hosting Anda
+];
