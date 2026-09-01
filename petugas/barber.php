@@ -463,15 +463,11 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
             </nav>
         </div>
 
-        <!-- Sidebar Footer / Bottom Home & Logout Buttons -->
-        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40 space-y-1">
+        <!-- Sidebar Footer / Bottom Home Button -->
+        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40">
             <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
                 <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
                 <span class="text-sm font-medium">Home</span>
-            </a>
-            <a href="../auth/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-rose-400 hover:text-rose-200 hover:bg-rose-500/20 transition-colors font-medium">
-                <i data-lucide="log-out" class="w-5 h-5 text-rose-400 shrink-0"></i>
-                <span class="text-sm font-medium">Logout</span>
             </a>
         </div>
     </aside>
