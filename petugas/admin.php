@@ -167,10 +167,16 @@ if ($page === 'barber') {
               LEFT JOIN layanan l ON a.layanan_id = l.id 
               LEFT JOIN users u ON a.pelanggan_id = u.id_user
               LEFT JOIN barber b ON a.barber_id = b.id
-              WHERE DATE(a.waktu_dibuat) = ? AND (a.barber_id = ? OR a.barber_id IS NULL)
+              WHERE DATE(a.waktu_dibuat) = ?
+                AND (
+                    (a.barber_id IS NOT NULL AND a.barber_id = ?)
+                    OR a.barber_id IS NULL
+                    OR a.barber_id = 0
+                    OR ? = 0
+                )
               ORDER BY a.id ASC";
     $stmt_q = $pdo->prepare($query);
-    $stmt_q->execute([$today, $barber_id]);
+    $stmt_q->execute([$today, (int)$barber_id, (int)$barber_id]);
     $barber_queues = $stmt_q->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($barber_queues as $q) {

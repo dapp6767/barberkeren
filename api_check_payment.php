@@ -14,10 +14,11 @@ if (!function_exists('is_logged_in') || !is_logged_in() || !in_array($_SESSION['
 }
 
 $user_id = $_SESSION['user_id'];
-$stmt_b = $pdo->prepare("SELECT id FROM barber WHERE user_id = ? LIMIT 1");
-$stmt_b->execute([$user_id]);
+$stmt_b = $pdo->prepare("SELECT * FROM barber WHERE user_id = ? OR id = ? LIMIT 1");
+$stmt_b->execute([$user_id, $user_id]);
 $barber = $stmt_b->fetch(PDO::FETCH_ASSOC);
-$barber_id = $barber ? $barber['id'] : null;
+
+$barber_id = $barber ? (int)$barber['id'] : null;
 
 $today = date('Y-m-d');
 // Cari antrean berstatus 'paid' (pelanggan sudah klik bayar) yang belum diproses barber
@@ -30,11 +31,16 @@ $query = "SELECT a.*, l.nama_layanan, l.harga, u.username as pelanggan_nama,
           LEFT JOIN barber b ON a.barber_id = b.id
           WHERE DATE(a.waktu_dibuat) = ? 
             AND a.status_antrean = 'paid' 
-            AND (a.barber_id = ? OR a.barber_id IS NULL)
+            AND (
+                (a.barber_id IS NOT NULL AND a.barber_id = ?)
+                OR a.barber_id IS NULL
+                OR a.barber_id = 0
+                OR a.served_by_user_id = ?
+            )
           ORDER BY a.id ASC LIMIT 1";
 
 $stmt = $pdo->prepare($query);
-$stmt->execute([$today, $barber_id]);
+$stmt->execute([$today, (int)$barber_id, (int)$user_id]);
 $queue = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($queue) {

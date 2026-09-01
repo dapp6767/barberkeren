@@ -25,10 +25,23 @@ $stmt_u = $pdo->prepare("SELECT * FROM users WHERE id_user = ? LIMIT 1");
 $stmt_u->execute([$user_id]);
 $user_data = $stmt_u->fetch(PDO::FETCH_ASSOC) ?: [];
 
-// Ambil ID Barber berdasarkan user_id
+// Ambil ID Barber berdasarkan user_id atau nama
 $stmt_b = $pdo->prepare("SELECT * FROM barber WHERE user_id = ? OR id = ? LIMIT 1");
 $stmt_b->execute([$user_id, $user_id]);
 $barber = $stmt_b->fetch(PDO::FETCH_ASSOC);
+
+if (!$barber && !empty($user_data['fullname'])) {
+    $stmt_b_name = $pdo->prepare("SELECT * FROM barber WHERE LOWER(nama) = LOWER(?) LIMIT 1");
+    $stmt_b_name->execute([$user_data['fullname']]);
+    $barber = $stmt_b_name->fetch(PDO::FETCH_ASSOC);
+}
+if (!$barber && !empty($user_data['username'])) {
+    $stmt_b_name = $pdo->prepare("SELECT * FROM barber WHERE LOWER(nama) = LOWER(?) LIMIT 1");
+    $stmt_b_name->execute([$user_data['username']]);
+    $barber = $stmt_b_name->fetch(PDO::FETCH_ASSOC);
+}
+
+$barber_id = $barber ? (int)$barber['id'] : null;
 
 // Ensure tgl_kursi column exists
 try {
@@ -57,16 +70,52 @@ foreach ($occ_list as $oc) {
 
 // Ambil Daftar Antrean Hari Ini
 $today = date('Y-m-d');
-$query = "SELECT a.*, l.nama_layanan, l.harga, u.username as pelanggan_nama, b.multiplier,
-          (SELECT metode_pembayaran FROM transaksi t WHERE t.antrian_id = a.id LIMIT 1) as metode_bayar
-          FROM antrian a 
-          LEFT JOIN layanan l ON a.layanan_id = l.id 
-          LEFT JOIN users u ON a.pelanggan_id = u.id_user
-          LEFT JOIN barber b ON a.barber_id = b.id
-          WHERE DATE(a.waktu_dibuat) = ? AND (a.barber_id = ? OR a.barber_id IS NULL)
-          ORDER BY a.id ASC";
-$stmt_q = $pdo->prepare($query);
-$stmt_q->execute([$today, $barber_id]);
+$isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin');
+
+$barber_kursi_letter = '';
+if ($barber && !empty($barber['kursi'])) {
+    if (preg_match('/kursi\s*([a-z])/i', $barber['kursi'], $m)) {
+        $barber_kursi_letter = strtoupper($m[1]);
+    }
+}
+$chairPrefix = $barber_kursi_letter ? ($barber_kursi_letter . '-%') : '';
+
+if ($isAdmin && !$barber_id) {
+    // Admin mode: tampilkan semua antrean hari ini
+    $query = "SELECT a.*, l.nama_layanan, l.harga, u.username as pelanggan_nama, b.multiplier, b.nama as barber_nama,
+              (SELECT metode_pembayaran FROM transaksi t WHERE t.antrian_id = a.id LIMIT 1) as metode_bayar
+              FROM antrian a 
+              LEFT JOIN layanan l ON a.layanan_id = l.id 
+              LEFT JOIN users u ON a.pelanggan_id = u.id_user
+              LEFT JOIN barber b ON a.barber_id = b.id
+              WHERE DATE(a.waktu_dibuat) = ?
+              ORDER BY a.id ASC";
+    $stmt_q = $pdo->prepare($query);
+    $stmt_q->execute([$today]);
+} else {
+    // Barber mode: tampilkan antrean khusus barber ini, antrean tanpa barber (bebas/otomatis), antrean kursi yang sama, dan yang sedang dilayani
+    $query = "SELECT a.*, l.nama_layanan, l.harga, u.username as pelanggan_nama, b.multiplier, b.nama as barber_nama,
+              (SELECT metode_pembayaran FROM transaksi t WHERE t.antrian_id = a.id LIMIT 1) as metode_bayar
+              FROM antrian a 
+              LEFT JOIN layanan l ON a.layanan_id = l.id 
+              LEFT JOIN users u ON a.pelanggan_id = u.id_user
+              LEFT JOIN barber b ON a.barber_id = b.id
+              WHERE DATE(a.waktu_dibuat) = ? 
+                AND (
+                    (a.barber_id IS NOT NULL AND a.barber_id = ?)
+                    OR a.barber_id IS NULL
+                    OR a.barber_id = 0
+                    OR a.served_by_user_id = ?
+                    " . ($chairPrefix ? "OR a.no_antrean LIKE ?" : "") . "
+                )
+              ORDER BY a.id ASC";
+    $stmt_q = $pdo->prepare($query);
+    $params = [$today, (int)$barber_id, (int)$user_id];
+    if ($chairPrefix) {
+        $params[] = $chairPrefix;
+    }
+    $stmt_q->execute($params);
+}
 $queues = $stmt_q->fetchAll(PDO::FETCH_ASSOC);
 
 // Count queues by status

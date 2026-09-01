@@ -8,6 +8,23 @@
  * `config/database.local.php` sehingga aman dan tidak akan ter-expose di GitHub.
  */
 
+// Polyfill fungsi string untuk kompatibilitas versi PHP < 8.0 di shared hosting
+if (!function_exists('str_starts_with')) {
+    function str_starts_with($haystack, $needle) {
+        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+if (!function_exists('str_ends_with')) {
+    function str_ends_with($haystack, $needle) {
+        return $needle === '' || $needle === substr($haystack, -strlen($needle));
+    }
+}
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle) {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
 // 1. Fungsi Mandiri untuk Memuat File .env (Tanpa Ketergantungan Composer)
 if (!function_exists('load_env_file')) {
     function load_env_file($path) {
