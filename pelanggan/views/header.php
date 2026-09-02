@@ -57,14 +57,56 @@
             color: #d4c4a0 !important;
             padding: 1rem 1.5rem !important;
         }
+        .dataTables_wrapper .dataTables_header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .dataTables_wrapper .dataTables_filter {
+            float: none !important;
+            margin-bottom: 0 !important;
+        }
+        .dataTables_wrapper .dataTables_footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .dataTables_wrapper .dataTables_footer_right {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
         .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_info,
         .dataTables_wrapper .dataTables_processing,
         .dataTables_wrapper .dataTables_paginate {
             color: #d4c4a0 !important;
-            margin-bottom: 0.75rem;
             font-size: 0.875rem;
+        }
+        .dataTables_wrapper .dataTables_length {
+            float: none !important;
+            margin-bottom: 0 !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .dataTables_wrapper .dataTables_info {
+            float: none !important;
+            margin-bottom: 0 !important;
+            padding-top: 0 !important;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            float: none !important;
+            margin-bottom: 0 !important;
+            padding-top: 0 !important;
         }
         .dataTables_wrapper .dataTables_filter input {
             background-color: #16120c !important;

@@ -276,6 +276,7 @@
             if (window.lucide) lucide.createIcons();
             if ($('#riwayatTable').length) {
                 $('#riwayatTable').DataTable({
+                    dom: '<"dataTables_header"f>rt<"dataTables_footer"i<"dataTables_footer_right"lp>>',
                     language: {
                         search: "Cari Riwayat:",
                         lengthMenu: "Tampilkan _MENU_ data",
