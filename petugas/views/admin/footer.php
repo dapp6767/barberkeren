@@ -227,149 +227,86 @@
 
     // Initialize Tabulator when ready
     let tables = {};
-    document.addEventListener("DOMContentLoaded", function() {
-        setTimeout(function() {
-            const cleanHtml = function(value) {
-                if (typeof value === 'string') {
-                    let tmp = document.createElement("DIV");
-                    tmp.innerHTML = value;
-                    return (tmp.textContent || tmp.innerText || "").trim().replace(/\s+/g, ' ');
-                }
-                return value;
-            };
-            
-            const commonConfig = {
-                layout: "fitColumns",
-                renderVertical: "basic",
-                pagination: "local",
-                paginationSize: 10,
-                paginationSizeSelector: [10, 25, 50, 100],
-                movableColumns: true,
-                columnDefaults: {
-                    accessorDownload: cleanHtml,
-                    accessorPrint: cleanHtml
-                },
-                printAsHtml: true,
-                printStyled: true
-            };
+    // Initialize Unified DataTables for Admin
+    $(document).ready(function() {
+        if (window.lucide) lucide.createIcons();
 
-            // Initialize Layanan Table
-            if (document.getElementById('table-layanan')) {
-                tables['table-layanan'] = new Tabulator("#table-layanan", commonConfig);
-                tables['table-layanan'].on("tableBuilt", function() {
-                    document.getElementById('table-layanan').classList.add('table-loaded');
-                });
-                tables['table-layanan'].on("renderComplete", function() {
-                    lucide.createIcons();
-                });
-                const searchLayanan = document.getElementById("search-layanan");
-                if (searchLayanan) {
-                    searchLayanan.addEventListener("keyup", function(){
-                        let term = this.value.toLowerCase();
-                        tables['table-layanan'].setFilter(function(data){
-                            for(let key in data) {
-                                if(String(data[key]).toLowerCase().includes(term)) return true;
-                            }
-                            return false;
-                        });
-                    });
-                }
+        const commonDataTableLang = {
+            search: "Cari Data:",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+            infoEmpty: "Belum ada data",
+            infoFiltered: "(disaring dari _MAX_ total data)",
+            zeroRecords: "Tidak ada data yang sesuai",
+            paginate: {
+                first: "Awal",
+                last: "Akhir",
+                next: "❯",
+                previous: "❮"
             }
-            
-            // Initialize Users Table
-            if (document.getElementById('table-users')) {
-                tables['table-users'] = new Tabulator("#table-users", commonConfig);
-                tables['table-users'].on("tableBuilt", function() {
-                    document.getElementById('table-users').classList.add('table-loaded');
+        };
+
+        const commonDom = '<"dataTables_header"f>rt<"dataTables_footer"i<"dataTables_footer_right"lp>>';
+
+        const initDt = function(selector, searchLabel, infoLabel, customOrder = []) {
+            if ($(selector).length && $(selector + ' tbody tr').length > 0 && !$(selector + ' tbody tr td[colspan]').length) {
+                const dt = $(selector).DataTable({
+                    dom: commonDom,
+                    language: Object.assign({}, commonDataTableLang, {
+                        search: searchLabel,
+                        info: infoLabel
+                    }),
+                    pageLength: 10,
+                    order: customOrder,
+                    responsive: true
                 });
-                tables['table-users'].on("renderComplete", function() {
-                    lucide.createIcons();
+                dt.on('draw', function() {
+                    if (window.lucide) lucide.createIcons();
                 });
-                const searchUsers = document.getElementById("search-users");
-                if (searchUsers) {
-                    searchUsers.addEventListener("keyup", function(){
-                        let term = this.value.toLowerCase();
-                        tables['table-users'].setFilter(function(data){
-                            for(let key in data) {
-                                if(String(data[key]).toLowerCase().includes(term)) return true;
-                            }
-                            return false;
-                        });
-                    });
-                }
             }
-            
-            // Initialize Transaksi Table
-            if (document.getElementById('table-transaksi')) {
-                tables['table-transaksi'] = new Tabulator("#table-transaksi", commonConfig);
-                tables['table-transaksi'].on("tableBuilt", function() {
-                    document.getElementById('table-transaksi').classList.add('table-loaded');
-                });
-                tables['table-transaksi'].on("renderComplete", function() {
-                    lucide.createIcons();
-                });
-                const searchTransaksi = document.getElementById("search-transaksi");
-                if (searchTransaksi) {
-                    searchTransaksi.addEventListener("keyup", function(){
-                        let term = this.value.toLowerCase();
-                        tables['table-transaksi'].setFilter(function(data){
-                            for(let key in data) {
-                                if(String(data[key]).toLowerCase().includes(term)) return true;
-                            }
-                            return false;
-                        });
-                    });
-                }
-            }
-        }, 100);
+        };
+
+        initDt('#table-layanan', 'Cari Layanan:', 'Menampilkan _START_ sampai _END_ dari _TOTAL_ layanan');
+        initDt('#table-transaksi', 'Cari Transaksi:', 'Menampilkan _START_ sampai _END_ dari _TOTAL_ transaksi', [[0, 'desc']]);
+        initDt('#table-users', 'Cari Pengguna:', 'Menampilkan _START_ sampai _END_ dari _TOTAL_ pengguna');
+        initDt('#table-barber', 'Cari Antrean:', 'Menampilkan _START_ sampai _END_ dari _TOTAL_ antrean');
+        initDt('#table-antrean', 'Cari Antrean:', 'Menampilkan _START_ sampai _END_ dari _TOTAL_ antrean');
     });
 
     function exportData(tableId, format) {
         let headers = [];
         let rows = [];
 
-        if (tables && tables[tableId]) {
-            let tab = tables[tableId];
-            tab.getColumns().forEach(col => {
-                let title = col.getDefinition().title || col.getField();
-                if (title && title.toLowerCase() !== 'aksi' && title !== '') {
-                    headers.push(title);
+        const tableEl = document.getElementById(tableId);
+        if (!tableEl) { alert("Tabel tidak ditemukan!"); return; }
+
+        let ths = tableEl.querySelectorAll("thead th");
+        ths.forEach(th => {
+            let txt = th.innerText.trim();
+            if (txt && txt.toLowerCase() !== 'aksi' && txt !== '') headers.push(txt);
+        });
+
+        if (window.jQuery && $.fn.dataTable && $.fn.dataTable.isDataTable('#' + tableId)) {
+            let dt = $('#' + tableId).DataTable();
+            dt.rows({ search: 'applied' }).every(function(rowIdx, tableLoop, rowLoop) {
+                let rowNode = this.node();
+                if (rowNode) {
+                    let rowData = [];
+                    let tds = rowNode.querySelectorAll("td");
+                    tds.forEach((td, colIdx) => {
+                        if (colIdx < headers.length) {
+                            let clone = td.cloneNode(true);
+                            clone.querySelectorAll('button, form, script, style, input, .hidden, [class*="hidden"], [style*="display:none"], [style*="display: none"]').forEach(el => el.remove());
+                            let txt = clone.innerText.trim().replace(/\s+/g, ' ');
+                            if (colIdx === 0 && (!txt || txt === '')) txt = String(rowLoop + 1);
+                            rowData.push(txt);
+                        }
+                    });
+                    if (rowData.length > 0) rows.push(rowData);
                 }
             });
-            let activeRows = tab.getData("active");
-            activeRows.forEach((rowObj, index) => {
-                let rowData = [];
-                tab.getColumns().forEach(col => {
-                    let field = col.getField();
-                    let title = col.getDefinition().title || field;
-                    if (title && title.toLowerCase() !== 'aksi' && title !== '') {
-                        let val = rowObj[field];
-                        if (field === 'no' || !val) {
-                            if (field === 'no') val = String(index + 1);
-                            else val = val || '';
-                        }
-                        if (typeof val === 'string') {
-                            let tmp = document.createElement("DIV");
-                            tmp.innerHTML = val;
-                            tmp.querySelectorAll('button, form, script, style, input, .hidden, [class*="hidden"], [style*="display:none"], [style*="display: none"]').forEach(el => el.remove());
-                            val = (tmp.textContent || tmp.innerText || "").trim().replace(/\s+/g, ' ');
-                        }
-                        rowData.push(val);
-                    }
-                });
-                rows.push(rowData);
-            });
         } else {
-            const table = document.getElementById(tableId);
-            if (!table) { alert("Tabel tidak ditemukan!"); return; }
-            
-            let ths = table.querySelectorAll("thead th");
-            ths.forEach(th => {
-                let txt = th.innerText.trim();
-                if (txt && txt.toLowerCase() !== 'aksi' && txt !== '') headers.push(txt);
-            });
-            
-            let trs = table.querySelectorAll("tbody tr");
+            let trs = tableEl.querySelectorAll("tbody tr");
             trs.forEach((tr, idx) => {
                 let rowData = [];
                 let tds = tr.querySelectorAll("td");

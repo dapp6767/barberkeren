@@ -388,13 +388,22 @@
     </div><!-- /.holo-chart-section -->
 
     <!-- Data Table Transaksi -->
-    <div class="bg-[#18120b] rounded-lg border border-white/10 shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/10 bg-[#22180f]">
-            <h3 class="font-serif font-bold text-[#f0d375] tracking-wide text-lg">Laporan Riwayat Transaksi Lunas</h3>
+    <div class="bg-[#18120b] rounded-xl border border-white/10 shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-amber-900/30 bg-[#16120c] flex justify-between items-center flex-wrap gap-3">
+            <h3 class="font-bold text-[#e8d5a3] text-base tracking-wide flex items-center gap-2">
+                <i data-lucide="receipt" class="w-5 h-5 text-amber-400"></i>
+                Laporan Riwayat Transaksi Lunas
+            </h3>
+            <div class="flex items-center gap-2 flex-wrap">
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-transaksi', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> CSV</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-transaksi', 'xlsx')"><i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Excel</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-transaksi', 'pdf')"><i data-lucide="file-text" class="w-4 h-4 text-rose-400"></i> PDF</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-transaksi', 'print')"><i data-lucide="printer" class="w-4 h-4 text-amber-400"></i> Print</button>
+            </div>
         </div>
-        <div class="tabulator-wrapper"><div class="tabulator-controls"><div class="flex gap-2"><button class="tabulator-btn" onclick="exportData('table-transaksi', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-transaksi', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button></div><input type="text" class="tabulator-search" id="search-transaksi" placeholder="Filter rows..."></div>
+        <div class="p-2">
             <!-- Mobile Card View (< 768px) -->
-            <div class="md:hidden space-y-3 mb-4 p-4">
+            <div class="md:hidden space-y-3 mb-4 p-2">
                 <?php if (empty($transaksi)): ?>
                     <div class="text-center py-6 text-zinc-400 text-xs">Belum ada data transaksi lunas.</div>
                 <?php else: ?>
@@ -425,37 +434,44 @@
             </div>
 
             <!-- Desktop Table View (>= 768px) -->
-            <table id="table-transaksi" class="hidden md:table w-full text-left border-collapse"><thead>
-                    <tr class="bg-zinc-900/60 text-zinc-300 text-sm border-b border-white/10">
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="id_transaksi" tabulator-formatter="html">ID Transaksi</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="no_tiket" tabulator-formatter="html">No. Tiket</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="pelanggan" tabulator-formatter="html">Pelanggan</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="total_bayar" tabulator-formatter="html">Total Bayar</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="status" tabulator-formatter="html">Status</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="waktu_bayar" tabulator-formatter="html">Waktu Bayar</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5">
-                    <?php if (empty($transaksi)): ?>
-                    <tr><td colspan="6" class="px-6 py-8 text-center text-zinc-400">Belum ada data transaksi lunas.</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($transaksi as $t): ?>
-                        <tr class="hover:bg-amber-500/10 transition-colors">
-                            <td class="px-6 py-4 font-mono text-amber-200/90 font-medium">#TRX-<?= $t['id'] ?></td>
-                            <td class="px-6 py-4 font-bold text-amber-400 font-mono"><?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?></td>
-                            <td class="px-6 py-4 text-zinc-200 font-medium"><?= htmlspecialchars($t['pelanggan'] ?? 'Guest') ?></td>
-                            <td class="px-6 py-4 text-amber-400 font-bold">Rp <?= number_format($t['total_harga'], 0, ',', '.') ?></td>
-                            <td class="px-6 py-4">
-                                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded text-xs font-semibold">
-                                    <?= strtoupper($t['status_pembayaran']) ?>
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-zinc-300"><?= $t['waktu_bayar'] ?></td>
+            <div class="hidden md:block overflow-x-auto custom-scroll">
+                <table id="table-transaksi" class="w-full text-left border-collapse display">
+                    <thead>
+                        <tr class="bg-zinc-900/70 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
+                            <th class="px-6 py-4 font-semibold">ID Transaksi</th>
+                            <th class="px-6 py-4 font-semibold">No. Tiket</th>
+                            <th class="px-6 py-4 font-semibold">Pelanggan</th>
+                            <th class="px-6 py-4 font-semibold">Total Bayar</th>
+                            <th class="px-6 py-4 font-semibold">Status</th>
+                            <th class="px-6 py-4 font-semibold">Waktu Bayar</th>
+                            <th class="px-6 py-4 font-semibold text-right">Aksi</th>
                         </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <?php if (!empty($transaksi)): ?>
+                            <?php foreach ($transaksi as $t): ?>
+                            <tr class="hover:bg-amber-900/10 transition-colors group">
+                                <td class="px-6 py-4 font-mono text-amber-200/90 font-medium">#TRX-<?= $t['id'] ?></td>
+                                <td class="px-6 py-4 font-bold text-amber-400 font-mono text-base"><?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?></td>
+                                <td class="px-6 py-4 text-white font-medium"><?= htmlspecialchars($t['pelanggan'] ?? 'Guest') ?></td>
+                                <td class="px-6 py-4 text-emerald-400 font-bold text-base">Rp <?= number_format($t['total_harga'], 0, ',', '.') ?></td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
+                                        <?= strtoupper($t['status_pembayaran']) ?>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-xs text-zinc-400"><?= $t['waktu_bayar'] ?></td>
+                                <td class="px-6 py-4 text-right">
+                                    <button type="button" onclick="printStruk('<?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?>', '<?= htmlspecialchars(addslashes($t['pelanggan'] ?? 'Guest')) ?>', '<?= htmlspecialchars(addslashes($t['layanan_list'] ?? 'Layanan Barber')) ?>', <?= $t['total_harga'] ?>, '<?= htmlspecialchars($t['metode_pembayaran'] ?? 'Cash') ?>', <?= $t['antrian_id'] ?? 'null' ?>)" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors">
+                                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> Struk
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

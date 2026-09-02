@@ -29,25 +29,25 @@
     </div>
 
     <!-- Data Table Layanan -->
-    <div class="bg-adminlte-card rounded-lg border border-zinc-700 shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-zinc-700 bg-[#30363d] flex justify-between items-center">
-            <h3 class="font-semibold text-white">Daftar Layanan</h3>
-        </div>
-        <div class="tabulator-wrapper">
-            <div class="tabulator-controls flex-wrap gap-3">
-                <div class="flex gap-2 flex-wrap">
-                    <button type="button" class="tabulator-btn" style="background-color: #2563eb; color: white; border-color: #3b82f6;" onclick="openAddLayananModal()">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Layanan
-                    </button>
-                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button>
-                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button>
-                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-                    <button class="tabulator-btn" onclick="exportData('table-layanan', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
-                </div>
-                <input type="text" class="tabulator-search" id="search-layanan" placeholder="Filter rows...">
+    <div class="bg-[#18120b] rounded-xl border border-white/10 shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-amber-900/30 bg-[#16120c] flex justify-between items-center flex-wrap gap-3">
+            <h3 class="font-bold text-[#e8d5a3] text-base tracking-wide flex items-center gap-2">
+                <i data-lucide="scissors" class="w-5 h-5 text-amber-400"></i>
+                Daftar Layanan
+            </h3>
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95" onclick="openAddLayananModal()">
+                    <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> Tambah Layanan
+                </button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-layanan', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> CSV</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-layanan', 'xlsx')"><i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Excel</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-layanan', 'pdf')"><i data-lucide="file-text" class="w-4 h-4 text-rose-400"></i> PDF</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-layanan', 'print')"><i data-lucide="printer" class="w-4 h-4 text-amber-400"></i> Print</button>
             </div>
+        </div>
+        <div class="p-2">
             <!-- Mobile Card View (< 768px) -->
-            <div class="md:hidden space-y-3 mb-4">
+            <div class="md:hidden space-y-3 mb-4 p-2">
                 <?php foreach ($layanan as $l): 
                     $img_url = get_service_image_url($l, '../');
                     $desc_text = !empty(trim($l['deskripsi'] ?? '')) ? htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], addslashes($l['deskripsi'])), ENT_QUOTES) : 'Belum ada informasi tambahan untuk layanan ini.';
@@ -86,58 +86,65 @@
             </div>
 
             <!-- Desktop Table View (>= 768px) -->
-            <table id="table-layanan" class="hidden md:table w-full text-left border-collapse display">
-                <thead>
-                    <tr class="bg-zinc-800/50 text-zinc-400 text-sm border-b border-zinc-700">
-                        <th class="px-4 py-3 font-medium text-center" tabulator-field="no" width="70" tabulator-formatter="rownum">No.</th>
-                        <th class="px-6 py-3 font-medium" tabulator-field="layanan" tabulator-formatter="html">Layanan</th>
-                        <th class="px-6 py-3 font-medium" tabulator-field="durasi">Durasi</th>
-                        <th class="px-6 py-3 font-medium" tabulator-field="harga" tabulator-formatter="html">Harga</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-700/50">
-                    <?php foreach ($layanan as $l): ?>
-                    <tr class="hover:bg-zinc-800/30 transition-colors">
-                        <td class="px-4 py-3 text-zinc-400 text-center font-medium"></td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center gap-3">
-                                <span class="text-white font-medium"><?= htmlspecialchars($l['nama_layanan']) ?></span>
-                                <?php if (!empty($l['is_terbaik'])): ?>
-                                    <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Terbaik</span>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                        <td class="px-6 py-3 text-zinc-400"><?= htmlspecialchars($l['durasi'] ?? 0) ?> Menit</td>
-                        <td class="px-6 py-3">
-                            <span class="hidden"><?= sprintf('%010d', $l['harga']) ?></span>
-                            <div class="flex justify-between items-center w-full min-w-[200px]">
-                                <span class="font-medium">Rp <?= number_format($l['harga'], 0, ',', '.') ?></span>
-                                <div class="flex items-center gap-2">
+            <div class="hidden md:block overflow-x-auto custom-scroll">
+                <table id="table-layanan" class="w-full text-left border-collapse display">
+                    <thead>
+                        <tr class="bg-zinc-900/70 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
+                            <th class="px-4 py-4 font-semibold text-center w-14">No.</th>
+                            <th class="px-6 py-4 font-semibold">Layanan</th>
+                            <th class="px-6 py-4 font-semibold">Durasi</th>
+                            <th class="px-6 py-4 font-semibold">Harga</th>
+                            <th class="px-6 py-4 font-semibold text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <?php $no = 1; foreach ($layanan as $l): ?>
+                        <tr class="hover:bg-amber-900/10 transition-colors group">
+                            <td class="px-4 py-4 text-zinc-400 text-center font-medium"><?= $no++ ?></td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-semibold text-base"><?= htmlspecialchars($l['nama_layanan']) ?></span>
+                                    <?php if (!empty($l['is_terbaik'])): ?>
+                                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Terbaik</span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-zinc-300">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-800/80 text-zinc-300 text-xs font-medium border border-white/10">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+                                    <?= htmlspecialchars($l['durasi'] ?? 0) ?> Menit
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-emerald-400 font-bold text-base">Rp <?= number_format($l['harga'], 0, ',', '.') ?></span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
                                 <?php 
                                     $img_url = get_service_image_url($l, '../');
                                     $desc_text = !empty(trim($l['deskripsi'] ?? '')) ? htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], addslashes($l['deskripsi'])), ENT_QUOTES) : 'Belum ada informasi tambahan untuk layanan ini.';
                                 ?>
-                                    <button type="button" onclick="openDescModal('<?= htmlspecialchars(addslashes($l['nama_layanan']), ENT_QUOTES) ?>', '<?= $desc_text ?>', '<?= htmlspecialchars($l['durasi'] ?? 0) ?>', 'Rp <?= number_format($l['harga'], 0, ',', '.') ?>', '<?= $img_url ?>')" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-400/10 transition-colors" title="Lihat Lebih Lengkap">
+                                    <button type="button" onclick="openDescModal('<?= htmlspecialchars(addslashes($l['nama_layanan']), ENT_QUOTES) ?>', '<?= $desc_text ?>', '<?= htmlspecialchars($l['durasi'] ?? 0) ?>', 'Rp <?= number_format($l['harga'], 0, ',', '.') ?>', '<?= $img_url ?>')" class="p-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/30 transition-colors" title="Lihat Lebih Lengkap">
                                         <i data-lucide="eye" class="w-4 h-4"></i>
                                     </button>
-                                    <button type="button" onclick="openEditLayananModal(<?= $l['id'] ?>, '<?= htmlspecialchars($l['nama_layanan'], ENT_QUOTES) ?>', <?= $l['harga'] ?>, <?= $l['durasi'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], $l['deskripsi'] ?? ''), ENT_QUOTES) ?>', <?= (int)($l['is_terbaik'] ?? 0) ?>, '<?= htmlspecialchars(addslashes($l['gambar'] ?? ''), ENT_QUOTES) ?>')" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-400/10 transition-colors" title="Edit">
+                                    <button type="button" onclick="openEditLayananModal(<?= $l['id'] ?>, '<?= htmlspecialchars($l['nama_layanan'], ENT_QUOTES) ?>', <?= $l['harga'] ?>, <?= $l['durasi'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(["\r", "\n"], ["\\r", "\\n"], $l['deskripsi'] ?? ''), ENT_QUOTES) ?>', <?= (int)($l['is_terbaik'] ?? 0) ?>, '<?= htmlspecialchars(addslashes($l['gambar'] ?? ''), ENT_QUOTES) ?>')" class="p-2 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 transition-colors" title="Edit">
                                         <i data-lucide="edit" class="w-4 h-4"></i>
                                     </button>
                                     <form method="POST" class="inline">
                                         <input type="hidden" name="form_type" value="delete_layanan">
                                         <input type="hidden" name="current_page" value="layanan">
                                         <input type="hidden" name="id" value="<?= $l['id'] ?>">
-                                        <button type="submit" class="text-red-400 hover:text-red-300 p-1.5 rounded hover:bg-red-400/10 transition-colors" onclick="return confirm('Hapus layanan ini?')" title="Hapus">
+                                        <button type="submit" class="p-2 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 transition-colors" onclick="return confirm('Hapus layanan ini?')" title="Hapus">
                                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                                         </button>
                                     </form>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

@@ -40,8 +40,10 @@
     <!-- FontAwesome 6 & Lucide Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- jQuery & DataTables CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <style>
         /* DataTables Custom Dark Amber Theme for Barber Keren */
         .dataTables_wrapper {
@@ -183,9 +185,6 @@
         }
     </style>
 
-    <!-- Tabulator CSS & JS -->
-    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
     <!-- SheetJS for XLSX -->
     <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
     <!-- jsPDF & html2pdf for PDF -->
@@ -194,120 +193,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>window.jsPDF = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;</script>
     <style>
-        /* === PREMIUM BROWN-BLACK THEME === */
-
-        /* Custom Tabulator Dark Theme Styles */
-        .tabulator-wrapper {
-            background: linear-gradient(135deg, #18120b 0%, #120e06 100%);
-            padding: 1.5rem; border-radius: 0.75rem; color: #d4d4d8;
-            font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(245,158,11,0.08);
-        }
-        .tabulator {
-            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.5rem;
-            background-color: #120e06; overflow: hidden;
-        }
-        .tabulator .tabulator-header {
-            background: linear-gradient(135deg, #2a1c0a 0%, #1e1408 100%) !important;
-            color: #fde68a; border-bottom: 2px solid rgba(245, 158, 11, 0.2); font-weight: 600;
-        }
-        .tabulator .tabulator-header .tabulator-col {
-            background: linear-gradient(135deg, #2a1c0a 0%, #1e1408 100%) !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .tabulator-col-title {
-            padding: 0.875rem 1.25rem !important; font-size: 0.875rem;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            color: #f59e0b; background: transparent !important;
-        }
-        .tabulator-cell { padding: 0.875rem 1.25rem !important; display: flex; align-items: center; }
-        .tabulator-row {
-            background-color: #120e06; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #d4d4d8 !important;
-            transition: all 0.2s ease;
-        }
-        .tabulator-row:nth-child(even) { background-color: #18120b; }
-        .tabulator-row:hover {
-            background: linear-gradient(90deg, #3d2b1a 0%, #2a1c0a 100%) !important;
-            border-left: 3px solid #f59e0b;
-            box-shadow: inset 0 0 20px rgba(245,158,11,0.06);
-        }
-        .tabulator-footer {
-            background: linear-gradient(135deg, #2a1c0a 0%, #1e1408 100%) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.08); color: #d4d4d8; padding: 0.75rem 1rem;
-        }
-        .tabulator-page {
-            background-color: #18120b !important; color: #d4d4d8 !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important; padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem; margin: 0 0.125rem; transition: all 0.2s;
-        }
-        .tabulator-page:not(.disabled):hover {
-            background: linear-gradient(135deg, #3d2b1a, #2a1c0a) !important;
-            color: #fde68a !important; border-color: #f59e0b !important;
-        }
-        .tabulator-page.active {
-            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-            color: #0e0a08 !important; border-color: #f59e0b !important;
-            font-weight: 700;
-        }
-        .tabulator-page.disabled { opacity: 0.5; cursor: not-allowed; }
-        .tabulator-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .tabulator-btn {
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #3d2b1a, #2a1c0a);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.375rem;
-            color: #fde68a; cursor: pointer; display: inline-flex; align-items: center;
-            gap: 0.5rem; font-size: 13px; transition: all 0.25s;
-        }
-        .tabulator-btn:hover {
-            background: linear-gradient(135deg, #5c3d1a, #3d2b1a);
-            border-color: #f59e0b; color: #f59e0b;
-            box-shadow: 0 0 12px rgba(245,158,11,0.2);
-        }
-        .tabulator-search {
-            padding: 0.4rem 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;
-            outline: none; width: 250px; background: #120e06; color: #fde68a;
-            transition: border-color 0.2s;
-        }
-        .tabulator-search:focus { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,0.15); }
-        .tabulator-search::placeholder { color: #a1a1aa; }
-
-        @media (max-width: 640px) {
-            .tabulator-controls {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.75rem;
-            }
-            .tabulator-controls > div {
-                flex-wrap: wrap;
-                justify-content: space-between;
-            }
-            .tabulator-btn {
-                flex: 1 1 calc(50% - 0.25rem);
-                justify-content: center;
-            }
-            .tabulator-search {
-                width: 100% !important;
-            }
-            .tabulator-wrapper {
-                padding: 0.75rem;
-            }
-        }
-
-        /* Fix table cell text colors */
-        .tabulator-row .text-white { color: #fde68a !important; }
-        .tabulator-row .text-zinc-400 { color: #d4d4d8 !important; }
-
         /* Custom Luxury Scrollbar for Cards */
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: rgba(18, 14, 6, 0.6); border-radius: 8px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.35); border-radius: 8px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.7); }
+    </style>
 
-        /* Smooth Table Loading */
-        .tabulator { opacity: 0; transition: opacity 0.5s ease-in-out; }
-        .tabulator.table-loaded { opacity: 1; }
-
+    <style>
         /* ============ SIDEBAR ============ */
         #sidebar {
             background: linear-gradient(180deg, #0e0a08 0%, #120e06 40%, #0a0603 100%);

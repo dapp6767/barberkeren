@@ -254,22 +254,25 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
     </div>
 
     <!-- Tabel Users -->
-    <div class="bg-[#18120b] rounded-lg border border-white/10 shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/10 bg-[#22180f]">
-            <h3 class="font-serif font-bold text-[#f0d375] tracking-wide text-lg">Daftar Akun Pengguna</h3>
-        </div>
-        <div class="tabulator-wrapper">
-            <div class="tabulator-controls">
-                <div class="flex gap-2 flex-wrap">
-                    <button type="button" class="tabulator-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0e0a08; border-color: #f59e0b; font-weight: 700;" onclick="openAddUserModal()">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Akun
-                    </button>
-                    <button class="tabulator-btn" onclick="exportData('table-users', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button><button class="tabulator-btn" onclick="exportData('table-users', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button><button class="tabulator-btn" onclick="exportData('table-users', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button><button class="tabulator-btn" onclick="exportData('table-users', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
-                </div>
-                <input type="text" class="tabulator-search" id="search-users" placeholder="Filter rows...">
+    <div class="bg-[#18120b] rounded-xl border border-white/10 shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-amber-900/30 bg-[#16120c] flex justify-between items-center flex-wrap gap-3">
+            <h3 class="font-bold text-[#e8d5a3] text-base tracking-wide flex items-center gap-2">
+                <i data-lucide="users" class="w-5 h-5 text-amber-400"></i>
+                Daftar Akun Pengguna
+            </h3>
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95" onclick="openAddUserModal()">
+                    <i data-lucide="user-plus" class="w-4 h-4 stroke-[2.5]"></i> Tambah Akun
+                </button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-users', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> CSV</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-users', 'xlsx')"><i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Excel</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-users', 'pdf')"><i data-lucide="file-text" class="w-4 h-4 text-rose-400"></i> PDF</button>
+                <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-users', 'print')"><i data-lucide="printer" class="w-4 h-4 text-amber-400"></i> Print</button>
             </div>
+        </div>
+        <div class="p-2">
             <!-- Mobile Card View (< 768px) -->
-            <div class="md:hidden space-y-3 mb-4">
+            <div class="md:hidden space-y-3 mb-4 p-2">
                 <?php foreach ($users as $u): ?>
                 <div class="bg-[#1a1208] border border-amber-900/40 rounded-xl p-4 shadow-md flex flex-col gap-3">
                     <div class="flex items-start justify-between gap-2">
@@ -307,30 +310,41 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
             </div>
 
             <!-- Desktop Table View (>= 768px) -->
-            <table id="table-users" class="hidden md:table w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-zinc-900/60 text-zinc-300 text-sm border-b border-white/10">
-                        <th class="px-4 py-3.5 font-semibold text-center" tabulator-field="no" width="70" tabulator-formatter="rownum">No.</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="fullname">Nama Lengkap</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="username">Username</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="email">Email</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="phone">No. WA</th>
-                        <th class="px-6 py-3.5 font-semibold" tabulator-field="role" tabulator-formatter="html">Role</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5">
-                    <?php foreach ($users as $u): ?>
-                    <tr class="hover:bg-amber-500/10 transition-colors">
-                        <td class="px-4 py-4 text-zinc-400 text-center font-medium"></td>
-                        <td class="px-6 py-4 text-white font-medium"><?= !empty($u['fullname']) ? htmlspecialchars($u['fullname']) : '-' ?></td>
-                        <td class="px-6 py-4 text-amber-200/90 font-mono font-medium"><?= htmlspecialchars($u['username']) ?></td>
-                        <td class="px-6 py-4 text-zinc-300"><?= !empty($u['email']) ? htmlspecialchars($u['email']) : '-' ?></td>
-                        <td class="px-6 py-4 text-zinc-300"><?= !empty($u['phone']) ? htmlspecialchars($u['phone']) : '-' ?></td>
-                        <td class="px-6 py-4">
-                            <div class="flex justify-between items-center w-full min-w-[150px]">
-                                <span class="text-zinc-300 capitalize font-medium"><?= htmlspecialchars($u['role']) ?></span>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" onclick="openEditUserModal(<?= $u['id_user'] ?>, '<?= htmlspecialchars($u['fullname'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['username'], ENT_QUOTES) ?>', '<?= htmlspecialchars($u['email'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['phone'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['role'], ENT_QUOTES) ?>')" class="text-amber-400 hover:text-amber-300 p-1.5 rounded hover:bg-amber-400/10 transition-colors" title="Edit">
+            <div class="hidden md:block overflow-x-auto custom-scroll">
+                <table id="table-users" class="w-full text-left border-collapse display">
+                    <thead>
+                        <tr class="bg-zinc-900/70 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
+                            <th class="px-4 py-4 font-semibold text-center w-14">No.</th>
+                            <th class="px-6 py-4 font-semibold">Nama Lengkap</th>
+                            <th class="px-6 py-4 font-semibold">Username</th>
+                            <th class="px-6 py-4 font-semibold">Email</th>
+                            <th class="px-6 py-4 font-semibold">No. WA</th>
+                            <th class="px-6 py-4 font-semibold">Role</th>
+                            <th class="px-6 py-4 font-semibold text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <?php $no = 1; foreach ($users as $u): ?>
+                        <tr class="hover:bg-amber-900/10 transition-colors group">
+                            <td class="px-4 py-4 text-zinc-400 text-center font-medium"><?= $no++ ?></td>
+                            <td class="px-6 py-4 text-white font-semibold"><?= !empty($u['fullname']) ? htmlspecialchars($u['fullname']) : '-' ?></td>
+                            <td class="px-6 py-4 text-amber-200/90 font-mono font-medium"><?= htmlspecialchars($u['username']) ?></td>
+                            <td class="px-6 py-4 text-zinc-300 text-sm"><?= !empty($u['email']) ? htmlspecialchars($u['email']) : '-' ?></td>
+                            <td class="px-6 py-4 text-zinc-300 text-sm"><?= !empty($u['phone']) ? htmlspecialchars($u['phone']) : '-' ?></td>
+                            <td class="px-6 py-4">
+                                <?php 
+                                    $r_badge = 'bg-zinc-800 text-zinc-300 border-zinc-700';
+                                    if ($u['role'] === 'admin') $r_badge = 'bg-purple-500/15 text-purple-300 border-purple-500/30';
+                                    elseif ($u['role'] === 'barber') $r_badge = 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+                                    elseif ($u['role'] === 'pelanggan') $r_badge = 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+                                ?>
+                                <span class="inline-block px-2.5 py-1 rounded-lg border text-xs font-bold uppercase tracking-wider <?= $r_badge ?>">
+                                    <?= htmlspecialchars($u['role']) ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button type="button" onclick="openEditUserModal(<?= $u['id_user'] ?>, '<?= htmlspecialchars($u['fullname'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['username'], ENT_QUOTES) ?>', '<?= htmlspecialchars($u['email'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['phone'] ?? '', ENT_QUOTES) ?>', '<?= htmlspecialchars($u['role'], ENT_QUOTES) ?>')" class="p-2 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 transition-colors" title="Edit">
                                         <i data-lucide="edit" class="w-4 h-4"></i>
                                     </button>
                                     <form method="POST" class="inline">
@@ -338,17 +352,17 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
                                         <input type="hidden" name="current_page" value="akun">
                                         <input type="hidden" name="id_user" value="<?= $u['id_user'] ?>">
                                         <input type="hidden" name="id" value="<?= $u['id_user'] ?>">
-                                        <button type="submit" class="text-rose-400 hover:text-rose-300 p-1.5 rounded hover:bg-rose-400/10 transition-colors" onclick="return confirm('Hapus user ini dari database?')" title="Hapus">
+                                        <button type="submit" class="p-2 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 transition-colors" onclick="return confirm('Hapus user ini dari database?')" title="Hapus">
                                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                                         </button>
                                     </form>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

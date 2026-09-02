@@ -25,28 +25,31 @@
 </div>
 
 <!-- Table Card -->
-<div class="bg-adminlte-card rounded-lg border border-zinc-700 shadow-md overflow-hidden">
-    <div class="px-6 py-4 border-b border-zinc-700 bg-[#30363d] flex justify-between items-center flex-wrap gap-2">
-        <h3 class="font-semibold text-white">Daftar Antrean Tugas Anda</h3>
-        <div class="flex gap-2">
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CSV</button>
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'xlsx')"><i data-lucide="table" class="w-4 h-4"></i> Excel</button>
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-            <button class="tabulator-btn" onclick="exportData('table-barber', 'print')"><i data-lucide="printer" class="w-4 h-4"></i> Print</button>
+<div class="bg-[#18120b] rounded-xl border border-white/10 shadow-xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-amber-900/30 bg-[#16120c] flex justify-between items-center flex-wrap gap-3">
+        <h3 class="font-bold text-[#e8d5a3] text-base tracking-wide flex items-center gap-2">
+            <i data-lucide="scissors" class="w-5 h-5 text-amber-400"></i>
+            Daftar Antrean Tugas Anda
+        </h3>
+        <div class="flex items-center gap-2 flex-wrap">
+            <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-barber', 'csv')"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> CSV</button>
+            <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-barber', 'xlsx')"><i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Excel</button>
+            <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-barber', 'pdf')"><i data-lucide="file-text" class="w-4 h-4 text-rose-400"></i> PDF</button>
+            <button class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition-all" onclick="exportData('table-barber', 'print')"><i data-lucide="printer" class="w-4 h-4 text-amber-400"></i> Print</button>
         </div>
     </div>
-    <div class="overflow-x-auto">
-        <table id="table-barber" class="w-full text-left border-collapse">
+    <div class="p-2 overflow-x-auto custom-scroll">
+        <table id="table-barber" class="w-full text-left border-collapse display">
             <thead>
-                <tr class="bg-zinc-800/50 text-zinc-400 text-sm border-b border-zinc-700">
-                    <th class="px-6 py-3 font-medium">No. Tiket</th>
-                    <th class="px-6 py-3 font-medium">Pelanggan</th>
-                    <th class="px-6 py-3 font-medium">Layanan & Harga</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium text-right">Aksi Kerja</th>
+                <tr class="bg-zinc-900/70 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
+                    <th class="px-6 py-4 font-semibold">No. Tiket</th>
+                    <th class="px-6 py-4 font-semibold">Pelanggan</th>
+                    <th class="px-6 py-4 font-semibold">Layanan & Harga</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 font-semibold text-right">Aksi Kerja</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-700/50">
+            <tbody class="divide-y divide-white/5">
                 <?php if (empty($barber_queues)): ?>
                 <tr><td colspan="5" class="px-6 py-8 text-center text-zinc-500">Belum ada antrean masuk untuk Anda hari ini.</td></tr>
                 <?php else: ?>
