@@ -274,25 +274,52 @@
         // DataTables Init
         $(document).ready(function() {
             if (window.lucide) lucide.createIcons();
+
+            const commonDataTableLang = {
+                search: "Cari Data:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Belum ada data",
+                infoFiltered: "(disaring dari _MAX_ total data)",
+                zeroRecords: "Tidak ada data yang sesuai",
+                paginate: {
+                    first: "Awal",
+                    last: "Akhir",
+                    next: "❯",
+                    previous: "❮"
+                }
+            };
+
+            const commonDom = '<"dataTables_header"f>rt<"dataTables_footer"i<"dataTables_footer_right"lp>>';
+
             if ($('#riwayatTable').length) {
                 $('#riwayatTable').DataTable({
-                    dom: '<"dataTables_header"f>rt<"dataTables_footer"i<"dataTables_footer_right"lp>>',
-                    language: {
+                    dom: commonDom,
+                    language: Object.assign({}, commonDataTableLang, {
                         search: "Cari Riwayat:",
-                        lengthMenu: "Tampilkan _MENU_ data",
                         info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ riwayat",
                         infoEmpty: "Belum ada data riwayat",
                         infoFiltered: "(disaring dari _MAX_ total riwayat)",
-                        zeroRecords: "Tidak ada riwayat yang sesuai",
-                        paginate: {
-                            first: "Awal",
-                            last: "Akhir",
-                            next: "❯",
-                            previous: "❮"
-                        }
-                    },
+                        zeroRecords: "Tidak ada riwayat yang sesuai"
+                    }),
                     pageLength: 10,
                     order: [[3, 'desc']],
+                    responsive: true
+                });
+            }
+
+            if ($('#activeQueueTable').length && $('#activeQueueTable tbody tr').length > 0 && !$('#activeQueueTable tbody tr td[colspan]').length) {
+                $('#activeQueueTable').DataTable({
+                    dom: commonDom,
+                    language: Object.assign({}, commonDataTableLang, {
+                        search: "Cari Antrean:",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ antrean",
+                        infoEmpty: "Belum ada antrean aktif",
+                        infoFiltered: "(disaring dari _MAX_ total antrean)",
+                        zeroRecords: "Tidak ada antrean yang sesuai"
+                    }),
+                    pageLength: 10,
+                    order: [],
                     responsive: true
                 });
             }

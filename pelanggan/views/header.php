@@ -67,6 +67,16 @@
             float: none !important;
             margin-bottom: 0 !important;
         }
+        .dataTables_wrapper .dataTables_filter label {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+            color: #d4c4a0 !important;
+            font-size: 0.875rem !important;
+            font-weight: 500 !important;
+        }
         .dataTables_wrapper .dataTables_footer {
             display: flex;
             justify-content: space-between;
@@ -94,19 +104,32 @@
         .dataTables_wrapper .dataTables_length {
             float: none !important;
             margin-bottom: 0 !important;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
+            display: inline-flex !important;
+            align-items: center !important;
+            white-space: nowrap !important;
+        }
+        .dataTables_wrapper .dataTables_length label {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.35rem !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+            color: #d4c4a0 !important;
+            font-size: 0.875rem !important;
         }
         .dataTables_wrapper .dataTables_info {
             float: none !important;
             margin-bottom: 0 !important;
             padding-top: 0 !important;
+            color: #a1a1aa !important;
         }
         .dataTables_wrapper .dataTables_paginate {
             float: none !important;
             margin-bottom: 0 !important;
             padding-top: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.25rem !important;
         }
         .dataTables_wrapper .dataTables_filter input {
             background-color: #16120c !important;
@@ -114,8 +137,8 @@
             color: #fde68a !important;
             border-radius: 0.5rem !important;
             padding: 0.375rem 0.75rem !important;
-            margin-left: 0.5rem !important;
             outline: none !important;
+            transition: all 0.2s ease !important;
         }
         .dataTables_wrapper .dataTables_filter input:focus {
             border-color: #f59e0b !important;
@@ -127,23 +150,39 @@
             color: #fde68a !important;
             border-radius: 0.5rem !important;
             padding: 0.25rem 0.5rem !important;
+            margin: 0 0.25rem !important;
             outline: none !important;
+            display: inline-block !important;
+            width: auto !important;
+            cursor: pointer !important;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             color: #d4c4a0 !important;
             border-radius: 0.5rem !important;
             border: 1px solid transparent !important;
+            padding: 0.35rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease !important;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button.current,
         .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
             background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
             color: #ffffff !important;
             border: 1px solid #f59e0b !important;
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3) !important;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
             background: rgba(245, 158, 11, 0.15) !important;
             color: #fde68a !important;
             border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+            opacity: 0.35 !important;
+            cursor: not-allowed !important;
+            background: transparent !important;
+            border-color: transparent !important;
         }
         table.dataTable tbody tr {
             background-color: transparent !important;

@@ -282,8 +282,8 @@
         </h3>
     </div>
     <!-- Desktop Table View -->
-    <div class="hidden md:block overflow-x-auto custom-scroll">
-        <table class="w-full text-left border-collapse">
+    <div class="hidden md:block overflow-x-auto custom-scroll p-2">
+        <table id="activeQueueTable" class="w-full text-left border-collapse display">
             <thead>
                 <tr class="bg-zinc-900/70 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
                     <th class="px-6 py-4 font-semibold">No. Tiket</th>

@@ -186,29 +186,29 @@
 </div>
 
 <!-- Desktop Table View (Visible on Desktop >= md) -->
-<div class="hidden md:block bg-adminlte-card rounded-xl border border-zinc-700 shadow-md overflow-hidden">
-    <div class="overflow-x-auto">
+<div class="hidden md:block bg-[#16120C] rounded-xl border border-amber-900/30 shadow-xl overflow-hidden">
+    <div class="overflow-x-auto custom-scroll">
         <table class="w-full text-left border-collapse">
             <thead>
-                <tr class="bg-zinc-800/50 text-zinc-400 text-sm border-b border-zinc-700">
-                    <th class="px-6 py-3 font-medium">No. Tiket</th>
-                    <th class="px-6 py-3 font-medium">Pelanggan</th>
-                    <th class="px-6 py-3 font-medium">Layanan & Harga</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium text-right">Aksi Kerja</th>
+                <tr class="bg-zinc-900/80 text-zinc-400 text-xs uppercase tracking-wider border-b border-white/10">
+                    <th class="px-6 py-4 font-semibold">No. Tiket</th>
+                    <th class="px-6 py-4 font-semibold">Pelanggan</th>
+                    <th class="px-6 py-4 font-semibold">Layanan & Harga</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 font-semibold text-right">Aksi Kerja</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-700/50">
+            <tbody class="divide-y divide-white/5">
                 <?php if (empty($queues)): ?>
-                <tr><td colspan="5" class="px-6 py-8 text-center text-zinc-500">Belum ada antrean masuk untuk Anda hari ini.</td></tr>
+                <tr><td colspan="5" class="px-6 py-8 text-center text-zinc-400 text-sm">Belum ada antrean masuk untuk Anda hari ini.</td></tr>
                 <?php else: ?>
                     <?php foreach ($queues as $q): 
                         $base_price = (float)($q['harga'] ?? 0);
                         $final_price = $base_price;
                     ?>
-                    <tr class="hover:bg-zinc-800/30 transition-colors">
+                    <tr class="hover:bg-amber-900/15 transition-colors">
                         <td class="px-6 py-4">
-                            <div class="font-bold text-lg text-white"><?= htmlspecialchars($q['no_antrean']) ?></div>
+                            <div class="font-bold text-lg text-amber-400 font-mono"><?= htmlspecialchars($q['no_antrean']) ?></div>
                         </td>
                         <td class="px-6 py-4 font-medium"><?= htmlspecialchars($q['pelanggan_nama'] ?? 'Guest') ?></td>
                         <td class="px-6 py-4">
