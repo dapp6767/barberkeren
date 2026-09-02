@@ -407,7 +407,11 @@
                 <?php if (empty($transaksi)): ?>
                     <div class="text-center py-6 text-zinc-400 text-xs">Belum ada data transaksi lunas.</div>
                 <?php else: ?>
-                    <?php foreach ($transaksi as $t): ?>
+                    <?php foreach ($transaksi as $t): 
+                        $t_time = !empty($t['waktu_bayar']) ? strtotime($t['waktu_bayar']) : (!empty($t['created_at']) ? strtotime($t['created_at']) : null);
+                        $t_date_str = $t_time ? date('d M Y', $t_time) : '-';
+                        $t_time_str = $t_time ? date('H:i', $t_time) . ' WIB' : '-';
+                    ?>
                     <div class="bg-[#1a1208] border border-amber-900/40 rounded-xl p-4 shadow-md flex flex-col gap-2.5">
                         <div class="flex items-center justify-between border-b border-amber-900/30 pb-2">
                             <span class="font-mono text-xs font-bold text-amber-200/90">#TRX-<?= $t['id'] ?></span>
@@ -423,7 +427,12 @@
                             <span class="text-amber-300 font-extrabold text-sm sm:text-base">Rp <?= number_format($t['total_harga'], 0, ',', '.') ?></span>
                         </div>
                         <div class="flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-amber-900/30">
-                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-amber-400"></i> <?= $t['waktu_bayar'] ?></span>
+                            <span class="flex items-center gap-1.5 font-medium text-zinc-300">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-400"></i>
+                                <span><?= $t_date_str ?></span>
+                                <span class="text-zinc-500">•</span>
+                                <span class="text-zinc-400"><?= $t_time_str ?></span>
+                            </span>
                             <button type="button" onclick="printStruk('<?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?>', '<?= htmlspecialchars(addslashes($t['pelanggan'] ?? 'Guest')) ?>', '<?= htmlspecialchars(addslashes($t['layanan_list'] ?? 'Layanan Barber')) ?>', <?= $t['total_harga'] ?>, '<?= htmlspecialchars($t['metode_pembayaran'] ?? 'Cash') ?>', <?= $t['antrian_id'] ?? 'null' ?>)" class="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30">
                                 <i data-lucide="printer" class="w-3 h-3"></i> Cetak Struk
                             </button>
@@ -443,13 +452,18 @@
                             <th class="px-6 py-4 font-semibold">Pelanggan</th>
                             <th class="px-6 py-4 font-semibold">Total Bayar</th>
                             <th class="px-6 py-4 font-semibold">Status</th>
-                            <th class="px-6 py-4 font-semibold">Waktu Bayar</th>
+                            <th class="px-6 py-4 font-semibold">Tanggal & Waktu</th>
                             <th class="px-6 py-4 font-semibold text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         <?php if (!empty($transaksi)): ?>
-                            <?php foreach ($transaksi as $t): ?>
+                            <?php foreach ($transaksi as $t): 
+                                $t_time = !empty($t['waktu_bayar']) ? strtotime($t['waktu_bayar']) : (!empty($t['created_at']) ? strtotime($t['created_at']) : null);
+                                $t_date_str = $t_time ? date('d M Y', $t_time) : '-';
+                                $t_time_str = $t_time ? date('H:i', $t_time) . ' WIB' : '-';
+                                $t_order_val = $t_time ? $t_time : 0;
+                            ?>
                             <tr class="hover:bg-amber-900/10 transition-colors group">
                                 <td class="px-6 py-4 font-mono text-amber-200/90 font-medium">#TRX-<?= $t['id'] ?></td>
                                 <td class="px-6 py-4 font-bold text-amber-400 font-mono text-base"><?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?></td>
@@ -460,7 +474,10 @@
                                         <?= strtoupper($t['status_pembayaran']) ?>
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-xs text-zinc-400"><?= $t['waktu_bayar'] ?></td>
+                                <td class="px-6 py-4" data-order="<?= $t_order_val ?>">
+                                    <div class="font-bold text-white text-sm"><?= $t_date_str ?></div>
+                                    <div class="text-zinc-400 text-xs mt-0.5"><?= $t_time_str ?></div>
+                                </td>
                                 <td class="px-6 py-4 text-right">
                                     <button type="button" onclick="printStruk('<?= htmlspecialchars(!empty($t['no_antrean']) ? $t['no_antrean'] : ('A-' . sprintf('%02d', !empty($t['antrian_id']) ? $t['antrian_id'] : $t['id']))) ?>', '<?= htmlspecialchars(addslashes($t['pelanggan'] ?? 'Guest')) ?>', '<?= htmlspecialchars(addslashes($t['layanan_list'] ?? 'Layanan Barber')) ?>', <?= $t['total_harga'] ?>, '<?= htmlspecialchars($t['metode_pembayaran'] ?? 'Cash') ?>', <?= $t['antrian_id'] ?? 'null' ?>)" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors">
                                         <i data-lucide="printer" class="w-3.5 h-3.5"></i> Struk
