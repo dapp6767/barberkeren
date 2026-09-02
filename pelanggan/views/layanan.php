@@ -1,3 +1,36 @@
+<style>
+    .service-img-wrapper {
+        height: 280px;
+        min-height: 260px;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background-color: #1a1612;
+    }
+    @media (min-width: 640px) {
+        .service-img-wrapper {
+            height: 320px;
+            min-height: 300px;
+        }
+    }
+    @media (min-width: 1024px) {
+        .service-img-wrapper {
+            height: 340px;
+            min-height: 320px;
+        }
+    }
+    .service-img-wrapper img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 25% !important;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .service-item:hover .service-img-wrapper img {
+        transform: scale(1.06);
+    }
+</style>
+
 <section id="tab-layanan" class="tab-content <?= $is_layanan ? 'active' : '' ?>">
 <!-- LAYANAN MODULE -->
 <div id="layanan-main-content" class="w-full pb-32">
@@ -76,16 +109,16 @@
              onclick="selectLayanan(this)">
 
             <!-- Image Section -->
-            <div class="relative w-full h-64 sm:h-72 lg:h-80 overflow-hidden bg-zinc-900">
+            <div class="service-img-wrapper">
                 <img src="<?= $img ?>" alt="<?= htmlspecialchars($s_name) ?>"
-                     class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                     class="transition-transform duration-700 ease-out"
                      loading="lazy">
                 
                 <!-- Subtle Gradient Overlay (Bottom) -->
-                <div class="absolute inset-0 bg-gradient-to-t from-[#16120C] via-[#16120C]/25 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#16120C] via-[#16120C]/25 to-transparent pointer-events-none"></div>
                 
                 <!-- Top Badges (Duration / Popular) -->
-                <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
+                <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30 shadow-md">
                         <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
                         <?= htmlspecialchars($s_durasi) ?>
@@ -98,14 +131,14 @@
                 </div>
 
                 <!-- Selection Active Overlay -->
-                <div class="selected-overlay absolute inset-0 bg-amber-500/20 backdrop-blur-[1px] flex items-center justify-center opacity-0 transition-opacity duration-300 pointer-events-none">
+                <div class="selected-overlay absolute inset-0 bg-amber-500/20 backdrop-blur-[1px] flex items-center justify-center opacity-0 transition-opacity duration-300 pointer-events-none z-10">
                     <div class="bg-amber-400 rounded-full p-3 shadow-2xl">
                         <i data-lucide="check" class="w-7 h-7 text-amber-950 stroke-[3]"></i>
                     </div>
                 </div>
 
                 <!-- Floating Price Badge -->
-                <div class="absolute bottom-3.5 right-3.5 bg-black/75 backdrop-blur-md text-emerald-400 font-extrabold text-sm sm:text-base px-3.5 py-1.5 rounded-xl border border-emerald-500/40 shadow-lg">
+                <div class="absolute bottom-3.5 right-3.5 bg-black/75 backdrop-blur-md text-emerald-400 font-extrabold text-sm sm:text-base px-3.5 py-1.5 rounded-xl border border-emerald-500/40 shadow-lg z-10">
                     <?= $price_formatted ?>
                 </div>
             </div>
