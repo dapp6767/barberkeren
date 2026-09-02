@@ -18,7 +18,7 @@
     </div>
 
     <!-- Service Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="service-list-container">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="service-list-container">
         <?php 
         $default_images_layanan = [
             'pangkas rambut biasa'      => 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
@@ -68,7 +68,7 @@
             $price_formatted = 'Rp ' . number_format($s_price, 0, ',', '.');
         ?>
         <!-- Service Card (Desktop Grid Style) -->
-        <div class="service-item group bg-[#1A1612] rounded-2xl border border-white/5 overflow-hidden shadow-lg transition-all duration-200 cursor-pointer hover:border-amber-500/40 hover:-translate-y-0.5 hover:shadow-amber-900/20 select-none"
+        <div class="service-item group bg-[#16120C] rounded-2xl border-2 border-white/5 overflow-hidden shadow-xl transition-all duration-300 cursor-pointer hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-950/40 select-none flex flex-col justify-between"
              data-id="<?= $s_id ?>"
              data-name="<?= htmlspecialchars($s_name) ?>"
              data-price="<?= $s_price ?>"
@@ -76,34 +76,61 @@
              onclick="selectLayanan(this)">
 
             <!-- Image Section -->
-            <div class="relative w-full h-44 overflow-hidden bg-zinc-800">
+            <div class="relative w-full h-64 sm:h-72 lg:h-80 overflow-hidden bg-zinc-900">
                 <img src="<?= $img ?>" alt="<?= htmlspecialchars($s_name) ?>"
-                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#1A1612] via-transparent to-transparent"></div>
-                <div class="selected-overlay absolute inset-0 bg-amber-500/25 flex items-center justify-center opacity-0 transition-opacity duration-200">
-                    <div class="bg-amber-400 rounded-full p-2 shadow-xl">
-                        <i data-lucide="check" class="w-5 h-5 text-amber-950"></i>
+                     class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                     loading="lazy">
+                
+                <!-- Subtle Gradient Overlay (Bottom) -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#16120C] via-[#16120C]/25 to-transparent"></div>
+                
+                <!-- Top Badges (Duration / Popular) -->
+                <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30 shadow-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <?= htmlspecialchars($s_durasi) ?>
+                    </span>
+                    <?php if (!empty($srv['is_terbaik']) || in_array($nama_lower, ['paket cukur sultan', 'maxcut', 'pangkas rambut luar biasa'])): ?>
+                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 shadow-lg border border-amber-300/40">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> Populer
+                    </span>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Selection Active Overlay -->
+                <div class="selected-overlay absolute inset-0 bg-amber-500/20 backdrop-blur-[1px] flex items-center justify-center opacity-0 transition-opacity duration-300 pointer-events-none">
+                    <div class="bg-amber-400 rounded-full p-3 shadow-2xl">
+                        <i data-lucide="check" class="w-7 h-7 text-amber-950 stroke-[3]"></i>
                     </div>
                 </div>
-                <div class="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-emerald-400 font-bold text-sm px-3 py-1 rounded-full border border-emerald-500/30">
+
+                <!-- Floating Price Badge -->
+                <div class="absolute bottom-3.5 right-3.5 bg-black/75 backdrop-blur-md text-emerald-400 font-extrabold text-sm sm:text-base px-3.5 py-1.5 rounded-xl border border-emerald-500/40 shadow-lg">
                     <?= $price_formatted ?>
                 </div>
             </div>
 
             <!-- Content Section -->
-            <div class="p-4 flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-base font-bold text-white leading-tight truncate"><?= htmlspecialchars($s_name) ?></h3>
-                    <p class="text-xs text-zinc-400 mt-1 line-clamp-2"><?= htmlspecialchars($s_desc) ?></p>
-                    <div class="flex items-center gap-1 text-xs text-zinc-500 mt-2">
-                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                        <span><?= htmlspecialchars($s_durasi) ?></span>
+            <div class="p-5 flex flex-col flex-1 justify-between gap-4">
+                <div>
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="text-lg font-bold text-white leading-snug group-hover:text-amber-300 transition-colors"><?= htmlspecialchars($s_name) ?></h3>
+                        <div class="selected-tick hidden shrink-0 mt-0.5">
+                            <div class="w-6 h-6 rounded-full bg-amber-400 flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.6)]">
+                                <i data-lucide="check" class="w-4 h-4 text-amber-950 stroke-[3]"></i>
+                            </div>
+                        </div>
                     </div>
+                    <p class="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed line-clamp-2"><?= htmlspecialchars($s_desc) ?></p>
                 </div>
-                <div class="selected-tick hidden shrink-0 mt-1">
-                    <div class="w-6 h-6 rounded-full bg-amber-400 flex items-center justify-center shadow-[0_0_10px_rgba(245,158,11,0.5)]">
-                        <i data-lucide="check" class="w-3.5 h-3.5 text-amber-950"></i>
-                    </div>
+
+                <div class="flex items-center justify-between pt-3 border-t border-white/5 text-xs">
+                    <span class="text-zinc-500 flex items-center gap-1 font-medium">
+                        <i data-lucide="scissors" class="w-3.5 h-3.5 text-amber-400/70"></i> Layanan Premium
+                    </span>
+                    <span class="text-amber-400 font-semibold group-hover:text-amber-300 flex items-center gap-1 group-hover:translate-x-0.5 transition-all">
+                        Pilih Layanan <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </span>
                 </div>
             </div>
         </div>
@@ -391,16 +418,26 @@
 
     function selectLayanan(el) {
         document.querySelectorAll('.service-item').forEach(function(card) {
-            card.classList.remove('border-amber-500', 'shadow-[0_0_20px_rgba(245,158,11,0.2)]');
-            card.classList.add('border-white/5');
-            card.querySelector('.selected-overlay').classList.replace('opacity-100', 'opacity-0');
-            card.querySelector('.selected-tick').classList.add('hidden');
+            card.classList.remove('border-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400/40', 'shadow-[0_0_25px_rgba(245,158,11,0.25)]', 'shadow-[0_0_20px_rgba(245,158,11,0.2)]', 'bg-[#22180d]');
+            card.classList.add('border-white/5', 'bg-[#16120C]');
+            const ov = card.querySelector('.selected-overlay');
+            if (ov) {
+                ov.classList.remove('opacity-100');
+                ov.classList.add('opacity-0');
+            }
+            const tick = card.querySelector('.selected-tick');
+            if (tick) tick.classList.add('hidden');
         });
 
-        el.classList.remove('border-white/5');
-        el.classList.add('border-amber-500', 'shadow-[0_0_20px_rgba(245,158,11,0.2)]');
-        el.querySelector('.selected-overlay').classList.replace('opacity-0', 'opacity-100');
-        el.querySelector('.selected-tick').classList.remove('hidden');
+        el.classList.remove('border-white/5', 'bg-[#16120C]');
+        el.classList.add('border-amber-400', 'ring-2', 'ring-amber-400/40', 'shadow-[0_0_25px_rgba(245,158,11,0.25)]', 'bg-[#22180d]');
+        const curOv = el.querySelector('.selected-overlay');
+        if (curOv) {
+            curOv.classList.remove('opacity-0');
+            curOv.classList.add('opacity-100');
+        }
+        const curTick = el.querySelector('.selected-tick');
+        if (curTick) curTick.classList.remove('hidden');
 
         selectedServiceId = el.dataset.id;
         selectedServiceName = el.dataset.name;
