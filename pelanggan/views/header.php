@@ -204,11 +204,11 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #brand-icon { transition: margin 0.3s ease; }
-        #brand-text { transition: opacity 0.2s, max-width 0.3s; max-width: 250px; white-space: nowrap; overflow: hidden; }
+        #brand-text { transition: opacity 0.2s, max-width 0.3s; max-width: 280px; white-space: nowrap; overflow: hidden; }
         #sidebar nav a {
             position: relative; transition: all 0.25s ease;
             white-space: nowrap; overflow: hidden;
-            border: 1px solid transparent; border-radius: 0.5rem;
+            border: 1px solid transparent; border-radius: 0.75rem;
         }
         #sidebar nav a::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0;
@@ -229,7 +229,7 @@
             border-color: #5c3d1a !important; color: #e8d5a3 !important;
         }
         #sidebar nav a.bg-adminlte-primary::before { opacity: 1; }
-        #sidebar nav span, #sidebar nav p { transition: opacity 0.2s, max-width 0.3s; max-width: 250px; overflow: hidden; white-space: nowrap; }
+        #sidebar nav span, #sidebar nav p { transition: opacity 0.2s, max-width 0.3s; max-width: 280px; overflow: hidden; white-space: nowrap; }
         #sidebar nav p { color: #6b4c20 !important; }
         #sidebar.w-20 #brand-logo-container { padding-left: 0; padding-right: 0; justify-content: center; }
         #sidebar.w-20 #brand-icon { margin-right: 0; }
@@ -268,7 +268,7 @@
         @media (max-width: 768px) {
             body {
                 flex-direction: column !important;
-                padding-bottom: 65px !important;
+                padding-bottom: 80px !important;
                 height: auto !important;
                 min-height: 100vh !important;
             }
@@ -285,8 +285,8 @@
 
             #sidebar.open-mobile {
                 transform: translateX(0) !important;
-                width: 260px !important;
-                box-shadow: 0 0 40px rgba(0,0,0,0.8) !important;
+                width: 285px !important;
+                box-shadow: 0 0 50px rgba(0,0,0,0.9) !important;
             }
 
             main {
@@ -392,21 +392,21 @@
     <div class="fixed inset-0 z-[-1] pointer-events-none" style="background: linear-gradient(135deg, #0e0a08 0%, #120e06 30%, #1a0e04 60%, #0a0603 100%);"></div>
 
     <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="w-64 bg-adminlte-sidebar h-full flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
+    <aside id="sidebar" class="w-72 bg-adminlte-sidebar h-full flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
         <script>
             if(localStorage.getItem('sidebarMinimized') === 'true') {
-                document.getElementById('sidebar').classList.replace('w-64', 'w-20');
+                document.getElementById('sidebar').classList.replace('w-72', 'w-20');
             }
         </script>
         <!-- Brand Logo -->
-        <div id="brand-logo-container" class="h-16 flex items-center px-6 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
+        <div id="brand-logo-container" class="h-16 md:h-18 flex items-center px-5 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
             <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
-            <span id="brand-text" class="text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Pelanggan</span></span>
+            <span id="brand-text" class="text-lg md:text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Pelanggan</span></span>
         </div>
         
         <!-- Sidebar Menu -->
         <div class="flex-1 overflow-y-auto py-4">
-            <nav class="flex flex-col gap-1 px-3">
+            <nav class="flex flex-col gap-1.5 px-3">
                 <?php
                 $current_page_param = $_GET['page'] ?? '';
                 $is_dashboard = ($current_page_param === '');
@@ -415,30 +415,30 @@
                 $is_layanan = ($current_page_param === 'layanan');
                 $is_qris = ($current_page_param === 'qris');
                 ?>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-dashboard')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-4 <?= $is_dashboard ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="layout-dashboard" class="fa-solid fa-house w-5 h-5 text-amber-400 shrink-0"></i>
+                <a href="javascript:void(0)" onclick="navigateToTab('tab-dashboard')" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-3 text-[15px] sm:text-base font-semibold transition-all <?= $is_dashboard ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Beranda</span>
                 </a>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-layanan')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_layanan ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="scissors" class="fa-solid fa-scissors w-5 h-5 text-amber-400 shrink-0"></i>
+                <a href="javascript:void(0)" onclick="navigateToTab('tab-layanan')" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-1.5 text-[15px] sm:text-base font-semibold transition-all <?= $is_layanan ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="scissors" class="w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Layanan</span>
                 </a>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-riwayat')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_riwayat ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="history" class="fa-solid fa-clock-rotate-left w-5 h-5 text-amber-400 shrink-0"></i>
+                <a href="javascript:void(0)" onclick="navigateToTab('tab-riwayat')" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-1.5 text-[15px] sm:text-base font-semibold transition-all <?= $is_riwayat ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="history" class="w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Riwayat Cukur</span>
                 </a>
-                <a href="javascript:void(0)" onclick="navigateToTab('tab-profil')" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1 <?= $is_profil ? 'bg-adminlte-primary text-amber-200' : 'text-stone-400 hover:text-amber-200' ?>">
-                    <i data-lucide="user-circle" class="fa-solid fa-user-gear w-5 h-5 text-amber-400 shrink-0"></i>
+                <a href="javascript:void(0)" onclick="navigateToTab('tab-profil')" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-1.5 text-[15px] sm:text-base font-semibold transition-all <?= $is_profil ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="user-circle" class="w-5 h-5 text-amber-400 shrink-0"></i>
                     <span>Profil Saya</span>
                 </a>
             </nav>
         </div>
 
         <!-- Sidebar Footer / Bottom Home Button -->
-        <div class="sidebar-footer p-3 border-t border-amber-900/30 bg-zinc-950/40">
-            <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
-                <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
-                <span class="text-sm font-medium">Home</span>
+        <div class="sidebar-footer p-3.5 border-t border-amber-900/30 bg-zinc-950/40">
+            <a href="../index.php" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-stone-300 hover:text-amber-200 hover:bg-amber-500/10 transition-colors text-[15px] sm:text-base font-semibold">
+                <i data-lucide="home" class="w-5 h-5 text-amber-400/80 shrink-0"></i>
+                <span>Home</span>
             </a>
         </div>
     </aside>
@@ -447,37 +447,33 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Top Navbar -->
-        <header class="h-16 flex items-center justify-between px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
-            <div class="flex items-center gap-4">
-                <button id="sidebar-toggle" class="transition-colors hover:text-amber-400" style="color:#8a6030;">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+        <header class="h-16 md:h-18 flex items-center justify-between px-4 sm:px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button id="sidebar-toggle" class="p-2 rounded-xl text-amber-500/80 hover:text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer" title="Menu Sidebar">
+                    <i data-lucide="menu" class="w-6 h-6 sm:w-7 sm:h-7"></i>
                 </button>
-                <h1 class="text-xl font-semibold text-white capitalize">
+                <h1 class="text-xl sm:text-2xl font-bold text-white capitalize tracking-tight flex items-center gap-2">
                     Pelanggan
                 </h1>
             </div>
-            <div class="flex items-center gap-4">
-                <div id="realtime-clock" class="hidden md:block text-sm text-zinc-300 font-medium tracking-wide"></div>
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div id="realtime-clock" class="hidden md:block text-sm md:text-base text-zinc-300 font-semibold tracking-wide"></div>
                 <?php 
                 $curr_fn = $user['fullname'] ?? $_SESSION['fullname'] ?? '';
                 $curr_un = $user['username'] ?? $_SESSION['username'] ?? 'User';
-                $nav_avatar_name = !empty($curr_fn) ? urlencode($curr_fn) : urlencode($curr_un);
-                $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $my_user_id . '.*');
-                $nav_profile_url = !empty($nav_profile_files)
-                    ? '../asset/image/' . basename($nav_profile_files[0]) . '?v=' . filemtime($nav_profile_files[0])
-                    : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
+                $nav_profile_url = get_user_avatar_url($my_user_id, $curr_fn ?: $curr_un, '../');
                 ?>
                 <div class="relative" id="user-profile-dropdown-container">
-                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
-                        <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
-                        <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars($curr_fn ?: $curr_un) ?></span>
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:opacity-90 transition-all p-1 sm:p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                        <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <span class="hidden md:block text-sm sm:text-base text-zinc-200 font-semibold max-w-[150px] truncate"><?= htmlspecialchars($curr_fn ?: $curr_un) ?></span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
                     </button>
 
                     <!-- Profile Dropdown Menu -->
                     <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
                         <div class="py-1 bg-rose-950/10">
-                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
+                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
                                 <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
                                 <span>Logout</span>
                             </a>

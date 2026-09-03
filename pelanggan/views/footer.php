@@ -1,12 +1,15 @@
         </main>
     </div>
 
+    <!-- Backdrop Overlay for Mobile Sidebar -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/70 z-50 backdrop-blur-xs hidden transition-opacity md:hidden"></div>
+
     <!-- Mobile Fixed Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0a08]/95 backdrop-blur-md border-t border-amber-500/20 flex justify-around items-center shadow-[0_-4px_25px_rgba(0,0,0,0.8)] transform-gpu"
          style="padding-bottom: env(safe-area-inset-bottom, 8px); padding-top: 8px;">
 
         <!-- Beranda -->
-        <a href="javascript:void(0)" onclick="switchTab('tab-dashboard', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $is_dashboard ? 'active' : '' ?>">
+        <a href="javascript:void(0)" onclick="switchTab('tab-dashboard', this)" class="nav-item flex flex-col items-center gap-1 py-1.5 px-3 min-w-[68px] rounded-xl transition-all duration-200 relative group <?= $is_dashboard ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
                 <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"/>
@@ -15,11 +18,11 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
             </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Beranda</span>
+            <span class="nav-label text-[11px] sm:text-xs font-bold tracking-tight leading-none mt-0.5">Beranda</span>
         </a>
 
         <!-- Layanan -->
-        <a href="javascript:void(0)" onclick="switchTab('tab-layanan', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $is_layanan ? 'active' : '' ?>">
+        <a href="javascript:void(0)" onclick="switchTab('tab-layanan', this)" class="nav-item flex flex-col items-center gap-1 py-1.5 px-3 min-w-[68px] rounded-xl transition-all duration-200 relative group <?= $is_layanan ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <!-- Solid Scissors -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
@@ -33,7 +36,7 @@
                 <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
                 <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
             </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Layanan</span>
+            <span class="nav-label text-[11px] sm:text-xs font-bold tracking-tight leading-none mt-0.5">Layanan</span>
         </a>
 
         <!-- Scan QRIS -->
@@ -44,11 +47,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                 </svg>
             </div>
-            <span class="nav-label absolute -bottom-5 text-[10px] font-bold text-amber-400 whitespace-nowrap">Scan QRIS</span>
+            <span class="nav-label absolute -bottom-5 text-[11px] sm:text-xs font-black text-amber-400 whitespace-nowrap">Scan QRIS</span>
         </a>
 
         <!-- Riwayat -->
-        <a href="javascript:void(0)" onclick="switchTab('tab-riwayat', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $is_riwayat ? 'active' : '' ?>">
+        <a href="javascript:void(0)" onclick="switchTab('tab-riwayat', this)" class="nav-item flex flex-col items-center gap-1 py-1.5 px-3 min-w-[68px] rounded-xl transition-all duration-200 relative group <?= $is_riwayat ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="solid-icon w-6 h-6 text-amber-400">
                 <path fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75-6.75a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clip-rule="evenodd"/>
@@ -57,11 +60,11 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="outline-icon w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
             </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Riwayat</span>
+            <span class="nav-label text-[11px] sm:text-xs font-bold tracking-tight leading-none mt-0.5">Riwayat</span>
         </a>
 
         <!-- Profil -->
-        <a href="javascript:void(0)" onclick="switchTab('tab-profil', this)" class="nav-item flex flex-col items-center gap-0.5 py-1 px-3 min-w-[64px] rounded-xl transition-all duration-200 relative group <?= $is_profil ? 'active' : '' ?>">
+        <a href="javascript:void(0)" onclick="switchTab('tab-profil', this)" class="nav-item flex flex-col items-center gap-1 py-1.5 px-3 min-w-[68px] rounded-xl transition-all duration-200 relative group <?= $is_profil ? 'active' : '' ?>">
             <div class="nav-indicator"></div>
             <?php
                 $bn_has_pic = false;
@@ -84,7 +87,7 @@
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             <?php endif; ?>
-            <span class="nav-label text-[10px] font-semibold tracking-tight leading-none mt-0.5">Profil</span>
+            <span class="nav-label text-[11px] sm:text-xs font-bold tracking-tight leading-none mt-0.5">Profil</span>
         </a>
     </nav>
 
@@ -118,18 +121,28 @@
         // Sidebar Toggle with Persistence
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 
         function applySidebarState(isMinimized) {
             const fouc = document.getElementById('fouc-style');
             if (fouc) fouc.remove();
             
             if (isMinimized) {
-                sidebar.classList.remove('w-64'); 
+                sidebar.classList.remove('w-72'); 
                 sidebar.classList.add('w-20');
             } else {
                 sidebar.classList.remove('w-20'); 
-                sidebar.classList.add('w-64');
+                sidebar.classList.add('w-72');
             }
+        }
+
+        function closeMobileSidebar() {
+            if (sidebar) sidebar.classList.remove('open-mobile');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+        }
+
+        if (sidebarBackdrop) {
+            sidebarBackdrop.addEventListener('click', closeMobileSidebar);
         }
 
         if (sidebarToggle && sidebar) {
@@ -137,8 +150,11 @@
                 e.stopPropagation();
                 if (window.innerWidth < 768) {
                     sidebar.classList.toggle('open-mobile');
+                    if (sidebarBackdrop) {
+                        sidebarBackdrop.classList.toggle('hidden', !sidebar.classList.contains('open-mobile'));
+                    }
                 } else {
-                    const willMinimize = sidebar.classList.contains('w-64');
+                    const willMinimize = sidebar.classList.contains('w-72');
                     localStorage.setItem('sidebarMinimized', willMinimize);
                     applySidebarState(willMinimize);
                 }
@@ -146,7 +162,7 @@
 
             document.addEventListener('click', (e) => {
                 if (window.innerWidth < 768 && sidebar.classList.contains('open-mobile') && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
-                    sidebar.classList.remove('open-mobile');
+                    closeMobileSidebar();
                 }
                 const profileContainer = document.getElementById('user-profile-dropdown-container');
                 if (profileContainer && !profileContainer.contains(e.target)) {

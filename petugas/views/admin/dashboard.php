@@ -500,8 +500,9 @@ $topSpendingList = $topSpendingStmt ? $topSpendingStmt->fetchAll(PDO::FETCH_ASSO
                         $tglTerakhir = !empty($cust['transaksi_terakhir']) ? date('d M Y', strtotime($cust['transaksi_terakhir'])) : 'Belum ada';
                         
                         // Check if user has an actual profile photo file in asset/image/
-                        $userPhotoPath = "../asset/image/profile_" . $cust['id_user'] . ".jpg";
-                        $hasRealPhoto = file_exists(__DIR__ . '/../../' . $userPhotoPath);
+                        $userPhotoFiles = glob(__DIR__ . '/../../asset/image/profile_' . $cust['id_user'] . '.*');
+                        $hasRealPhoto = !empty($userPhotoFiles);
+                        $userPhotoPath = $hasRealPhoto ? '../asset/image/' . basename($userPhotoFiles[0]) . '?v=' . filemtime($userPhotoFiles[0]) : '';
                         $initial = strtoupper(substr($cust['nama'], 0, 1));
                     ?>
                     <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-amber-900/20 transition-colors border border-transparent hover:border-amber-900/30">

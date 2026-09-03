@@ -490,9 +490,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                 <div class="relative" id="user-profile-dropdown-container">
                     <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-all p-1 sm:p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
                         <?php 
-                        $nav_avatar_name = !empty($user_data['fullname']) ? urlencode($user_data['fullname']) : urlencode($_SESSION['username']);
-                        $nav_profile_files = glob(__DIR__ . '/../asset/image/profile_' . $_SESSION['user_id'] . '.*');
-                        $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
+                        $nav_profile_url = get_user_avatar_url($_SESSION['user_id'], !empty($user_data['fullname']) ? $user_data['fullname'] : $_SESSION['username'], '../');
                         ?>
                         <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
                         <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars(!empty($user_data['fullname']) ? $user_data['fullname'] : $_SESSION['username']) ?></span>
@@ -923,18 +921,23 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                                 <!-- Background Decoration -->
                                 <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-amber-900/30 to-amber-950/20 z-0"></div>
                                 
-                                <div class="relative z-10 w-28 h-28 rounded-full border-4 border-zinc-700 shadow-xl mt-4 mb-4 overflow-hidden bg-zinc-900 group">
+                                <div class="relative z-10 w-28 h-28 rounded-full border-4 border-amber-500/40 shadow-xl mt-4 mb-2 overflow-hidden bg-zinc-900 group">
                                     <?php 
-                                    $avatar_name = !empty($user_data['fullname']) ? urlencode($user_data['fullname']) : urlencode($_SESSION['username']);
-                                    $profile_files = glob(__DIR__ . '/../asset/image/profile_' . $_SESSION['user_id'] . '.*');
-                                    $profile_url = !empty($profile_files) ? '../asset/image/' . basename($profile_files[0]) : "https://ui-avatars.com/api/?name={$avatar_name}&background=random&color=fff&size=128&bold=true";
+                                    $profile_url = get_user_avatar_url($_SESSION['user_id'], $user_data['fullname'] ?? $_SESSION['username'], '../');
                                     ?>
-                                    <img src="<?= $profile_url ?>" alt="Avatar" class="w-full h-full object-cover">
-                                    <label for="foto_profil_input" class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-semibold backdrop-blur-sm">
+                                    <img id="barber_avatar_preview" src="<?= $profile_url ?>" alt="Avatar" class="w-full h-full object-cover">
+                                    <label for="foto_profil_input" class="absolute inset-0 bg-black/75 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-semibold backdrop-blur-xs">
                                         <i data-lucide="camera" class="w-6 h-6 mb-1 text-amber-400"></i>
                                         Ubah Foto
                                     </label>
-                                    <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/*" onchange="document.getElementById('profile_save_btn').click();">
+                                    <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/jpeg,image/png,image/webp,image/jpg" onchange="handleProfilePhotoChange(this, 'barber_avatar_preview')">
+                                </div>
+                                
+                                <label for="foto_profil_input" class="relative z-10 inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 cursor-pointer transition-all">
+                                    <i data-lucide="upload" class="w-3.5 h-3.5"></i> Pilih Foto
+                                </label>
+                                <div id="barber_photo_selected_badge" class="hidden relative z-10 text-[11px] text-emerald-400 font-medium mb-3">
+                                    ✓ Foto baru dipilih. Klik "Simpan Perubahan".
                                 </div>
                                 
                                 <h3 class="relative z-10 text-xl font-bold text-white mb-1"><?= !empty($user_data['fullname']) ? htmlspecialchars($user_data['fullname']) : htmlspecialchars($_SESSION['username']) ?></h3>
@@ -1870,6 +1873,33 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
         const modal = document.getElementById('selectKursiModal');
         const kursiBtn = document.getElementById('btn-nav-kursi');
         if (modal) modal.classList.add('hidden');
+    }
+    function handleProfilePhotoChange(input, previewId) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ukuran Terlalu Besar',
+                        text: 'Ukuran file foto maksimal adalah 5 MB.',
+                        confirmButtonColor: '#d4af37'
+                    });
+                } else {
+                    alert('Ukuran file foto maksimal adalah 5 MB.');
+                }
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewEl = document.getElementById(previewId);
+                if (previewEl) previewEl.src = e.target.result;
+                const badge = document.getElementById('barber_photo_selected_badge');
+                if (badge) badge.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
     }
     document.addEventListener("DOMContentLoaded", function() {
         if (window.lucide) lucide.createIcons();

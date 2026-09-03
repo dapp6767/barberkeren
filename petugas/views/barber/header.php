@@ -273,9 +273,7 @@
                 <div class="relative" id="user-profile-dropdown-container">
                     <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
                         <?php
-                        $user_photo_files = glob(__DIR__ . '/../../asset/image/profile_' . $user_id . '.*');
-                        $has_b_photo = !empty($user_photo_files);
-                        $b_photo_url = $has_b_photo ? '../asset/image/' . basename($user_photo_files[0]) . '?v=' . filemtime($user_photo_files[0]) : "https://ui-avatars.com/api/?name=" . urlencode($user_data['fullname'] ?? 'Barber') . "&background=random&color=fff&size=64&bold=true";
+                        $b_photo_url = get_user_avatar_url($user_id, $user_data['fullname'] ?? 'Barber', '../');
                         ?>
                         <img src="<?= $b_photo_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
                         <div class="hidden md:flex flex-col text-left">

@@ -12,7 +12,7 @@ require_once __DIR__ . '/notifikasi.php';
  * Update Profil & Password Pengguna
  */
 if (!function_exists('update_user_profile')) {
-    function update_user_profile($user_id, $redirect_url = 'dashboard.php?tab=profil') {
+    function update_user_profile($user_id, $redirect_url = 'dashboard.php?page=profil') {
         $pdo = get_koneksi();
 
         $fullname = trim($_POST['fullname'] ?? '');
@@ -58,7 +58,8 @@ if (!function_exists('update_user_profile')) {
 
             $update_password_hash = null;
 
-            if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
+            // Hanya validasi password jika pengguna memang mengisi password baru
+            if (!empty($new_password) || !empty($confirm_password)) {
                 if (empty($old_password)) {
                     set_flash('danger', 'Silakan masukkan Password Lama Anda untuk mengonfirmasi perubahan password!');
                     redirect($redirect_url);
@@ -142,13 +143,61 @@ if (!function_exists('update_user_profile')) {
             $stmt_b_up = $pdo->prepare("UPDATE barber SET nama = ? WHERE user_id = ?");
             $stmt_b_up->execute([$fullname, $user_id]);
 
-            $file_key = isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] === UPLOAD_ERR_OK ? 'foto_profil' : 'profile_photo';
-            if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
-                $ext = pathinfo($_FILES[$file_key]['name'], PATHINFO_EXTENSION);
-                $dest = __DIR__ . '/../asset/image/profile_' . $user_id . '.' . $ext;
-                $oldFiles = glob(__DIR__ . '/../asset/image/profile_' . $user_id . '.*');
-                foreach ($oldFiles as $f) { if (is_file($f)) unlink($f); }
-                move_uploaded_file($_FILES[$file_key]['tmp_name'], $dest);
+            // Handle Upload Foto Profil
+            $file_key = null;
+            if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $file_key = 'foto_profil';
+            } elseif (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $file_key = 'profile_photo';
+            }
+
+            if ($file_key && isset($_FILES[$file_key])) {
+                if ($_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
+                    $allowed_exts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+                    $ext = strtolower(pathinfo($_FILES[$file_key]['name'], PATHINFO_EXTENSION));
+
+                    if ($_FILES[$file_key]['size'] > 5 * 1024 * 1024) {
+                        set_flash('danger', 'Ukuran file foto maksimal 5 MB!');
+                        redirect($redirect_url);
+                        exit;
+                    }
+
+                    if (!in_array($ext, $allowed_exts)) {
+                        set_flash('danger', 'Format foto tidak didukung! Gunakan format JPG, PNG, atau WEBP.');
+                        redirect($redirect_url);
+                        exit;
+                    }
+
+                    $img_info = @getimagesize($_FILES[$file_key]['tmp_name']);
+                    if (!$img_info) {
+                        set_flash('danger', 'File yang diunggah bukan format gambar valid!');
+                        redirect($redirect_url);
+                        exit;
+                    }
+
+                    $target_dir = __DIR__ . '/../asset/image';
+                    if (!is_dir($target_dir)) {
+                        @mkdir($target_dir, 0777, true);
+                    }
+
+                    $oldFiles = glob($target_dir . '/profile_' . $user_id . '.*');
+                    if (!empty($oldFiles)) {
+                        foreach ($oldFiles as $f) {
+                            if (is_file($f)) @unlink($f);
+                        }
+                    }
+
+                    $dest = $target_dir . '/profile_' . $user_id . '.' . $ext;
+                    if (move_uploaded_file($_FILES[$file_key]['tmp_name'], $dest)) {
+                        set_flash('success', 'Profil dan Foto Profil berhasil diperbarui!');
+                    } else {
+                        set_flash('warning', 'Profil diperbarui, namun foto gagal disimpan di server.');
+                    }
+                } elseif ($_FILES[$file_key]['error'] === UPLOAD_ERR_INI_SIZE || $_FILES[$file_key]['error'] === UPLOAD_ERR_FORM_SIZE) {
+                    set_flash('danger', 'Ukuran file foto terlalu besar (maksimal 5 MB)!');
+                    redirect($redirect_url);
+                    exit;
+                }
             }
 
             redirect($redirect_url);
@@ -160,3 +209,4 @@ if (!function_exists('update_user_profile')) {
         }
     }
 }
+

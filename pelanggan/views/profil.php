@@ -17,18 +17,23 @@
                 <!-- Background Decoration -->
                 <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-amber-900/30 to-amber-950/20 z-0"></div>
                 
-                <div class="relative z-10 w-28 h-28 rounded-full border-4 border-zinc-700 shadow-xl mt-4 mb-4 overflow-hidden bg-zinc-900 group">
+                <div class="relative z-10 w-28 h-28 rounded-full border-4 border-amber-500/40 shadow-xl mt-4 mb-2 overflow-hidden bg-zinc-900 group">
                     <?php 
-                    $avatar_name = !empty($current_user['fullname']) ? urlencode($current_user['fullname']) : urlencode($current_user['username']);
-                    $profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $_SESSION['user_id'] . '.*');
-                    $profile_url = !empty($profile_files) ? '../asset/image/' . basename($profile_files[0]) : "https://ui-avatars.com/api/?name={$avatar_name}&background=random&color=fff&size=128&bold=true";
+                    $profile_url = get_user_avatar_url($_SESSION['user_id'], $current_user['fullname'] ?? $current_user['username'], '../');
                     ?>
-                    <img src="<?= $profile_url ?>" alt="Avatar" class="w-full h-full object-cover">
-                    <label for="foto_profil_input" class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-semibold backdrop-blur-sm">
+                    <img id="pelanggan_avatar_preview" src="<?= $profile_url ?>" alt="Avatar" class="w-full h-full object-cover">
+                    <label for="foto_profil_input" class="absolute inset-0 bg-black/75 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-semibold backdrop-blur-xs">
                         <i data-lucide="camera" class="w-6 h-6 mb-1 text-amber-400"></i>
                         Ubah Foto
                     </label>
-                    <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/*" onchange="document.getElementById('profile_save_btn').click();">
+                    <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/jpeg,image/png,image/webp,image/jpg" onchange="handleProfilePhotoChange(this, 'pelanggan_avatar_preview')">
+                </div>
+                
+                <label for="foto_profil_input" class="relative z-10 inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 cursor-pointer transition-all">
+                    <i data-lucide="upload" class="w-3.5 h-3.5"></i> Pilih Foto
+                </label>
+                <div id="photo_selected_badge" class="hidden relative z-10 text-[11px] text-emerald-400 font-medium mb-3">
+                    ✓ Foto baru dipilih. Klik "Simpan Perubahan".
                 </div>
                 
                 <h3 class="relative z-10 text-xl font-bold text-white mb-1"><?= !empty($current_user['fullname']) ? htmlspecialchars($current_user['fullname']) : htmlspecialchars($current_user['username']) ?></h3>
@@ -152,4 +157,33 @@
         </div>
     </form>
 </div>
+<script>
+function handleProfilePhotoChange(input, previewId) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 5 * 1024 * 1024) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ukuran Terlalu Besar',
+                    text: 'Ukuran file foto maksimal adalah 5 MB.',
+                    confirmButtonColor: '#d4af37'
+                });
+            } else {
+                alert('Ukuran file foto maksimal adalah 5 MB.');
+            }
+            input.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewEl = document.getElementById(previewId);
+            if (previewEl) previewEl.src = e.target.result;
+            const badge = document.getElementById('photo_selected_badge');
+            if (badge) badge.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
 </section>

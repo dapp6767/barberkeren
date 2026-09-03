@@ -186,8 +186,9 @@ $userActivityList = $userActivityStmt ? $userActivityStmt->fetchAll(PDO::FETCH_A
                             $is_currently_online = ($active_sess > 0) || (((int)$uAct['is_online'] === 1) && ($last_time > 0) && (time() - $last_time <= 900));
                             $formatted_date = $last_time > 0 ? date('d M Y H:i', $last_time) : 'Belum ada';
                             
-                            $userPhotoPath = "../asset/image/profile_" . $uAct['id_user'] . ".jpg";
-                            $hasRealPhoto = file_exists(__DIR__ . '/../../' . $userPhotoPath);
+                            $userPhotoFiles = glob(__DIR__ . '/../../asset/image/profile_' . $uAct['id_user'] . '.*');
+                            $hasRealPhoto = !empty($userPhotoFiles);
+                            $userPhotoPath = $hasRealPhoto ? '../asset/image/' . basename($userPhotoFiles[0]) . '?v=' . filemtime($userPhotoFiles[0]) : '';
                             $initial = strtoupper(substr($uAct['nama'], 0, 1));
                         ?>
                         <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-amber-900/20 transition-colors border border-transparent hover:border-amber-900/30">

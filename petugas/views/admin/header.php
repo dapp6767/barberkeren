@@ -483,9 +483,7 @@
                 <div class="relative" id="user-profile-dropdown-container">
                     <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-all p-1 sm:p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
                         <?php 
-                        $nav_avatar_name = !empty($current_user['fullname']) ? urlencode($current_user['fullname']) : urlencode($current_user['username']);
-                        $nav_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $_SESSION['user_id'] . '.*');
-                        $nav_profile_url = !empty($nav_profile_files) ? '../asset/image/' . basename($nav_profile_files[0]) : "https://ui-avatars.com/api/?name={$nav_avatar_name}&background=random&color=fff&size=64&bold=true";
+                        $nav_profile_url = get_user_avatar_url($_SESSION['user_id'], $current_user['fullname'] ?? $current_user['username'], '../');
                         ?>
                         <img src="<?= $nav_profile_url ?>" alt="Avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
                         <span class="hidden md:block text-sm text-zinc-200 font-medium max-w-[130px] truncate"><?= htmlspecialchars($current_user['fullname'] ?: $current_user['username']) ?></span>

@@ -243,4 +243,24 @@ if (!function_exists('get_service_image_url')) {
         return 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
     }
 }
+
+/**
+ * Get User Profile Avatar URL with cache busting (?v=filemtime)
+ */
+if (!function_exists('get_user_avatar_url')) {
+    function get_user_avatar_url($user_id, $name = '', $prefix = '../') {
+        $user_id = (int)$user_id;
+        if ($user_id > 0) {
+            $image_dir = __DIR__ . '/../asset/image/';
+            $files = glob($image_dir . 'profile_' . $user_id . '.*');
+            if (!empty($files) && file_exists($files[0])) {
+                $filename = basename($files[0]);
+                $ver = filemtime($files[0]);
+                return rtrim($prefix, '/') . '/asset/image/' . $filename . '?v=' . $ver;
+            }
+        }
+        $enc_name = urlencode(!empty($name) ? $name : 'User');
+        return "https://ui-avatars.com/api/?name={$enc_name}&background=1e1408&color=fde68a&size=128&bold=true";
+    }
+}
 ?>

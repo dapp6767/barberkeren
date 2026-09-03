@@ -323,7 +323,7 @@
             
             $b_user_id = $br['user_id'] ?? 0;
             $b_profile_files = glob(__DIR__ . '/../../asset/image/profile_' . $b_user_id . '.*');
-            $b_photo_url = !empty($b_profile_files) ? '../asset/image/' . basename($b_profile_files[0]) : null;
+            $b_photo_url = !empty($b_profile_files) ? '../asset/image/' . basename($b_profile_files[0]) . '?v=' . filemtime($b_profile_files[0]) : null;
 
             $stmt_serv = $pdo_early->prepare("SELECT COUNT(*) FROM antrian WHERE barber_id = ? AND status_antrean = 'serving'");
             $stmt_serv->execute([$br['id']]);
