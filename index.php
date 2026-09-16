@@ -186,12 +186,12 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                             Dashboard
                         </a>
                     <?php else: ?>
-                        <a href="auth/login.php?redirect=booking" class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-600 bg-transparent px-5 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white">
+                        <a href="auth/login.php" class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-600 bg-transparent px-5 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white">
                             Login
                         </a>
-                        <button onclick="openBookNowModal()" class="inline-flex h-10 items-center justify-center rounded-lg bg-gold px-5 py-2 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
+                        <a href="<?= $bookNowUrl ?>" class="inline-flex h-10 items-center justify-center rounded-lg bg-gold px-5 py-2 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
                             Book Now
-                        </button>
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -217,12 +217,12 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                         Dashboard
                     </a>
                 <?php else: ?>
-                    <a href="auth/login.php?redirect=booking" class="w-full inline-flex h-10 items-center justify-center rounded-lg border border-zinc-700 bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white mt-2">
+                    <a href="auth/login.php" class="w-full inline-flex h-10 items-center justify-center rounded-lg border border-zinc-700 bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white mt-2">
                         Login
                     </a>
-                    <button onclick="openBookNowModal()" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500">
+                    <a href="<?= $bookNowUrl ?>" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500">
                         Book Now
-                    </button>
+                    </a>
                 <?php endif; ?>
             </div>
         </div>
@@ -332,11 +332,11 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
 
                                 <!-- CTA -->
                                 <div class="p-4 border-t" style="border-color: rgba(255,255,255,0.06);">
-                                    <button onclick="openBookNowModal()" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-black text-sm font-bold transition-colors"
+                                    <a href="<?= $bookNowUrl ?>" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-black text-sm font-bold transition-colors"
                                        style="background: linear-gradient(90deg, #c9a03a, #8a6010);" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
                                         <i data-lucide="scissors" class="w-4 h-4"></i>
                                         Ambil Antrean
-                                    </button>
+                                    </a>
                                 </div>
 
                             </div>
@@ -870,79 +870,6 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
       });
     </script>
 
-<!-- ===== BOOK NOW MODAL (Guest Choice) ===== -->
-<?php if (!is_logged_in()): ?>
-<div id="bookNowModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeBookNowModal()"></div>
-    <div id="bookNowModalCard" class="relative w-full max-w-sm bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden scale-95 transition-transform duration-300">
-        <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-48 h-48 bg-yellow-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="relative px-6 pt-7 pb-4 text-center">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 mb-4">
-                <i data-lucide="scissors" class="w-7 h-7 text-yellow-400"></i>
-            </div>
-            <h2 class="text-xl font-bold text-white">Siap Booking?</h2>
-            <p class="text-sm text-zinc-400 mt-1.5 leading-relaxed">Pilih cara kamu melanjutkan untuk memesan layanan di Elite Barber.</p>
-        </div>
-        <div class="px-6 pb-6 flex flex-col gap-3 relative">
-            <button onclick="closeBookNowModal(); setTimeout(function(){ document.getElementById('gallery').scrollIntoView({behavior:'smooth'}); }, 300);" class="group flex w-full items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-200 text-left">
-                <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-yellow-500/40 transition-colors">
-                    <i data-lucide="user" class="w-5 h-5 text-zinc-300"></i>
-                </div>
-                <div class="flex-1 text-left">
-                    <p class="text-white font-semibold text-sm">Lanjut sebagai Tamu</p>
-                    <p class="text-zinc-500 text-xs mt-0.5">Lihat layanan dulu, login saat ambil antrian</p>
-                </div>
-                <i data-lucide="arrow-right" class="w-4 h-4 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
-            </button>
-            <a href="auth/login.php?redirect=booking" class="group flex items-center gap-4 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/15 hover:border-yellow-500/60 transition-all duration-200">
-                <div class="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center shrink-0 group-hover:bg-yellow-500/20 transition-colors">
-                    <i data-lucide="log-in" class="w-5 h-5 text-yellow-400"></i>
-                </div>
-                <div class="flex-1 text-left">
-                    <p class="text-yellow-400 font-bold text-sm">Login / Masuk</p>
-                    <p class="text-zinc-500 text-xs mt-0.5">Setelah login, langsung diarahkan ke halaman booking</p>
-                </div>
-                <i data-lucide="arrow-right" class="w-4 h-4 text-yellow-500/60 group-hover:text-yellow-400 group-hover:translate-x-0.5 transition-all"></i>
-            </a>
-            <p class="text-center text-xs text-zinc-600 mt-1">
-                Belum punya akun?
-                <a href="auth/register.php?redirect=booking" class="text-yellow-400 hover:underline font-medium">Daftar gratis</a>
-            </p>
-        </div>
-        <button onclick="closeBookNowModal()" class="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-colors">
-            <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-    </div>
-</div>
-<script>
-function openBookNowModal() {
-    const modal = document.getElementById('bookNowModal');
-    const card  = document.getElementById('bookNowModalCard');
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    modal.classList.add('opacity-100');
-    card.classList.remove('scale-95');
-    card.classList.add('scale-100');
-    document.body.style.overflow = 'hidden';
-    if (window.lucide) lucide.createIcons();
-}
-function closeBookNowModal() {
-    const modal = document.getElementById('bookNowModal');
-    const card  = document.getElementById('bookNowModalCard');
-    modal.classList.remove('opacity-100');
-    modal.classList.add('opacity-0', 'pointer-events-none');
-    card.classList.remove('scale-100');
-    card.classList.add('scale-95');
-    document.body.style.overflow = '';
-}
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeBookNowModal();
-});
-</script>
-<?php endif; ?>
-<!-- ===== END BOOK NOW MODAL ===== -->
-
 </body>
 
 </html>
-
-

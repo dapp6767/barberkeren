@@ -14,17 +14,6 @@ if (function_exists('is_logged_in') && is_logged_in()) {
     exit;
 }
 
-// Simpan intended URL dari query parameter ke session
-if (!empty($_GET['redirect'])) {
-    $allowed_redirects = [
-        'booking' => '../pelanggan/dashboard.php?page=layanan',
-    ];
-    $key = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_GET['redirect']);
-    if (isset($allowed_redirects[$key])) {
-        $_SESSION['intended_url'] = $allowed_redirects[$key];
-    }
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullname         = function_exists('sanitize') ? sanitize($_POST['fullname'] ?? '') : trim($_POST['fullname'] ?? '');
     $username         = function_exists('sanitize') ? sanitize($_POST['username'] ?? '') : trim($_POST['username'] ?? '');
@@ -39,9 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = register_user($fullname, $username, $email, $phone, $password);
         if ($result['status']) {
             if (function_exists('set_flash')) set_flash('success', $result['message']);
-            // Teruskan parameter redirect ke halaman login
-            $redirect_param = !empty($_SESSION['intended_url']) ? '?redirect=booking' : '';
-            redirect('login.php' . $redirect_param);
+            redirect('login.php');
             exit;
         } else {
             if (function_exists('set_flash')) set_flash('danger', $result['message']);
