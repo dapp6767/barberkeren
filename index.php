@@ -884,7 +884,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
             <p class="text-sm text-zinc-400 mt-1.5 leading-relaxed">Pilih cara kamu melanjutkan untuk memesan layanan di Elite Barber.</p>
         </div>
         <div class="px-6 pb-6 flex flex-col gap-3 relative">
-            <a href="pelanggan/dashboard.php" class="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-200">
+            <button onclick="closeBookNowModal(); setTimeout(function(){ document.getElementById('gallery').scrollIntoView({behavior:'smooth'}); }, 300);" class="group flex w-full items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-200 text-left">
                 <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-yellow-500/40 transition-colors">
                     <i data-lucide="user" class="w-5 h-5 text-zinc-300"></i>
                 </div>
@@ -893,7 +893,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                     <p class="text-zinc-500 text-xs mt-0.5">Lihat layanan dulu, login saat ambil antrian</p>
                 </div>
                 <i data-lucide="arrow-right" class="w-4 h-4 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
-            </a>
+            </button>
             <a href="auth/login.php" class="group flex items-center gap-4 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/15 hover:border-yellow-500/60 transition-all duration-200">
                 <div class="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center shrink-0 group-hover:bg-yellow-500/20 transition-colors">
                     <i data-lucide="log-in" class="w-5 h-5 text-yellow-400"></i>
