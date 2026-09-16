@@ -67,7 +67,19 @@
         const modalContent = document.getElementById('descModalContent');
         
         document.getElementById('descModalTitle').innerText = title;
-        document.getElementById('descModalText').innerText = text;
+        // Format deskripsi jadi badge tag
+        const rawText = text.replace(/\\r/g, '\r').replace(/\\n/g, '\n');
+        const items = rawText.split(/[,\n\r+]+/).map(s => s.trim()).filter(s => s.length > 0);
+        const descEl = document.getElementById('descModalText');
+        if (items.length > 1) {
+            descEl.innerHTML = '<div class="flex flex-wrap gap-2">' +
+                items.map(item =>
+                    `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-800 border border-white/10 text-sm text-zinc-200 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>${item}</span>`
+                ).join('') +
+                '</div>';
+        } else {
+            descEl.innerText = rawText || 'Belum ada informasi tambahan.';
+        }
         document.getElementById('descModalDurasi').innerText = durasi + ' Menit';
         document.getElementById('descModalHarga').innerText = harga;
         

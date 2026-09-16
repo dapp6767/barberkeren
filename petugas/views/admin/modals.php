@@ -30,7 +30,7 @@
             </div>
             
             <div class="bg-black/40 border border-zinc-800/80 rounded-xl p-6 mb-2 shadow-inner">
-                <p id="descModalText" class="text-zinc-300 text-base leading-relaxed whitespace-pre-wrap"></p>
+                <div id="descModalText" class="text-zinc-300 text-base leading-relaxed"></div>
             </div>
         </div>
     </div>
