@@ -186,7 +186,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                             Dashboard
                         </a>
                     <?php else: ?>
-                        <a href="auth/login.php" class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-600 bg-transparent px-5 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white">
+                        <a href="auth/login.php?redirect=booking" class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-600 bg-transparent px-5 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white">
                             Login
                         </a>
                         <button onclick="openBookNowModal()" class="inline-flex h-10 items-center justify-center rounded-lg bg-gold px-5 py-2 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
@@ -217,7 +217,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                         Dashboard
                     </a>
                 <?php else: ?>
-                    <a href="auth/login.php" class="w-full inline-flex h-10 items-center justify-center rounded-lg border border-zinc-700 bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white mt-2">
+                    <a href="auth/login.php?redirect=booking" class="w-full inline-flex h-10 items-center justify-center rounded-lg border border-zinc-700 bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white mt-2">
                         Login
                     </a>
                     <button onclick="openBookNowModal()" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500">
@@ -894,19 +894,19 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <i data-lucide="arrow-right" class="w-4 h-4 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
             </button>
-            <a href="auth/login.php" class="group flex items-center gap-4 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/15 hover:border-yellow-500/60 transition-all duration-200">
+            <a href="auth/login.php?redirect=booking" class="group flex items-center gap-4 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/15 hover:border-yellow-500/60 transition-all duration-200">
                 <div class="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center shrink-0 group-hover:bg-yellow-500/20 transition-colors">
                     <i data-lucide="log-in" class="w-5 h-5 text-yellow-400"></i>
                 </div>
                 <div class="flex-1 text-left">
                     <p class="text-yellow-400 font-bold text-sm">Login / Masuk</p>
-                    <p class="text-zinc-500 text-xs mt-0.5">Akses penuh &amp; riwayat antrian kamu</p>
+                    <p class="text-zinc-500 text-xs mt-0.5">Setelah login, langsung diarahkan ke halaman booking</p>
                 </div>
                 <i data-lucide="arrow-right" class="w-4 h-4 text-yellow-500/60 group-hover:text-yellow-400 group-hover:translate-x-0.5 transition-all"></i>
             </a>
             <p class="text-center text-xs text-zinc-600 mt-1">
                 Belum punya akun?
-                <a href="auth/register.php" class="text-yellow-400 hover:underline font-medium">Daftar gratis</a>
+                <a href="auth/register.php?redirect=booking" class="text-yellow-400 hover:underline font-medium">Daftar gratis</a>
             </p>
         </div>
         <button onclick="closeBookNowModal()" class="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-colors">

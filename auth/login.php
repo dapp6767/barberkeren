@@ -10,12 +10,30 @@ if (file_exists(__DIR__ . '/../functions/auth_functions.php')) {
 }
 
 function redirect_by_role($role) {
+    // Cek apakah ada intended URL yang disimpan di session
+    if (!empty($_SESSION['intended_url'])) {
+        $url = $_SESSION['intended_url'];
+        unset($_SESSION['intended_url']); // Hapus setelah dipakai
+        redirect($url);
+        exit;
+    }
     switch ($role) {
         case 'admin':   redirect('../petugas/admin.php'); break;
         case 'barber':  redirect('../petugas/barber.php'); break;
-        default:        redirect('../pelanggan/dashboard.php'); break;
+        default:        redirect('../pelanggan/dashboard.php?page=layanan'); break;
     }
     exit;
+}
+
+// Simpan intended URL dari query parameter ke session (sebelum cek login)
+if (!empty($_GET['redirect'])) {
+    $allowed_redirects = [
+        'booking' => '../pelanggan/dashboard.php?page=layanan',
+    ];
+    $key = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_GET['redirect']);
+    if (isset($allowed_redirects[$key])) {
+        $_SESSION['intended_url'] = $allowed_redirects[$key];
+    }
 }
 
 if (function_exists('is_logged_in') && is_logged_in()) {
