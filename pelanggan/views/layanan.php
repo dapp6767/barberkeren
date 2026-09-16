@@ -154,7 +154,24 @@
                             </div>
                         </div>
                     </div>
-                    <p class="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed line-clamp-2"><?= htmlspecialchars($s_desc) ?></p>
+                    <?php
+                        // Pisahkan deskripsi berdasarkan koma, newline, atau '+'
+                        $desc_items = preg_split('/[,\n\r+]+/', $s_desc);
+                        $desc_items = array_filter(array_map('trim', $desc_items));
+                        $desc_items = array_values($desc_items);
+                    ?>
+                    <?php if (count($desc_items) > 1): ?>
+                    <div class="mt-2.5 flex flex-wrap gap-1.5">
+                        <?php foreach ($desc_items as $di): ?>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800/80 border border-white/8 text-[11px] text-zinc-300 font-medium leading-snug">
+                            <span class="w-1 h-1 rounded-full bg-amber-400/70 shrink-0"></span>
+                            <?= htmlspecialchars($di) ?>
+                        </span>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php else: ?>
+                    <p class="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed"><?= htmlspecialchars($s_desc) ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="flex items-center justify-between pt-3 border-t border-white/5 text-xs">
