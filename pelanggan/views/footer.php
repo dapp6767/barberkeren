@@ -308,21 +308,7 @@
 
             const commonDom = '<"dataTables_header"f>rt<"dataTables_footer"i<"dataTables_footer_right"lp>>';
 
-            if ($('#riwayatTable').length) {
-                $('#riwayatTable').DataTable({
-                    dom: commonDom,
-                    language: Object.assign({}, commonDataTableLang, {
-                        search: "Cari Riwayat:",
-                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ riwayat",
-                        infoEmpty: "Belum ada data riwayat",
-                        infoFiltered: "(disaring dari _MAX_ total riwayat)",
-                        zeroRecords: "Tidak ada riwayat yang sesuai"
-                    }),
-                    pageLength: 10,
-                    order: [[3, 'desc']],
-                    responsive: true
-                });
-            }
+            // riwayatTable is initialized in riwayat.php (with Buttons extension)
 
             if ($('#activeQueueTable').length && $('#activeQueueTable tbody tr').length > 0 && !$('#activeQueueTable tbody tr td[colspan]').length) {
                 $('#activeQueueTable').DataTable({

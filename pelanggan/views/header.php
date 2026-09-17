@@ -46,6 +46,14 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Buttons Extension (Excel, CSV, PDF, Print) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 
     <!-- HTML5 QR Code Scanner & SweetAlert2 CDN -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -189,6 +197,122 @@
         }
         table.dataTable.no-footer {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* ===== DataTables Buttons - Custom Dark Amber Theme ===== */
+        div.dt-buttons {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 0.4rem !important;
+            margin-bottom: 0 !important;
+        }
+        div.dt-buttons .dt-button {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.4rem !important;
+            padding: 0.45rem 1rem !important;
+            border-radius: 0.6rem !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.03em !important;
+            text-transform: uppercase !important;
+            border: 1px solid transparent !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            background: rgba(39,34,24,0.85) !important;
+            color: #d4c4a0 !important;
+            border-color: rgba(245,158,11,0.2) !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            outline: none !important;
+        }
+        div.dt-buttons .dt-button:hover {
+            background: rgba(245,158,11,0.12) !important;
+            border-color: rgba(245,158,11,0.45) !important;
+            color: #fde68a !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(245,158,11,0.15) !important;
+        }
+        div.dt-buttons .dt-button:active {
+            transform: translateY(0) !important;
+            box-shadow: none !important;
+        }
+        /* Excel button - green tint */
+        div.dt-buttons .buttons-excel,
+        div.dt-buttons .dt-button.btn-excel {
+            background: rgba(22,101,52,0.25) !important;
+            border-color: rgba(34,197,94,0.35) !important;
+            color: #86efac !important;
+        }
+        div.dt-buttons .buttons-excel:hover,
+        div.dt-buttons .dt-button.btn-excel:hover {
+            background: rgba(22,101,52,0.45) !important;
+            border-color: rgba(34,197,94,0.6) !important;
+            color: #bbf7d0 !important;
+        }
+        /* CSV button - blue tint */
+        div.dt-buttons .buttons-csv,
+        div.dt-buttons .dt-button.btn-csv {
+            background: rgba(30,58,138,0.25) !important;
+            border-color: rgba(59,130,246,0.35) !important;
+            color: #93c5fd !important;
+        }
+        div.dt-buttons .buttons-csv:hover,
+        div.dt-buttons .dt-button.btn-csv:hover {
+            background: rgba(30,58,138,0.45) !important;
+            border-color: rgba(59,130,246,0.6) !important;
+            color: #bfdbfe !important;
+        }
+        /* PDF button - red tint */
+        div.dt-buttons .buttons-pdf,
+        div.dt-buttons .dt-button.btn-pdf {
+            background: rgba(127,29,29,0.28) !important;
+            border-color: rgba(239,68,68,0.35) !important;
+            color: #fca5a5 !important;
+        }
+        div.dt-buttons .buttons-pdf:hover,
+        div.dt-buttons .dt-button.btn-pdf:hover {
+            background: rgba(127,29,29,0.5) !important;
+            border-color: rgba(239,68,68,0.6) !important;
+            color: #fecaca !important;
+        }
+        /* Print button - amber/yellow tint */
+        div.dt-buttons .buttons-print,
+        div.dt-buttons .dt-button.btn-print {
+            background: rgba(120,53,15,0.28) !important;
+            border-color: rgba(245,158,11,0.35) !important;
+            color: #fcd34d !important;
+        }
+        div.dt-buttons .buttons-print:hover,
+        div.dt-buttons .dt-button.btn-print:hover {
+            background: rgba(120,53,15,0.5) !important;
+            border-color: rgba(245,158,11,0.6) !important;
+            color: #fde68a !important;
+        }
+        /* Export Buttons Row layout */
+        .riwayat-export-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            padding: 0.75rem 1.5rem 0;
+        }
+        .riwayat-export-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #78716c;
+            white-space: nowrap;
+        }
+        /* Print-only styles */
+        @media print {
+            body * { visibility: hidden; }
+            #printable-riwayat, #printable-riwayat * { visibility: visible; }
+            #printable-riwayat {
+                position: absolute; left: 0; top: 0; width: 100%;
+            }
         }
 
         /* ============ SIDEBAR ============ */
