@@ -138,6 +138,23 @@
         ::-webkit-scrollbar-thumb { background: #3d2b1a; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #c9a03a; }
 
+        /* Sidebar collapse — identik pelanggan */
+        #sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
+        #sidebar.w-20 #brand-text { opacity: 0; width: 0; overflow: hidden; }
+        #sidebar.w-20 nav a span,
+        #sidebar.w-20 nav p,
+        #sidebar.w-20 .sidebar-footer a span {
+            opacity: 0; max-width: 0; overflow: hidden; white-space: nowrap;
+        }
+        #sidebar.w-20 nav a { justify-content: center; padding-left: 0; padding-right: 0; }
+
+        /* Mobile sidebar — slide in from left */
+        @media (max-width: 767px) {
+            #sidebar { position: fixed; left: -300px; top: 0; height: 100vh; z-index: 50; transition: left 0.3s ease; }
+            #sidebar.open-mobile { left: 0; }
+        }
+        #sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 49; }
+
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
             color: #9ca3af; text-decoration: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -210,18 +227,15 @@
         .mobile-nav-item i { font-size: 18px; }
     </style>
 </head>
-<body class="bg-[#0a0805] text-zinc-100 font-sans min-h-screen flex antialiased selection:bg-amber-900 selection:text-amber-100 pb-16 md:pb-0">
+<body class="text-amber-50 bg-adminlte-bg font-sans antialiased overflow-x-hidden flex h-screen">
+    <div class="fixed inset-0 z-[-1] pointer-events-none" style="background: linear-gradient(135deg, #0e0a08 0%, #120e06 30%, #1a0e04 60%, #0a0603 100%);"></div>
 
     <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="w-64 min-h-screen flex flex-col fixed md:relative z-40">
-        <!-- Brand Logo Header -->
-        <div id="brand-logo-container" class="h-16 flex items-center px-4">
-            <div id="brand-icon" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900 border border-amber-500/40 flex items-center justify-center text-amber-200 font-bold text-xl shadow-lg shrink-0 mr-3">
-                <i data-lucide="scissors" class="w-5 h-5 text-amber-300"></i>
-            </div>
-            <div id="brand-text" class="flex flex-col">
-                <span class="font-bold text-white text-base tracking-wider uppercase font-serif" style="color:#e8d5a3;">ELITE BARBER</span>
-                <span class="text-[10px] text-amber-400/80 tracking-widest font-semibold uppercase -mt-0.5">Workstation Panel</span>
+    <aside id="sidebar" class="w-72 bg-adminlte-sidebar h-full flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
+        <div id="brand-logo-container" class="h-16 md:h-18 flex items-center px-5 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
+            <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
+            <div id="brand-text" class="flex flex-col overflow-hidden">
+                <span class="font-bold text-base tracking-wider whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span style="color:#8a6030;font-weight:400;">Barber</span></span>
             </div>
         </div>
 
@@ -246,51 +260,42 @@
         </nav>
 
         <!-- Sidebar Footer / Bottom Home Button -->
-        <div class="sidebar-footer p-3 border-t border-zinc-800/80 bg-zinc-950/40">
-            <a href="../index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-amber-200 hover:bg-amber-500/10 transition-colors">
-                <i data-lucide="home" class="fa-solid fa-house w-5 h-5 text-zinc-400 shrink-0"></i>
-                <span class="text-sm font-medium">Home</span>
+        <div class="sidebar-footer p-3.5 border-t border-amber-900/30 bg-zinc-950/40">
+            <a href="../index.php" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-stone-300 hover:text-amber-200 hover:bg-amber-500/10 transition-colors text-[15px] sm:text-base font-semibold">
+                <i data-lucide="home" class="w-5 h-5 text-amber-400/80 shrink-0"></i>
+                <span id="sidebar-home-label">Home</span>
             </a>
         </div>
     </aside>
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
         <!-- Top Navigation Bar -->
-        <header class="h-16 bg-[#18120b] border-b border-white/10 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-md">
-            <div class="flex items-center gap-3">
-                <button id="sidebar-toggle" class="text-zinc-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
+        <header class="h-16 md:h-18 flex items-center justify-between px-4 sm:px-6 shadow-lg z-10 shrink-0" style="background: linear-gradient(90deg, #1a1008 0%, #110d06 50%, #1a1008 100%); border-bottom: 1px solid rgba(90,55,15,0.4);">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button id="sidebar-toggle" class="p-2 rounded-xl text-amber-500/80 hover:text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer" title="Menu Sidebar">
+                    <i data-lucide="menu" class="w-6 h-6 sm:w-7 sm:h-7"></i>
                 </button>
-                <div class="hidden sm:flex flex-col">
-                    <span class="text-xs text-amber-300 font-semibold" id="realtime-clock">Memuat jam...</span>
-                    <span class="text-[10px] text-zinc-400">Shift Kerja Barber Specialist</span>
-                </div>
+                <h1 class="text-xl sm:text-2xl font-bold text-white capitalize tracking-tight flex items-center gap-2">
+                    Panel Kerja Barber
+                </h1>
             </div>
-
-            <!-- Right Profile Info & Dropdown -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div id="realtime-clock" class="hidden md:block text-sm md:text-base text-zinc-300 font-semibold tracking-wide"></div>
                 <div class="relative" id="user-profile-dropdown-container">
-                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-all p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
+                    <button type="button" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:opacity-90 transition-all p-1 sm:p-1.5 rounded-xl hover:bg-amber-500/10 focus:outline-none border border-transparent hover:border-amber-500/20 group" id="user-profile-dropdown-btn">
                         <?php
                         $b_photo_url = get_user_avatar_url($user_id, $user_data['fullname'] ?? 'Barber', '../');
                         ?>
-                        <img src="<?= $b_photo_url ?>" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
-                        <div class="hidden md:flex flex-col text-left">
-                            <span class="text-xs font-bold text-white max-w-[120px] truncate"><?= htmlspecialchars($user_data['fullname'] ?? $user_data['username'] ?? 'Barber') ?></span>
-                            <span class="text-[10px] text-amber-400 capitalize">Barber Specialist</span>
-                        </div>
+                        <img src="<?= $b_photo_url ?>" alt="Avatar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-md border-2 border-amber-700/60 transition-transform group-hover:scale-105">
+                        <span class="hidden md:block text-sm sm:text-base text-zinc-200 font-semibold max-w-[150px] truncate"><?= htmlspecialchars($user_data['fullname'] ?? $user_data['username'] ?? 'Barber') ?></span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 transition-transform duration-200" id="profile-dropdown-chevron"></i>
                     </button>
 
                     <!-- Profile Dropdown Menu -->
-                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl divide-y divide-amber-900/40">
-                        <div class="p-3 bg-[#1e1408]">
-                            <span class="text-xs font-bold text-amber-200 block truncate"><?= htmlspecialchars($user_data['fullname'] ?? $user_data['username'] ?? 'Barber') ?></span>
-                            <span class="text-[10px] text-amber-400/80 font-mono capitalize">Role: Barber</span>
-                        </div>
+                    <div id="user-profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#161009] border border-amber-900/60 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
                         <div class="py-1 bg-rose-950/10">
-                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
+                            <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-colors">
                                 <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
                                 <span>Logout</span>
                             </a>
@@ -301,4 +306,4 @@
         </header>
 
         <!-- Dynamic Main View Wrapper -->
-        <main class="flex-1 p-4 md:p-6 overflow-y-auto page-transition">
+        <main class="flex-1 overflow-y-auto p-6 relative page-transition">

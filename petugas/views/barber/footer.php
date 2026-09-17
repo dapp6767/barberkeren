@@ -85,60 +85,85 @@
     setInterval(updateClock, 1000); 
     updateClock();
 
-    // Sidebar Toggle
+    // Sidebar Toggle with Persistence (identik dengan pelanggan)
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 
     function applySidebarState(isMinimized) {
         if (isMinimized) {
-            sidebar.classList.remove('w-64'); 
+            sidebar.classList.remove('w-72'); 
             sidebar.classList.add('w-20');
+            // Sembunyikan label teks saat minimized
+            sidebar.querySelectorAll('span:not(#brand-icon)').forEach(el => { el.style.opacity = '0'; el.style.maxWidth = '0'; el.style.overflow = 'hidden'; });
         } else {
             sidebar.classList.remove('w-20'); 
-            sidebar.classList.add('w-64');
+            sidebar.classList.add('w-72');
+            sidebar.querySelectorAll('span').forEach(el => { el.style.opacity = ''; el.style.maxWidth = ''; el.style.overflow = ''; });
         }
+    }
+
+    function closeMobileSidebar() {
+        if (sidebar) sidebar.classList.remove('open-mobile');
+        if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+    }
+
+    if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+    }
+
+    if (sidebarToggle && sidebar) {
+        // Restore saved state on desktop
+        const saved = localStorage.getItem('barberSidebarMinimized');
+        if (saved === 'true' && window.innerWidth >= 768) {
+            applySidebarState(true);
+        }
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (window.innerWidth < 768) {
+                sidebar.classList.toggle('open-mobile');
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.toggle('hidden', !sidebar.classList.contains('open-mobile'));
+                }
+            } else {
+                const willMinimize = sidebar.classList.contains('w-72');
+                localStorage.setItem('barberSidebarMinimized', willMinimize);
+                applySidebarState(willMinimize);
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 768 && sidebar.classList.contains('open-mobile') && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                closeMobileSidebar();
+            }
+        });
     }
 
     // Profile Dropdown Toggle
     function toggleProfileDropdown(e) {
         if (e) e.stopPropagation();
         const dropdown = document.getElementById('user-profile-dropdown-menu');
-        const chevron = document.getElementById('profile-dropdown-chevron');
+        const chevron  = document.getElementById('profile-dropdown-chevron');
         if (dropdown) {
             const isHidden = dropdown.classList.contains('hidden');
             dropdown.classList.toggle('hidden');
-            if (chevron) {
-                chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-            }
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
-
     function closeProfileDropdown() {
         const dropdown = document.getElementById('user-profile-dropdown-menu');
-        const chevron = document.getElementById('profile-dropdown-chevron');
+        const chevron  = document.getElementById('profile-dropdown-chevron');
         if (dropdown && !dropdown.classList.contains('hidden')) {
             dropdown.classList.add('hidden');
             if (chevron) chevron.style.transform = 'rotate(0deg)';
         }
     }
-
     document.addEventListener('click', function(e) {
-        const profileContainer = document.getElementById('user-profile-dropdown-container');
-        if (profileContainer && !profileContainer.contains(e.target)) {
-            closeProfileDropdown();
-        }
+        const pc = document.getElementById('user-profile-dropdown-container');
+        if (pc && !pc.contains(e.target)) closeProfileDropdown();
     });
 
-    if (sidebarToggle && sidebar) {
-        const isMinimized = localStorage.getItem('sidebarMinimized') === 'true';
-        sidebarToggle.addEventListener('click', () => {
-            const willMinimize = sidebar.classList.contains('w-64');
-            localStorage.setItem('sidebarMinimized', willMinimize);
-            applySidebarState(willMinimize);
-        });
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
+
         // Line Chart Performance Barber
         if (document.getElementById('barberChart1')) {
             const labels = <?php echo json_encode($barberLabels ?? []); ?>;
@@ -253,6 +278,9 @@
         }
     });
 </script>
+
+<!-- Mobile Sidebar Backdrop -->
+<div id="sidebar-backdrop" class="hidden md:hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:49;"></div>
 
     <?php
         $b_has_custom_pic = false;
