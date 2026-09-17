@@ -869,7 +869,7 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-3 border-b border-amber-900/30">
                                 <h3 class="text-xl font-bold tracking-wide flex items-center gap-2" style="color:#e8d5a3;">
                                     <i data-lucide="trending-up" class="w-5 h-5 text-amber-400"></i>
-                                    Tren Pelanggan Dilayani (30 Hari Terakhir)
+                                    Kunjungan Pelanggan (30 Hari Terakhir)
                                 </h3>
                                 <span class="text-[11px] text-amber-300 bg-amber-950/60 border border-amber-800/40 px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shrink-0">
                                     ↔ Geser Kiri / Kanan (Max 30 Hari)
