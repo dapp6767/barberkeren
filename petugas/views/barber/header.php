@@ -97,11 +97,11 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #brand-icon { transition: margin 0.3s ease; }
-        #brand-text { transition: opacity 0.2s, max-width 0.3s; max-width: 250px; white-space: nowrap; overflow: hidden; }
+        #brand-text { transition: opacity 0.2s, max-width 0.3s; max-width: 280px; white-space: nowrap; overflow: hidden; }
         #sidebar nav a {
             position: relative; transition: all 0.25s ease;
             white-space: nowrap; overflow: hidden;
-            border: 1px solid transparent; border-radius: 0.5rem;
+            border: 1px solid transparent; border-radius: 0.75rem;
         }
         #sidebar nav a::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0;
@@ -122,99 +122,90 @@
             border-color: #5c3d1a !important; color: #e8d5a3 !important;
         }
         #sidebar nav a.bg-adminlte-primary::before { opacity: 1; }
-        #sidebar nav span, #sidebar nav p { transition: opacity 0.2s, max-width 0.3s; max-width: 250px; overflow: hidden; white-space: nowrap; }
+        #sidebar nav span, #sidebar nav p { transition: opacity 0.2s, max-width 0.3s; max-width: 280px; overflow: hidden; white-space: nowrap; }
         #sidebar nav p { color: #6b4c20 !important; }
         #sidebar.w-20 #brand-logo-container { padding-left: 0; padding-right: 0; justify-content: center; }
         #sidebar.w-20 #brand-icon { margin-right: 0; }
         #sidebar.w-20 #brand-text { opacity: 0; max-width: 0; margin: 0; }
-        #sidebar.w-20 nav a { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        #sidebar.w-20 nav a, #sidebar.w-20 .sidebar-footer a { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
+        #sidebar.w-20 nav span, #sidebar.w-20 nav p, #sidebar.w-20 .sidebar-footer span { opacity: 0; max-width: 0; padding: 0; margin: 0; border: none; }
+
+        * { -webkit-tap-highlight-color: transparent; }
+        body { background-color: #0F172A !important; color: #F8FAFC !important; }
+
+        .page-transition, .tab-content, nav { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+
+        /* Mobile Layout Adjustments (< 768px) */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column !important;
+                padding-bottom: 80px !important;
+                height: auto !important;
+                min-height: 100vh !important;
+            }
+            #sidebar {
+                position: fixed !important;
+                top: 0; bottom: 0; left: 0;
+                z-index: 60 !important;
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            #sidebar.open-mobile {
+                transform: translateX(0) !important;
+                width: 285px !important;
+                box-shadow: 0 0 50px rgba(0,0,0,0.9) !important;
+            }
+            main { padding: 1rem !important; }
         }
-        .page-transition { animation: fadeSlideUp 0.4s ease-out forwards; }
+
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #0e0a08; }
         ::-webkit-scrollbar-thumb { background: #3d2b1a; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #c9a03a; }
 
-        /* Sidebar collapse — identik pelanggan */
-        #sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
-        #sidebar.w-20 #brand-text { opacity: 0; width: 0; overflow: hidden; }
-        #sidebar.w-20 nav a span,
-        #sidebar.w-20 nav p,
-        #sidebar.w-20 .sidebar-footer a span {
-            opacity: 0; max-width: 0; overflow: hidden; white-space: nowrap;
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #sidebar.w-20 nav a { justify-content: center; padding-left: 0; padding-right: 0; }
+        .page-transition { animation: fadeSlideUp 0.4s ease-out forwards; }
 
-        /* Mobile sidebar — slide in from left */
-        @media (max-width: 767px) {
-            #sidebar { position: fixed; left: -300px; top: 0; height: 100vh; z-index: 50; transition: left 0.3s ease; }
-            #sidebar.open-mobile { left: 0; }
-        }
-        #sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 49; }
-
+        /* Mobile Bottom Nav */
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
             color: #9ca3af; text-decoration: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative; padding: 6px 12px; border-radius: 12px;
             -webkit-tap-highlight-color: transparent !important;
-            -webkit-touch-callout: none !important;
-            user-select: none !important;
-            -webkit-user-select: none !important;
-            outline: none !important;
+            user-select: none !important; outline: none !important;
             background-color: transparent !important;
         }
-        .nav-item:focus,
-        .nav-item:active,
-        .nav-item:focus-visible,
-        .nav-item:focus-within {
-            outline: none !important;
-            box-shadow: none !important;
+        .nav-item:focus, .nav-item:active, .nav-item:focus-visible, .nav-item:focus-within {
+            outline: none !important; box-shadow: none !important;
             background-color: transparent !important;
-            -webkit-tap-highlight-color: transparent !important;
         }
         .nav-item:hover { color: #fcd34d; }
-        .nav-item .solid-icon { display: none; color: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
+        .nav-item .solid-icon { display: none; color: #f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.8)); }
         .nav-item .outline-icon { display: block; color: #9ca3af; transition: color 0.2s ease, transform 0.2s ease; }
         .nav-item:hover .outline-icon { color: #fcd34d; transform: translateY(-1px); }
         .nav-item.active { color: #f59e0b; }
-        .nav-item.active .solid-icon { display: block; animation: iconPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nav-item.active .solid-icon { display: block; animation: iconPop 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
         .nav-item.active .outline-icon { display: none; }
-        .nav-item.active .nav-label { color: #fbbf24; font-weight: 700; text-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
-        
+        .nav-item.active .nav-label { color: #fbbf24; font-weight: 700; text-shadow: 0 0 8px rgba(245,158,11,0.5); }
         .nav-item .nav-indicator {
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0px;
-            height: 3px;
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+            width: 0px; height: 3px;
             background: linear-gradient(90deg, #f59e0b, #fbbf24);
-            border-radius: 9999px;
-            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.9);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 9999px; box-shadow: 0 2px 10px rgba(245,158,11,0.9);
+            opacity: 0; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
-        .nav-item.active .nav-indicator {
-            opacity: 1;
-            width: 24px;
-        }
-        
-        .nav-item .profile-img { border-color: rgba(255, 255, 255, 0.15); transition: all 0.25s ease; }
-        .nav-item.active .profile-img { border-color: #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.7); }
-
-        @keyframes iconPop {
-            0% { transform: scale(0.8); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
+        .nav-item.active .nav-indicator { opacity: 1; width: 24px; }
+        .nav-item .profile-img { border-color: rgba(255,255,255,0.15); transition: all 0.25s ease; }
+        .nav-item.active .profile-img { border-color: #f59e0b; box-shadow: 0 0 12px rgba(245,158,11,0.7); }
+        @keyframes iconPop { 0% { transform: scale(0.8); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         .mobile-bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-            background: rgba(14, 10, 8, 0.95); backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(14,10,8,0.95); backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.1);
             display: flex; justify-content: space-around; align-items: center;
             padding: 8px 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
         }
@@ -232,38 +223,45 @@
 
     <!-- Sidebar Navigation -->
     <aside id="sidebar" class="w-72 bg-adminlte-sidebar h-full flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
-        <div id="brand-logo-container" class="h-16 md:h-18 flex items-center px-5 overflow-hidden" style="border-bottom: 1px solid #3a2510;">
+        <script>
+            if(localStorage.getItem('barberSidebarMinimized') === 'true') {
+                document.currentScript.closest('aside').classList.replace('w-72', 'w-20');
+            }
+        </script>
+        <!-- Brand Logo -->
+        <div id="brand-logo-container" class="h-16 md:h-18 flex items-center px-5 overflow-hidden">
             <span id="brand-icon" class="text-2xl mr-3 shrink-0">💈</span>
-            <div id="brand-text" class="flex flex-col overflow-hidden">
-                <span class="font-bold text-base tracking-wider whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span style="color:#8a6030;font-weight:400;">Barber</span></span>
-            </div>
+            <span id="brand-text" class="text-lg md:text-xl font-bold tracking-tight whitespace-nowrap" style="color:#e8d5a3;">Dashboard <span class="font-normal" style="color:#8a6030;">Barber</span></span>
         </div>
 
-        <!-- Navigation Menu Links -->
-        <nav class="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
-            <p class="px-3 text-[10px] font-bold text-amber-700/80 uppercase tracking-widest mb-2">MODUL kerja</p>
-            
-            <a href="barber.php?page=dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-zinc-300 transition-colors <?= ($current_page === 'dashboard' || empty($current_page)) ? 'bg-adminlte-primary' : '' ?>">
-                <i data-lucide="layout-dashboard" class="w-5 h-5 text-amber-400 shrink-0"></i>
-                <span class="font-medium">Workstation Barber</span>
-            </a>
-            
-            <a href="barber.php?page=kursi" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-zinc-300 transition-colors <?= $current_page === 'kursi' ? 'bg-adminlte-primary' : '' ?>">
-                <i data-lucide="armchair" class="w-5 h-5 text-amber-400 shrink-0"></i>
-                <span class="font-medium">Stasiun Kursi</span>
-            </a>
-
-            <a href="barber.php?page=profil" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-zinc-300 transition-colors <?= $current_page === 'profil' ? 'bg-adminlte-primary' : '' ?>">
-                <i data-lucide="user-cog" class="w-5 h-5 text-amber-400 shrink-0"></i>
-                <span class="font-medium">Profil & Keamanan</span>
-            </a>
-        </nav>
+        <!-- Sidebar Menu -->
+        <div class="flex-1 overflow-y-auto py-4">
+            <nav class="flex flex-col gap-1.5 px-3">
+                <a href="barber.php?page=dashboard" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-3 text-[15px] sm:text-base font-semibold transition-all <?= ($current_page === 'dashboard' || empty($current_page)) ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                    <span>Panel Kerja</span>
+                </a>
+                <a href="barber.php?page=charts" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-1.5 text-[15px] sm:text-base font-semibold transition-all <?= $current_page === 'charts' ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                    <span>Statistik (Charts)</span>
+                </a>
+                <a href="barber.php?page=kursi" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-1.5 text-[15px] sm:text-base font-semibold transition-all <?= $current_page === 'kursi' ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="armchair" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                    <span>Kursi (Stasiun Kerja)</span>
+                </a>
+                <p class="px-4 text-[10px] font-bold text-amber-700/60 uppercase tracking-widest mt-4 mb-1">Lainnya</p>
+                <a href="barber.php?page=profil" class="sidebar-item flex items-center gap-3.5 px-4 py-3 rounded-xl mt-1 text-[15px] sm:text-base font-semibold transition-all <?= $current_page === 'profil' ? 'bg-adminlte-primary text-amber-200' : 'text-stone-300 hover:text-amber-200' ?>">
+                    <i data-lucide="user-cog" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                    <span>Profil</span>
+                </a>
+            </nav>
+        </div>
 
         <!-- Sidebar Footer / Bottom Home Button -->
         <div class="sidebar-footer p-3.5 border-t border-amber-900/30 bg-zinc-950/40">
             <a href="../index.php" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-stone-300 hover:text-amber-200 hover:bg-amber-500/10 transition-colors text-[15px] sm:text-base font-semibold">
                 <i data-lucide="home" class="w-5 h-5 text-amber-400/80 shrink-0"></i>
-                <span id="sidebar-home-label">Home</span>
+                <span>Home</span>
             </a>
         </div>
     </aside>
