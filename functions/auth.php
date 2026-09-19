@@ -144,7 +144,7 @@ if (!function_exists('register_user')) {
  * Login User (Mendukung Validasi Role)
  */
 if (!function_exists('login_user')) {
-    function login_user($username_email, $password, $selected_role = null) {
+    function login_user($username_email, $password, $selected_role = null, $remember = false) {
         $pdo = get_koneksi();
 
         $username_email = trim($username_email);
@@ -218,11 +218,17 @@ if (!function_exists('login_user')) {
                     $_SESSION['fullname']  = !empty($user['fullname']) ? $user['fullname'] : $user['username'];
                     $_SESSION['user_role'] = $user['role'];
 
-                    $token = bin2hex(random_bytes(32));
-                    $update_token = $pdo->prepare("UPDATE users SET remember_token = ?, is_online = 1, last_active = NOW() WHERE id_user = ?");
-                    $update_token->execute([$token, $user['id_user']]);
-                    
-                    setcookie('remember_me', $token, time() + (86400 * 30), "/", "", false, true);
+                    // Remember Me: hanya buat token & cookie jika user mencentang checkbox
+                    if ($remember) {
+                        $token = bin2hex(random_bytes(32));
+                        $update_token = $pdo->prepare("UPDATE users SET remember_token = ?, is_online = 1, last_active = NOW() WHERE id_user = ?");
+                        $update_token->execute([$token, $user['id_user']]);
+                        $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+                        setcookie('remember_me', $token, time() + (86400 * 30), '/', '', $secure, true);
+                    } else {
+                        // Hapus token lama jika ada (login tanpa remember)
+                        $pdo->prepare("UPDATE users SET is_online = 1, last_active = NOW() WHERE id_user = ?")->execute([$user['id_user']]);
+                    }
 
                     if (function_exists('touch_user_activity')) {
                         touch_user_activity();

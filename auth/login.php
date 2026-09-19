@@ -32,8 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($username_email) || empty($password)) {
         if (function_exists('set_flash')) set_flash('danger', 'Username/Email dan Password wajib diisi!');
     } else {
+        $remember = isset($_POST['remember_me']);
         if (function_exists('login_user')) {
-            $result = login_user($username_email, $password);
+            $result = login_user($username_email, $password, null, $remember);
             if ($result['status']) {
                 if (function_exists('set_flash')) set_flash('success', 'Selamat datang kembali!');
                 $role = $result['role'] ?? $_SESSION['user_role'] ?? 'pelanggan';
@@ -185,6 +186,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 
+                <!-- Ingat Saya -->
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="remember_me" name="remember_me"
+                           class="w-4 h-4 rounded border border-white/20 bg-white/5 accent-gold cursor-pointer">
+                    <label for="remember_me" class="text-sm text-zinc-400 cursor-pointer select-none">
+                        Ingat Saya <span class="text-zinc-600 text-xs">(30 hari)</span>
+                    </label>
+                </div>
+
                 <button type="submit"
                         class="w-full h-12 rounded-full bg-gold text-zinc-950 font-bold text-sm tracking-wide shadow-lg hover:bg-[#e8c84a] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 mt-2">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
