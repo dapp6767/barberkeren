@@ -372,7 +372,6 @@
 
                         <div>
                             <h4 class="text-white font-bold text-base leading-tight group-hover:text-amber-300 transition-colors"><?= htmlspecialchars($br['nama']) ?></h4>
-                            <p class="text-xs text-zinc-400 mt-1"><?= htmlspecialchars($br['spesialisasi'] ?? 'Hair Stylist') ?></p>
                         </div>
                     </div>
 
