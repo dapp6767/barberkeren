@@ -13,6 +13,26 @@ if (is_logged_in()) {
         $bookNowUrl = 'pelanggan/dashboard.php';
     }
 }
+
+// Ikon & badge role dinamis untuk navbar
+$_nav_role = $_SESSION['user_role'] ?? 'pelanggan';
+switch ($_nav_role) {
+    case 'admin':
+        $role_icon  = 'crown';
+        $role_color = 'text-amber-400';
+        $role_badge = '<span class="ml-1 text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-amber-400/15 text-amber-400 border border-amber-400/30">Admin</span>';
+        break;
+    case 'barber':
+        $role_icon  = 'scissors';
+        $role_color = 'text-gold';
+        $role_badge = '<span class="ml-1 text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-gold/15 text-gold border border-gold/30">Barber</span>';
+        break;
+    default:
+        $role_icon  = 'user';
+        $role_color = 'text-zinc-300';
+        $role_badge = '';
+        break;
+}
 $stmt_ulasan = $pdo->query("SELECT u.*, us.username FROM ulasan u JOIN users us ON u.pelanggan_id = us.id_user ORDER BY u.waktu DESC LIMIT 6");
 $ulasan_list = $stmt_ulasan->fetchAll(PDO::FETCH_ASSOC);
 
@@ -179,8 +199,9 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                 <div class="hidden lg:flex items-center gap-4">
                     <?php if (is_logged_in()): ?>
                         <div class="flex items-center gap-2 text-sm text-zinc-300 font-medium">
-                            <i data-lucide="user" class="w-4 h-4"></i>
+                            <i data-lucide="<?= $role_icon ?>" class="w-4 h-4 <?= $role_color ?>"></i>
                             <span><?= htmlspecialchars($_SESSION['fullname'] ?? $_SESSION['username'] ?? 'User') ?></span>
+                            <?= $role_badge ?>
                         </div>
                         <a href="<?= $bookNowUrl ?>" class="inline-flex h-10 items-center justify-center rounded-lg bg-gold px-5 py-2 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
                             Dashboard
@@ -207,8 +228,9 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                 
                 <?php if (is_logged_in()): ?>
                     <div class="flex items-center gap-2 text-sm text-zinc-300 font-medium mt-2">
-                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <i data-lucide="<?= $role_icon ?>" class="w-4 h-4 <?= $role_color ?>"></i>
                         <span><?= htmlspecialchars($_SESSION['fullname'] ?? $_SESSION['username'] ?? 'User') ?></span>
+                        <?= $role_badge ?>
                     </div>
                     <a href="<?= $bookNowUrl ?>" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500 mt-2">
                         Dashboard
