@@ -167,7 +167,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                     <a href="#services" class="text-zinc-300 hover:text-white transition-colors">Ulasan</a>
                     <a href="#gallery" class="text-zinc-300 hover:text-white transition-colors">Layanan</a>
                     <a href="#pricing" class="text-zinc-300 hover:text-white transition-colors flex items-center gap-2">
-                        Antrian 
+                        Antrean
                         <span class="bg-gold/20 text-gold px-2 py-0.5 rounded-full text-xs font-bold border border-gold/30">
                             <?= htmlspecialchars($display_queue) ?>
                         </span>
@@ -186,11 +186,8 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                             Dashboard
                         </a>
                     <?php else: ?>
-                        <a href="auth/login.php" class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-600 bg-transparent px-5 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white">
-                            Login
-                        </a>
-                        <a href="<?= $bookNowUrl ?>" class="inline-flex h-10 items-center justify-center rounded-lg bg-gold px-5 py-2 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
-                            Book Now
+                        <a href="auth/login.php" class="inline-flex h-10 items-center justify-center rounded-lg bg-gold px-5 py-2 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
+                            Masuk / Login
                         </a>
                     <?php endif; ?>
                 </div>
@@ -201,7 +198,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                 <a href="#services" class="text-zinc-300 hover:text-white transition-colors font-medium">Ulasan</a>
                 <a href="#gallery" class="text-zinc-300 hover:text-white transition-colors font-medium">Layanan</a>
                 <a href="#pricing" class="text-zinc-300 hover:text-white transition-colors flex items-center justify-between font-medium">
-                    Antrian
+                    Antrean
                     <span class="bg-gold/20 text-gold px-2 py-0.5 rounded-full text-xs font-bold border border-gold/30">
                         <?= htmlspecialchars($display_queue) ?>
                     </span>
@@ -217,11 +214,8 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                         Dashboard
                     </a>
                 <?php else: ?>
-                    <a href="auth/login.php" class="w-full inline-flex h-10 items-center justify-center rounded-lg border border-zinc-700 bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-800 text-white mt-2">
-                        Login
-                    </a>
-                    <a href="<?= $bookNowUrl ?>" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500">
-                        Book Now
+                    <a href="auth/login.php" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500 mt-2">
+                        Masuk / Login
                     </a>
                 <?php endif; ?>
             </div>
@@ -241,12 +235,16 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                         <span class="block text-gold italic font-light mt-2">dan Presisi.</span>
                     </h1>
                     
-                    <!-- Search / Action Box -->
-                    <div class="hero-parallax-text flex max-w-sm mt-8 shadow-[0_0_40px_rgba(212,175,55,0.15)] relative z-20">
-                        <input type="text" id="search-input" placeholder="Layanan apa yang Anda cari?" class="w-full px-5 py-3.5 rounded-l-full bg-zinc-900/80 text-white border border-r-0 border-white/10 focus:ring-0 focus:border-gold outline-none text-sm font-medium backdrop-blur-md">
-                        <button id="search-btn" class="bg-gold px-6 py-3.5 rounded-r-full text-zinc-950 font-bold hover:bg-yellow-500 transition-colors flex items-center justify-center shrink-0 border border-gold">
-                            <i data-lucide="search" class="w-4 h-4"></i>
-                        </button>
+                    <!-- CTA Buttons -->
+                    <div class="hero-parallax-text flex flex-wrap items-center gap-4 mt-8 relative z-20">
+                        <a href="<?= $bookNowUrl ?>" class="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gold px-7 text-sm font-bold text-black shadow-[0_0_30px_rgba(212,175,55,0.25)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] active:scale-95">
+                            <i data-lucide="scissors" class="w-4 h-4"></i>
+                            Ambil Antrean
+                        </a>
+                        <a href="#layanan" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'}); return false;" class="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-gold/40 bg-white/5 px-7 text-sm font-semibold text-gold backdrop-blur-sm transition-all hover:bg-gold/10 hover:border-gold hover:scale-105 active:scale-95">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            Lihat Layanan
+                        </a>
                     </div>
                     
                     <p class="hero-parallax-text mt-8 text-zinc-400 text-sm flex items-start gap-2 font-medium tracking-wide">
@@ -314,7 +312,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                                         <div class="text-[2.5rem] md:text-[3rem] font-serif font-semibold text-zinc-600 leading-none">
                                             Kosong
                                         </div>
-                                        <p class="mt-3 text-xs text-zinc-600 font-medium tracking-widest uppercase">Belum Ada Antrian</p>
+                                        <p class="mt-3 text-xs text-zinc-600 font-medium tracking-widest uppercase">Belum Ada Antrean</p>
                                     <?php endif; ?>
                                 </div>
 
@@ -457,7 +455,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                                     <li class="flex items-center text-zinc-300 font-light"><i data-lucide="check" class="w-5 h-5 text-gold mr-4 shrink-0"></i> <span><?= htmlspecialchars($feat) ?></span></li>
                                     <?php endforeach; ?>
                                 </ul>
-                                <a href="<?= $bookNowUrl ?>" class="mt-8 flex w-full items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-gold hover:text-black hover:border-gold py-4 text-sm font-semibold text-white transition-all shadow-[0_0_20px_rgba(212,175,55,0.05)] hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">Pilih <?= htmlspecialchars($p['nama_layanan']) ?></a>
+                                <a href="<?= $bookNowUrl ?>" class="mt-8 flex w-full items-center justify-center rounded-full bg-white/5 border border-gold/30 hover:bg-gold hover:text-black hover:border-gold py-4 text-sm font-semibold text-white transition-all shadow-[0_0_20px_rgba(212,175,55,0.1)] hover:shadow-[0_0_30px_rgba(212,175,55,0.35)] whitespace-normal text-center leading-snug px-4">Pilih <?= htmlspecialchars($p['nama_layanan']) ?></a>
                             </div>
                         </div>
                         <?php endforeach; ?>
