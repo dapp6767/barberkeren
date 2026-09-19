@@ -215,7 +215,7 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                     </a>
                 <?php else: ?>
                     <a href="auth/login.php" class="w-full inline-flex h-10 items-center justify-center rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-500 mt-2">
-                        Masuk / Login
+                        Login
                     </a>
                 <?php endif; ?>
             </div>
