@@ -50,7 +50,11 @@ try {
 $barbers_detail = [];
 $stmt_bd = $pdo_early->query("
     SELECT b.id, b.user_id, b.kursi, b.tgl_kursi, b.spesialisasi, b.status, b.tingkatan,
-           COALESCE(NULLIF(TRIM(b.nama), ''), u.fullname, u.username, 'Barber') AS nama
+           CASE
+               WHEN b.user_id IS NOT NULL AND b.user_id > 0
+               THEN COALESCE(NULLIF(TRIM(u.fullname), ''), NULLIF(TRIM(u.username), ''), NULLIF(TRIM(b.nama), ''), 'Barber')
+               ELSE COALESCE(NULLIF(TRIM(b.nama), ''), 'Barber')
+           END AS nama
     FROM barber b
     LEFT JOIN users u ON b.user_id = u.id_user
     WHERE b.status = 'Aktif' OR b.status = 'aktif'

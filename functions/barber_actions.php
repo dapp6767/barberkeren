@@ -61,9 +61,15 @@ function handle_barber_post_actions() {
                 exit;
             }
 
-            // Update kursi, tgl_kursi, dan pastikan user_id tersinkronisasi
-            $stmt_upd = $pdo->prepare("UPDATE barber SET kursi = ?, tgl_kursi = CURDATE(), user_id = ? WHERE id = ?");
-            $stmt_upd->execute([$kursi_pilihan, $user_id, $barber_id]);
+            // Ambil nama asli dari akun user yang login
+            $stmt_uname = $pdo->prepare("SELECT fullname, username FROM users WHERE id_user = ? LIMIT 1");
+            $stmt_uname->execute([$user_id]);
+            $uname_row = $stmt_uname->fetch(PDO::FETCH_ASSOC);
+            $real_name = trim($uname_row['fullname'] ?? '') !== '' ? trim($uname_row['fullname']) : trim($uname_row['username'] ?? '');
+
+            // Update kursi, tgl_kursi, user_id, dan sinkronkan nama dari akun user
+            $stmt_upd = $pdo->prepare("UPDATE barber SET kursi = ?, tgl_kursi = CURDATE(), user_id = ?, nama = ? WHERE id = ?");
+            $stmt_upd->execute([$kursi_pilihan, $user_id, $real_name ?: $barber['nama'], $barber_id]);
 
             set_flash('success', "Berhasil! Anda menetapkan <b>{$kursi_pilihan}</b> sebagai kursi tugas melayani hari ini.");
             redirect('barber.php');
