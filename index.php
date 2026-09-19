@@ -237,10 +237,6 @@ $chairs_data = $stmt_chairs->fetchAll(PDO::FETCH_ASSOC);
                     
                     <!-- CTA Buttons -->
                     <div class="hero-parallax-text flex flex-wrap items-center gap-4 mt-8 relative z-20">
-                        <a href="<?= $bookNowUrl ?>" class="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gold px-7 text-sm font-bold text-black shadow-[0_0_30px_rgba(212,175,55,0.25)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] active:scale-95">
-                            <i data-lucide="scissors" class="w-4 h-4"></i>
-                            Ambil Antrean
-                        </a>
                         <a href="#layanan" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'}); return false;" class="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-gold/40 bg-white/5 px-7 text-sm font-semibold text-gold backdrop-blur-sm transition-all hover:bg-gold/10 hover:border-gold hover:scale-105 active:scale-95">
                             <i data-lucide="layout-grid" class="w-4 h-4"></i>
                             Lihat Layanan
