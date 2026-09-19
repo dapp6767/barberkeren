@@ -349,13 +349,15 @@
             $nama_parts = explode(' ', trim($br['nama']));
             $initials = strtoupper(substr($nama_parts[0], 0, 1)) . (isset($nama_parts[1]) ? strtoupper(substr($nama_parts[1], 0, 1)) : '');
             $br_has_selected_chair = (!empty($br['tgl_kursi']) && $br['tgl_kursi'] === date('Y-m-d'));
+            $br_disabled = !$br_has_selected_chair;
+            $next_ticket_label = $next_ticket_per_barber[$br['id']] ?? ($br_letter . '-01');
         ?>
-        <div class="barber-card group relative cursor-pointer rounded-2xl border-2 border-white/10 bg-[#1A1612] p-5 shadow-lg transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:-translate-y-1 select-none"
+        <div class="barber-card group relative rounded-2xl border-2 <?= $br_disabled ? 'border-white/5 bg-[#111009] opacity-60 cursor-not-allowed' : 'cursor-pointer border-white/10 bg-[#1A1612] hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:-translate-y-1' ?> p-5 shadow-lg transition-all duration-300 select-none"
              data-barber-id="<?= $br['id'] ?>"
              data-barber-name="<?= htmlspecialchars($br['nama']) ?>"
              data-barber-kursi="<?= htmlspecialchars($br['kursi']) ?>"
              data-barber-letter="<?= $br_letter ?>"
-             onclick="selectBarber(this)">
+             <?= !$br_disabled ? 'onclick="selectBarber(this)"' : '' ?>>
 
             <div class="flex flex-col gap-4">
                 <div class="flex items-start justify-between">
@@ -388,15 +390,19 @@
                             <?= htmlspecialchars($br['kursi']) ?> (Hari Ini)
                         </span>
                     <?php else: ?>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-medium bg-zinc-800/80 text-zinc-400 border border-white/10" title="Barber belum mengonfirmasi kursi bertugas hari ini">
-                            <i data-lucide="armchair" class="w-3.5 h-3.5 text-zinc-500"></i>
-                            <?= htmlspecialchars($br['kursi']) ?> (Belum Siap)
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-medium bg-zinc-800/80 text-zinc-500 border border-white/10" title="Barber belum mengonfirmasi kursi bertugas hari ini">
+                            <i data-lucide="armchair" class="w-3.5 h-3.5 text-zinc-600"></i>
+                            Belum Ada Barber
                         </span>
                     <?php endif; ?>
 
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold <?= $colors['badge'] ?> border">
                         <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
-                        No Tiket: <strong><?= $br_letter ?>-xx</strong>
+                        <?php if ($br_has_selected_chair): ?>
+                            Tiket Berikutnya: <strong><?= htmlspecialchars($next_ticket_label) ?></strong>
+                        <?php else: ?>
+                            <span class="text-zinc-500">Tidak Tersedia</span>
+                        <?php endif; ?>
                     </span>
                 </div>
 

@@ -61,9 +61,9 @@ function handle_barber_post_actions() {
                 exit;
             }
 
-            // Update kursi dan tgl_kursi untuk hari ini
-            $stmt_upd = $pdo->prepare("UPDATE barber SET kursi = ?, tgl_kursi = CURDATE() WHERE id = ?");
-            $stmt_upd->execute([$kursi_pilihan, $barber_id]);
+            // Update kursi, tgl_kursi, dan pastikan user_id tersinkronisasi
+            $stmt_upd = $pdo->prepare("UPDATE barber SET kursi = ?, tgl_kursi = CURDATE(), user_id = ? WHERE id = ?");
+            $stmt_upd->execute([$kursi_pilihan, $user_id, $barber_id]);
 
             set_flash('success', "Berhasil! Anda menetapkan <b>{$kursi_pilihan}</b> sebagai kursi tugas melayani hari ini.");
             redirect('barber.php');

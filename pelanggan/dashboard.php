@@ -48,9 +48,31 @@ try {
 
 // Fetch detail barber dengan kursi untuk step pilih barber
 $barbers_detail = [];
-$stmt_bd = $pdo_early->query("SELECT id, user_id, nama, kursi, tgl_kursi, spesialisasi, status, tingkatan FROM barber WHERE status = 'Aktif' OR status = 'aktif' ORDER BY kursi ASC");
+$stmt_bd = $pdo_early->query("
+    SELECT b.id, b.user_id, b.kursi, b.tgl_kursi, b.spesialisasi, b.status, b.tingkatan,
+           COALESCE(NULLIF(TRIM(b.nama), ''), u.fullname, u.username, 'Barber') AS nama
+    FROM barber b
+    LEFT JOIN users u ON b.user_id = u.id_user
+    WHERE b.status = 'Aktif' OR b.status = 'aktif'
+    ORDER BY b.kursi ASC
+");
 if ($stmt_bd) {
     $barbers_detail = $stmt_bd->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Hitung nomor tiket berikutnya per barber (untuk badge)
+$next_ticket_per_barber = [];
+foreach ($barbers_detail as $bd) {
+    $kursi_str = strtoupper($bd['kursi'] ?? '');
+    $br_letter = '';
+    if (preg_match('/KURSI\s*([A-Z])/', $kursi_str, $m_br)) {
+        $br_letter = $m_br[1];
+    }
+    if ($br_letter) {
+        $stmt_next_t = $pdo_early->prepare("SELECT COUNT(*) + 1 FROM antrian WHERE barber_id = ? AND DATE(waktu_dibuat) = CURDATE()");
+        $stmt_next_t->execute([$bd['id']]);
+        $next_ticket_per_barber[$bd['id']] = $br_letter . '-' . str_pad((int)$stmt_next_t->fetchColumn(), 2, '0', STR_PAD_LEFT);
+    }
 }
 
 // 4. Fetch Data Pelanggan Login (Status Antrean & Riwayat)
