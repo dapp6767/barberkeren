@@ -143,10 +143,18 @@ try {
         : (!empty($antrean['username']) ? trim($antrean['username']) : 'Pelanggan');
 
     $no_wa = trim($antrean['phone'] ?? '');
+    $clean_wa = preg_replace('/[^0-9]/', '', $no_wa);
 
     // Validasi ketersediaan nomor WhatsApp pelanggan
     if (empty($no_wa)) {
         set_flash('danger', "Gagal: Pelanggan <b>" . htmlspecialchars($nama_pelanggan) . "</b> belum melengkapi nomor WhatsApp / HP pada profil akunnya.");
+        header('Location: barber.php');
+        exit;
+    }
+
+    // Validasi panjang dan format nomor telepon (mencegah kegagalan Fonnte 'target input invalid' pada nomor dummy seperti '00000' atau '123')
+    if (strlen($clean_wa) < 9 || strlen($clean_wa) > 15) {
+        set_flash('danger', "Nomor WhatsApp pelanggan (<b>" . htmlspecialchars($no_wa) . "</b>) tidak valid! Nomor HP/WA harus memiliki panjang 9-15 digit angka (contoh: 08123456789). Silakan perbarui nomor pelanggan di menu Akun/Profil pengguna.");
         header('Location: barber.php');
         exit;
     }
@@ -170,10 +178,17 @@ try {
            . "Kursi cukur sebentar lagi siap (estimasi ~10 menit lagi). Silakan segera merapat ke barbershop agar giliranmu tidak terlewat. Ditunggu ya!";
 
     // 6. Token API Fonnte
-    // Token dapat diambil dari file .env (FONNTE_TOKEN) atau langsung menggunakan string token di bawah
-    $token_fonnte = getenv('FONNTE_TOKEN') ?: ($_ENV['FONNTE_TOKEN'] ?? 'MASUKKAN_TOKEN_FONNTE_KAMU');
+    // Menggunakan helper env_val() terpusat (mendukung getenv(), $_ENV, dan $_SERVER dari file .env)
+    $token_fonnte = '';
+    if (function_exists('env_val')) {
+        $token_fonnte = env_val('FONNTE_TOKEN', '');
+    }
+    if (empty($token_fonnte)) {
+        $token_fonnte = getenv('FONNTE_TOKEN') ?: ($_ENV['FONNTE_TOKEN'] ?? ($_SERVER['FONNTE_TOKEN'] ?? ''));
+    }
+    $token_fonnte = trim((string)$token_fonnte);
 
-    // 7. Eksekusi Pengiriman Pesan
+    // 7. Eksekusi Pengiriman Pesan via cURL Fonnte
     $hasil = kirim_whatsapp_fonnte($no_wa, $pesan, $token_fonnte);
 
     if ($hasil['status']) {
@@ -189,11 +204,19 @@ try {
 
         set_flash('success', "Notifikasi pengingat WhatsApp berhasil dikirim ke <b>" . htmlspecialchars($nama_pelanggan) . "</b> ({$no_wa})!");
     } else {
-        // Deteksi jika token masih berupa placeholder bawaan
-        if ($token_fonnte === 'MASUKKAN_TOKEN_FONNTE_KAMU' || empty($token_fonnte)) {
-            set_flash('warning', "Pesan belum dapat terkirim karena <b>Token Fonnte</b> masih berupa placeholder ('MASUKKAN_TOKEN_FONNTE_KAMU'). Silakan atur token Fonnte aktif Anda pada file <code>.env</code> atau file <code>petugas/kirim_pengingat.php</code>.");
+        $err_msg = $hasil['message'];
+
+        // Evaluasi pesan kesalahan spesifik
+        if (empty($token_fonnte) || $token_fonnte === 'MASUKKAN_TOKEN_FONNTE_KAMU') {
+            set_flash('warning', "Pesan belum dapat terkirim karena <b>Token Fonnte</b> di file <code>.env</code> masih kosong atau berupa placeholder ('MASUKKAN_TOKEN_FONNTE_KAMU'). Silakan pastikan token Anda telah disimpan di file <code>.env</code>.");
+        } elseif (stripos($err_msg, 'target input invalid') !== false) {
+            set_flash('danger', "Gagal: Nomor WhatsApp tujuan (<b>{$no_wa}</b>) tidak valid menurut sistem WhatsApp Gateway Fonnte. Pastikan nomor diawali '08' atau '62' dan terdaftar di WhatsApp.");
+        } elseif (stripos($err_msg, 'device disconnect') !== false) {
+            set_flash('danger', "Gagal: Perangkat WhatsApp Anda di Fonnte terputus (Disconnect). Silakan scan ulang QR Code di <a href='https://fonnte.com' target='_blank' class='underline font-bold'>dashboard Fonnte</a>.");
+        } elseif (stripos($err_msg, 'invalid token') !== false) {
+            set_flash('danger', "Gagal: Token Fonnte tidak valid. Silakan periksa kembali token akun Fonnte Anda di file <code>.env</code>.");
         } else {
-            set_flash('danger', "Gagal mengirim WhatsApp ke " . htmlspecialchars($nama_pelanggan) . ": " . htmlspecialchars($hasil['message']));
+            set_flash('danger', "Gagal mengirim WhatsApp ke " . htmlspecialchars($nama_pelanggan) . ": " . htmlspecialchars($err_msg));
         }
     }
 
