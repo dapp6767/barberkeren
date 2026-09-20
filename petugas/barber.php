@@ -656,11 +656,17 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                             <!-- Mobile Action Buttons -->
                             <div class="pt-2 border-t border-amber-900/30 flex flex-wrap gap-2">
                                 <?php if ($status === 'waiting'): ?>
+                                    <form action="kirim_pengingat.php" method="POST" class="w-full">
+                                        <input type="hidden" name="id_antrean" value="<?= $q['id'] ?>">
+                                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95" title="Kirim Pengingat WhatsApp (~10 Menit Giliran Tiba)">
+                                            <i data-lucide="message-circle" class="w-4 h-4"></i> Panggil / Ingatkan WA
+                                        </button>
+                                    </form>
                                     <form method="POST" class="flex-1">
                                         <input type="hidden" name="action" value="call">
                                         <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">
                                         <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95">
-                                            <i data-lucide="megaphone" class="w-4 h-4"></i> Panggil
+                                            <i data-lucide="megaphone" class="w-4 h-4"></i> Mulai Layani
                                         </button>
                                     </form>
                                     <form method="POST" class="shrink-0">
@@ -754,6 +760,12 @@ $barberTotalUlasan = (int)($ratingData['total_ulasan'] ?? 0);
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end gap-2">
                                                 <?php if ($q['status_antrean'] === 'waiting'): ?>
+                                                    <form action="kirim_pengingat.php" method="POST">
+                                                        <input type="hidden" name="id_antrean" value="<?= $q['id'] ?>">
+                                                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-sm" title="Kirim Pengingat WhatsApp (~10 Menit Giliran Tiba)">
+                                                            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Ingatkan WA
+                                                        </button>
+                                                    </form>
                                                     <form method="POST">
                                                         <input type="hidden" name="action" value="call">
                                                         <input type="hidden" name="antrian_id" value="<?= $q['id'] ?>">

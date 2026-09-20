@@ -84,6 +84,12 @@
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
                                 <?php if ($q['status_antrean'] === 'waiting'): ?>
+                                    <form action="kirim_pengingat.php" method="POST">
+                                        <input type="hidden" name="id_antrean" value="<?= $q['id'] ?>">
+                                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-sm" title="Kirim Pengingat WhatsApp (~10 Menit Giliran Tiba)">
+                                            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Ingatkan WA
+                                        </button>
+                                    </form>
                                     <form method="POST">
                                         <input type="hidden" name="form_type" value="call">
                                         <input type="hidden" name="current_page" value="barber">

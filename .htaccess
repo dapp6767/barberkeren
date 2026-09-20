@@ -4,13 +4,23 @@
 
 # 1. Lindungi file sensitif (.env, .git, database .sql, .log) dari akses langsung via browser
 <FilesMatch "^\.env">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
 
-<FilesMatch "(\.sql|\.log|\.git)">
-    Order allow,deny
-    Deny from all
+<FilesMatch "(\.sql|\.log|\.git|\.env)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
 
 # 2. Matikan Directory Browsing / List Folder
