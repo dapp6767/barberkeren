@@ -8,22 +8,51 @@
                 <i data-lucide="scissors" class="w-5 h-5 text-amber-400"></i>
                 Sedang Dilayani
             </h3>
-        </div>
-        <div class="p-6 sm:p-8 text-center flex flex-col items-center justify-center my-auto">
-            <?php if ($current_serving): ?>
-                <div class="w-full bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6 mb-4 relative overflow-hidden">
-                    <p class="text-xs uppercase font-semibold text-amber-400/80 tracking-widest mb-1.5">Nomor Antrean</p>
-                    <div class="text-5xl sm:text-6xl font-black text-amber-400 font-mono tracking-wider mb-2 drop-shadow-[0_0_15px_rgba(245,158,11,0.4)]">
-                        <?= htmlspecialchars($current_serving['ticket_number']) ?>
-                    </div>
-                    <p class="text-lg sm:text-xl text-white font-bold truncate max-w-[220px] mx-auto">
-                        <?= htmlspecialchars($current_serving['customer_name']) ?>
-                    </p>
-                </div>
-                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/35">
-                    <i data-lucide="armchair" class="w-4 h-4"></i>
-                    Kursi <?= htmlspecialchars(substr($current_serving['ticket_number'], 0, 1)) ?>
+            <?php 
+            $serving_list = !empty($all_serving) ? $all_serving : ($current_serving ? [$current_serving] : []);
+            if (!empty($serving_list)): 
+            ?>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    <?= count($serving_list) ?> Kursi Aktif
                 </span>
+            <?php endif; ?>
+        </div>
+        <div class="p-6 sm:p-8 text-center flex flex-col items-center justify-center my-auto w-full">
+            <?php if (!empty($serving_list)): ?>
+                <div class="w-full space-y-4">
+                    <?php foreach ($serving_list as $srv): 
+                        $t_no = htmlspecialchars($srv['ticket_number'] ?? $srv['no_antrean'] ?? '-');
+                        $c_name = htmlspecialchars($srv['customer_name'] ?? $srv['pelanggan_nama'] ?? 'Pelanggan');
+                        $k_name = htmlspecialchars(!empty($srv['kursi']) ? $srv['kursi'] : ('Kursi ' . substr($t_no, 0, 1)));
+                        $b_name = htmlspecialchars($srv['barber_nama'] ?? $srv['barber_name'] ?? 'Barber');
+                        $l_name = htmlspecialchars($srv['nama_layanan'] ?? '');
+                    ?>
+                        <div class="w-full bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5 relative overflow-hidden text-center transition-all hover:border-amber-500/40 shadow-inner">
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/35">
+                                    <i data-lucide="armchair" class="w-3.5 h-3.5"></i>
+                                    <?= $k_name ?>
+                                </span>
+                                <span class="text-xs text-zinc-300 font-medium flex items-center gap-1 bg-zinc-900/80 px-2.5 py-1 rounded-md border border-white/5">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 text-amber-400"></i>
+                                    <?= $b_name ?>
+                                </span>
+                            </div>
+                            <p class="text-[11px] uppercase font-semibold text-amber-400/80 tracking-widest mb-1">Nomor Antrean</p>
+                            <div class="text-5xl sm:text-6xl font-black text-amber-400 font-mono tracking-wider mb-2 drop-shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+                                <?= $t_no ?>
+                            </div>
+                            <p class="text-lg sm:text-xl text-white font-bold truncate max-w-[240px] mx-auto">
+                                <?= $c_name ?>
+                            </p>
+                            <?php if ($l_name): ?>
+                                <p class="text-xs text-zinc-400 mt-1 truncate">
+                                    <?= $l_name ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php else: ?>
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-3 text-amber-400/70">
                     <i data-lucide="users" class="w-8 h-8 sm:w-10 sm:h-10 opacity-70"></i>
@@ -197,13 +226,18 @@
                                 <?= $my_queue['status_antrean'] === 'serving' ? 'Sedang Dilayani' : 'Menunggu Giliran' ?>
                             </strong>
                         </div>
-                        <?php if(!empty($my_queue['barber_nama'])): ?>
                         <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-sm text-zinc-300">
+                            <span class="text-zinc-400">Kursi:</span>
+                            <span class="font-bold text-amber-400"><?= htmlspecialchars($my_queue['kursi'] ?? ('Kursi ' . substr($my_queue['no_antrean'] ?? 'A', 0, 1))) ?></span>
+                        </div>
+                        <?php if(!empty($my_queue['barber_nama'])): ?>
+                        <div class="mt-2 pt-2 border-t border-white/5 flex justify-between items-center text-sm text-zinc-300">
                             <span class="text-zinc-400">Barber:</span>
                             <span class="font-bold text-white"><?= htmlspecialchars($my_queue['barber_nama']) ?></span>
                         </div>
                         <?php endif; ?>
                     </div>
+                    <?php if ($my_queue['status_antrean'] === 'waiting'): ?>
                     <form method="POST" action="" class="mt-4" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan antrean Anda?');">
                         <input type="hidden" name="action" value="cancel_my_ticket">
                         <input type="hidden" name="antrian_id" value="<?= $my_queue['id'] ?>">
@@ -211,9 +245,15 @@
                             <i data-lucide="x-circle" class="w-4 h-4 text-rose-400"></i> Batalkan / Hapus Antrean Saya
                         </button>
                     </form>
-                    <p class="text-xs sm:text-sm text-zinc-300 mt-3 max-w-md mx-auto">
+                    <p class="text-xs sm:text-sm text-zinc-400 mt-3 max-w-md mx-auto">
                         Silakan tunggu giliran Anda dipanggil. Tiket baru dapat diambil kembali setelah giliran Anda selesai.
                     </p>
+                    <?php else: ?>
+                    <div class="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-medium flex items-center justify-center gap-2 max-w-sm mx-auto">
+                        <i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>
+                        <span>Saat ini Anda sedang dilayani di kursi pangkas. Selamat menikmati layanan kami!</span>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
             <?php else: 
@@ -306,10 +346,10 @@
                     ?>
                         <tr class="<?= $row_bg ?>">
                             <td class="px-6 py-4.5">
-                                <span class="text-amber-400 font-mono font-black text-xl sm:text-2xl tracking-wide"><?= htmlspecialchars($q['ticket_number']) ?></span>
+                                <span class="text-amber-400 font-mono font-black text-xl sm:text-2xl tracking-wide"><?= htmlspecialchars($q['ticket_number'] ?? $q['no_antrean'] ?? '-') ?></span>
                             </td>
                             <td class="px-6 py-4.5 font-bold text-white text-base sm:text-lg">
-                                <?= htmlspecialchars($q['customer_name']) ?>
+                                <?= htmlspecialchars($q['customer_name'] ?? $q['pelanggan_nama'] ?? 'Pelanggan') ?>
                                 <?php if ($is_my_row): ?>
                                     <span class="ml-2 px-2.5 py-0.5 rounded-md text-xs font-black bg-amber-500 text-black uppercase tracking-wider">Anda</span>
                                 <?php endif; ?>
@@ -317,22 +357,24 @@
                             <td class="px-6 py-4.5 text-base">
                                 <div class="text-zinc-100 font-semibold"><?= htmlspecialchars($q['nama_layanan'] ?? $q['service_name'] ?? 'Standard Cut') ?></div>
                                 <?php 
-                                    $base = (float)($q['base_price'] ?? 0);
+                                    $base = (float)($q['base_price'] ?? $q['harga'] ?? 0);
                                     echo "<div class='text-emerald-400 mt-0.5 font-bold text-xs sm:text-sm'>Rp " . number_format($base, 0, ',', '.') . "</div>";
                                 ?>
                             </td>
                             <td class="px-6 py-4.5 text-zinc-200 text-base font-medium">
-                                Kursi <?= htmlspecialchars(substr($q['ticket_number'], 0, 1)) ?>
-                                <?php if (!empty($q['barber_nama'])): ?>
-                                    <span class="text-xs sm:text-sm text-zinc-400 block mt-0.5 font-normal">(<?= htmlspecialchars($q['barber_nama']) ?>)</span>
+                                <?= htmlspecialchars(!empty($q['kursi']) ? $q['kursi'] : ('Kursi ' . substr($q['ticket_number'] ?? $q['no_antrean'] ?? 'A', 0, 1))) ?>
+                                <?php if (!empty($q['barber_nama'] ?? $q['barber_name'])): ?>
+                                    <span class="text-xs sm:text-sm text-zinc-400 block mt-0.5 font-normal">(<?= htmlspecialchars($q['barber_nama'] ?? $q['barber_name']) ?>)</span>
                                 <?php endif; ?>
                             </td>
                             <td class="px-6 py-4.5">
-                                <?php if ($q['status'] === 'serving'): ?>
+                                <?php 
+                                $status_val = $q['status'] ?? $q['status_antrean'] ?? 'waiting';
+                                if ($status_val === 'serving'): ?>
                                     <span class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/35 flex items-center gap-1.5 w-fit uppercase">
                                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span> Melayani
                                     </span>
-                                <?php elseif (in_array($q['status'], ['payment', 'paid'])): ?>
+                                <?php elseif (in_array($status_val, ['payment', 'paid'])): ?>
                                     <span class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-blue-500/15 text-blue-400 border border-blue-500/35 flex items-center gap-1.5 w-fit uppercase">
                                         <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> Pembayaran
                                     </span>
@@ -343,7 +385,7 @@
                                 <?php endif; ?>
                             </td>
                             <td class="px-6 py-4.5 text-zinc-300 text-base sm:text-lg font-bold font-mono">
-                                <?= (int)$q['estimated_wait_min'] ?> Menit
+                                <?= (int)($q['estimated_wait_min'] ?? 0) ?> Menit
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -364,16 +406,18 @@
             <div class="p-4 sm:p-5 rounded-2xl <?= $card_border ?> transition-all flex flex-col gap-3.5 shadow-md">
                 <div class="flex justify-between items-center border-b border-white/10 pb-3">
                     <div class="flex items-center gap-2.5">
-                        <span class="text-amber-400 font-mono font-black text-2xl sm:text-3xl tracking-wider"><?= htmlspecialchars($q['ticket_number']) ?></span>
+                        <span class="text-amber-400 font-mono font-black text-2xl sm:text-3xl tracking-wider"><?= htmlspecialchars($q['ticket_number'] ?? $q['no_antrean'] ?? '-') ?></span>
                         <?php if ($is_my_row): ?>
                             <span class="px-2.5 py-0.5 rounded text-xs font-black bg-amber-500 text-black uppercase tracking-wider">Anda</span>
                         <?php endif; ?>
                     </div>
-                    <?php if ($q['status'] === 'serving'): ?>
+                    <?php 
+                    $m_status = $q['status'] ?? $q['status_antrean'] ?? 'waiting';
+                    if ($m_status === 'serving'): ?>
                         <span class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/35 flex items-center gap-1.5 uppercase">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span> Melayani
                         </span>
-                    <?php elseif (in_array($q['status'], ['payment', 'paid'])): ?>
+                    <?php elseif (in_array($m_status, ['payment', 'paid'])): ?>
                         <span class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-blue-500/15 text-blue-400 border border-blue-500/35 flex items-center gap-1.5 uppercase">
                             <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> Pembayaran
                         </span>
@@ -387,26 +431,26 @@
                 <div class="grid grid-cols-2 gap-3 text-sm sm:text-base">
                     <div>
                         <span class="text-xs text-zinc-400 uppercase font-semibold block mb-1">Pelanggan</span>
-                        <span class="font-bold text-white text-base sm:text-lg block truncate"><?= htmlspecialchars($q['customer_name']) ?></span>
+                        <span class="font-bold text-white text-base sm:text-lg block truncate"><?= htmlspecialchars($q['customer_name'] ?? $q['pelanggan_nama'] ?? 'Pelanggan') ?></span>
                     </div>
                     <div>
                         <span class="text-xs text-zinc-400 uppercase font-semibold block mb-1">Layanan & Harga</span>
                         <span class="font-semibold text-zinc-100 text-sm sm:text-base block truncate"><?= htmlspecialchars($q['nama_layanan'] ?? $q['service_name'] ?? 'Standard Cut') ?></span>
-                        <span class="text-sm sm:text-base text-emerald-400 font-extrabold block mt-0.5">Rp <?= number_format((float)($q['base_price'] ?? 0), 0, ',', '.') ?></span>
+                        <span class="text-sm sm:text-base text-emerald-400 font-extrabold block mt-0.5">Rp <?= number_format((float)($q['base_price'] ?? $q['harga'] ?? 0), 0, ',', '.') ?></span>
                     </div>
                 </div>
 
                 <div class="flex justify-between items-center text-xs sm:text-sm text-zinc-300 pt-2.5 border-t border-white/10">
                     <div class="flex items-center gap-1.5">
                         <i data-lucide="scissors" class="w-4 h-4 text-amber-400"></i>
-                        <span class="font-medium">Kursi <?= htmlspecialchars(substr($q['ticket_number'], 0, 1)) ?></span>
-                        <?php if (!empty($q['barber_nama'])): ?>
-                            <span class="text-zinc-400 font-normal">(<?= htmlspecialchars($q['barber_nama']) ?>)</span>
+                        <span class="font-medium"><?= htmlspecialchars(!empty($q['kursi']) ? $q['kursi'] : ('Kursi ' . substr($q['ticket_number'] ?? $q['no_antrean'] ?? 'A', 0, 1))) ?></span>
+                        <?php if (!empty($q['barber_nama'] ?? $q['barber_name'])): ?>
+                            <span class="text-zinc-400 font-normal">(<?= htmlspecialchars($q['barber_nama'] ?? $q['barber_name']) ?>)</span>
                         <?php endif; ?>
                     </div>
                     <div class="flex items-center gap-1 text-amber-300 font-bold font-mono">
                         <i data-lucide="clock" class="w-4 h-4"></i>
-                        <span><?= (int)$q['estimated_wait_min'] ?> Menit Est.</span>
+                        <span><?= (int)($q['estimated_wait_min'] ?? 0) ?> Menit Est.</span>
                     </div>
                 </div>
             </div>

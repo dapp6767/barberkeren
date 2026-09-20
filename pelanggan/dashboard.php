@@ -23,6 +23,7 @@ if (!function_exists('is_logged_in') || !is_logged_in()) {
 handle_customer_post_actions();
 
 // 3. Fetch Master Data Antrean & Layanan
+$all_serving     = function_exists('get_all_serving_queues') ? get_all_serving_queues() : [];
 $current_serving = get_current_serving_queue();
 $active_queues   = get_active_queues();
 $barbers        = get_all_barbers();
@@ -92,7 +93,7 @@ if ($my_user_id) {
     $stmt_u->execute([$my_user_id]);
     $user = $stmt_u->fetch(PDO::FETCH_ASSOC) ?: [];
     
-    $stmt_my = $pdo->prepare("SELECT a.*, l.nama_layanan, l.harga, b.nama as barber_nama, b.multiplier 
+    $stmt_my = $pdo->prepare("SELECT a.*, l.nama_layanan, l.harga, b.nama as barber_nama, b.kursi, b.multiplier 
                               FROM antrian a 
                               LEFT JOIN layanan l ON a.layanan_id = l.id 
                               LEFT JOIN barber b ON a.barber_id = b.id 
@@ -101,6 +102,10 @@ if ($my_user_id) {
                               ORDER BY a.id DESC LIMIT 1");
     $stmt_my->execute([$my_user_id]);
     $my_queue = $stmt_my->fetch(PDO::FETCH_ASSOC);
+    if ($my_queue && empty($my_queue['kursi'])) {
+        $ch_l = strtoupper(substr($my_queue['no_antrean'] ?? '', 0, 1));
+        $my_queue['kursi'] = $ch_l ? "Kursi $ch_l" : "Kursi A";
+    }
 
     // Fetch History (Riwayat) unconditionally for SPA
     $stmt_hist = $pdo->prepare("SELECT t.*, a.no_antrean, l.nama_layanan, b.nama as barber_name 

@@ -136,19 +136,106 @@ if (!function_exists('take_queue_ticket')) {
 /**
  * Helper Queue Status
  */
+if (!function_exists('get_all_serving_queues')) {
+    function get_all_serving_queues() {
+        $pdo = get_koneksi();
+        if (!$pdo) return [];
+        $stmt = $pdo->query("
+            SELECT 
+                a.*,
+                a.no_antrean AS ticket_number,
+                a.status_antrean AS status,
+                l.nama_layanan,
+                l.nama_layanan AS service_name,
+                l.harga,
+                l.harga AS base_price,
+                l.durasi,
+                b.nama AS barber_nama,
+                b.nama AS barber_name,
+                b.kursi,
+                b.multiplier AS barber_multiplier,
+                COALESCE(NULLIF(TRIM(u.fullname), ''), NULLIF(TRIM(u.username), ''), 'Pelanggan') AS customer_name,
+                COALESCE(NULLIF(TRIM(u.fullname), ''), NULLIF(TRIM(u.username), ''), 'Pelanggan') AS pelanggan_nama
+            FROM antrian a
+            LEFT JOIN layanan l ON a.layanan_id = l.id
+            LEFT JOIN barber b ON a.barber_id = b.id
+            LEFT JOIN users u ON a.pelanggan_id = u.id_user
+            WHERE a.status_antrean = 'serving' 
+              AND DATE(a.waktu_dibuat) = CURDATE()
+            ORDER BY a.id ASC
+        ");
+        $results = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        foreach ($results as &$r) {
+            if (empty($r['kursi'])) {
+                $letter = strtoupper(substr($r['no_antrean'] ?? '', 0, 1));
+                $r['kursi'] = $letter ? "Kursi $letter" : "Kursi A";
+            }
+        }
+        return $results;
+    }
+}
+
 if (!function_exists('get_current_serving_queue')) {
     function get_current_serving_queue() {
-        $pdo = get_koneksi();
-        $stmt = $pdo->query("SELECT a.*, l.nama_layanan, b.nama as barber_nama FROM antrian a LEFT JOIN layanan l ON a.layanan_id = l.id LEFT JOIN barber b ON a.barber_id = b.id WHERE a.status_antrean = 'serving' AND DATE(a.waktu_dibuat) = CURDATE() ORDER BY a.id ASC LIMIT 1");
-        return $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
+        $all = get_all_serving_queues();
+        return !empty($all) ? $all[0] : null;
     }
 }
 
 if (!function_exists('get_active_queues')) {
     function get_active_queues() {
         $pdo = get_koneksi();
-        $stmt = $pdo->query("SELECT a.*, l.nama_layanan, b.nama as barber_nama FROM antrian a LEFT JOIN layanan l ON a.layanan_id = l.id LEFT JOIN barber b ON a.barber_id = b.id WHERE a.status_antrean IN ('waiting', 'serving') AND DATE(a.waktu_dibuat) = CURDATE() ORDER BY a.id ASC");
-        return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        if (!$pdo) return [];
+        $stmt = $pdo->query("
+            SELECT 
+                a.*,
+                a.no_antrean AS ticket_number,
+                a.status_antrean AS status,
+                l.nama_layanan,
+                l.nama_layanan AS service_name,
+                l.harga,
+                l.harga AS base_price,
+                l.durasi,
+                b.nama AS barber_nama,
+                b.nama AS barber_name,
+                b.kursi,
+                b.multiplier AS barber_multiplier,
+                COALESCE(NULLIF(TRIM(u.fullname), ''), NULLIF(TRIM(u.username), ''), 'Pelanggan') AS customer_name,
+                COALESCE(NULLIF(TRIM(u.fullname), ''), NULLIF(TRIM(u.username), ''), 'Pelanggan') AS pelanggan_nama
+            FROM antrian a
+            LEFT JOIN layanan l ON a.layanan_id = l.id
+            LEFT JOIN barber b ON a.barber_id = b.id
+            LEFT JOIN users u ON a.pelanggan_id = u.id_user
+            WHERE a.status_antrean IN ('waiting', 'serving')
+              AND DATE(a.waktu_dibuat) = CURDATE()
+            ORDER BY a.id ASC
+        ");
+        $queues = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        // Hitung perkiraan waktu tunggu (estimated_wait_min) per kursi/barber
+        $wait_times = [];
+        foreach ($queues as &$q) {
+            $chair_key = !empty($q['barber_id']) ? 'b_' . $q['barber_id'] : 'c_' . strtoupper(substr($q['no_antrean'] ?? 'A', 0, 1));
+            if (!isset($wait_times[$chair_key])) {
+                $wait_times[$chair_key] = 0;
+            }
+
+            if (empty($q['kursi'])) {
+                $letter = strtoupper(substr($q['no_antrean'] ?? '', 0, 1));
+                $q['kursi'] = $letter ? "Kursi $letter" : "Kursi A";
+            }
+
+            $service_dur = !empty($q['durasi']) ? (int)$q['durasi'] : 20;
+
+            if ($q['status'] === 'serving') {
+                $q['estimated_wait_min'] = 0;
+                $wait_times[$chair_key] = max(10, (int)($service_dur / 2));
+            } else {
+                $q['estimated_wait_min'] = $wait_times[$chair_key];
+                $wait_times[$chair_key] += $service_dur;
+            }
+        }
+        return $queues;
     }
 }
 
