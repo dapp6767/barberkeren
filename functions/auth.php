@@ -44,31 +44,54 @@ if (!function_exists('validate_account_creation')) {
         $email    = trim($email);
 
         if (contains_sara_words($fullname)) {
-            return ['status' => false, 'message' => 'Nama Lengkap mengandung kata/unsur SARA atau profanitas yang dilarang! Silakan gunakan nama yang sopan.'];
+            return [
+                'status'  => false,
+                'message' => 'Nama Lengkap mengandung kata/unsur SARA atau profanitas yang dilarang! Silakan gunakan nama yang sopan.',
+                'field'   => 'fullname'
+            ];
         }
         if (contains_sara_words($username)) {
-            return ['status' => false, 'message' => 'Username mengandung kata/unsur SARA atau profanitas yang dilarang! Silakan gunakan username lain.'];
+            return [
+                'status'  => false,
+                'message' => 'Username mengandung kata/unsur SARA atau profanitas yang dilarang! Silakan gunakan username lain.',
+                'field'   => 'username'
+            ];
         }
 
         try {
+            // 1. Cek duplikasi username (prioritas utama)
             if ($exclude_user_id) {
-                $stmt = $pdo->prepare("SELECT id_user, username, fullname, email FROM users WHERE (LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?)) OR (fullname != '' AND LOWER(fullname) = LOWER(?))) AND id_user != ? LIMIT 1");
-                $stmt->execute([$username, $email, $fullname, $exclude_user_id]);
+                $stmtUser = $pdo->prepare("SELECT id_user FROM users WHERE LOWER(username) = LOWER(?) AND id_user != ? LIMIT 1");
+                $stmtUser->execute([$username, $exclude_user_id]);
             } else {
-                $stmt = $pdo->prepare("SELECT id_user, username, fullname, email FROM users WHERE LOWER(username) = LOWER(?) OR (email != '' AND LOWER(email) = LOWER(?)) OR (fullname != '' AND LOWER(fullname) = LOWER(?)) LIMIT 1");
-                $stmt->execute([$username, $email, $fullname]);
+                $stmtUser = $pdo->prepare("SELECT id_user FROM users WHERE LOWER(username) = LOWER(?) LIMIT 1");
+                $stmtUser->execute([$username]);
             }
 
-            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($existing) {
-                if (strtolower($existing['username']) === strtolower($username)) {
-                    return ['status' => false, 'message' => "Username '@{$username}' sudah digunakan! Silakan pilih username lain."];
+            if ($stmtUser->fetch()) {
+                return [
+                    'status'  => false,
+                    'message' => 'Username sudah digunakan, silakan gunakan username lain.',
+                    'field'   => 'username'
+                ];
+            }
+
+            // 2. Cek duplikasi email jika diisi
+            if (!empty($email)) {
+                if ($exclude_user_id) {
+                    $stmtEmail = $pdo->prepare("SELECT id_user FROM users WHERE email != '' AND LOWER(email) = LOWER(?) AND id_user != ? LIMIT 1");
+                    $stmtEmail->execute([$email, $exclude_user_id]);
+                } else {
+                    $stmtEmail = $pdo->prepare("SELECT id_user FROM users WHERE email != '' AND LOWER(email) = LOWER(?) LIMIT 1");
+                    $stmtEmail->execute([$email]);
                 }
-                if (!empty($email) && strtolower($existing['email'] ?? '') === strtolower($email)) {
-                    return ['status' => false, 'message' => "Email '{$email}' sudah terdaftar! Gunakan email lain."];
-                }
-                if (!empty($fullname) && strtolower($existing['fullname'] ?? '') === strtolower($fullname)) {
-                    return ['status' => false, 'message' => "Nama lengkap '{$fullname}' sudah terdaftar dalam sistem! Silakan gunakan nama lain."];
+
+                if ($stmtEmail->fetch()) {
+                    return [
+                        'status'  => false,
+                        'message' => "Email '{$email}' sudah terdaftar! Gunakan email lain.",
+                        'field'   => 'email'
+                    ];
                 }
             }
         } catch (PDOException $e) {
@@ -76,19 +99,19 @@ if (!function_exists('validate_account_creation')) {
         }
 
         if (strlen($password) < 6) {
-            return ['status' => false, 'message' => 'Password minimal harus terdiri dari 6-8 karakter!'];
+            return ['status' => false, 'message' => 'Password minimal harus terdiri dari 6-8 karakter!', 'field' => 'password'];
         }
         if (!preg_match('/[A-Z]/', $password)) {
-            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Huruf Besar (A-Z)!'];
+            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Huruf Besar (A-Z)!', 'field' => 'password'];
         }
         if (!preg_match('/[a-z]/', $password)) {
-            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Huruf Kecil (a-z)!'];
+            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Huruf Kecil (a-z)!', 'field' => 'password'];
         }
         if (!preg_match('/[0-9]/', $password)) {
-            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Angka (0-9)!'];
+            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Angka (0-9)!', 'field' => 'password'];
         }
         if (!preg_match('/[\W_]/', $password)) {
-            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Simbol Khusus (misal: @, #, !, $, %, dll)!'];
+            return ['status' => false, 'message' => 'Password wajib mengandung minimal satu Simbol Khusus (misal: @, #, !, $, %, dll)!', 'field' => 'password'];
         }
 
         return ['status' => true, 'message' => 'Validasi berhasil!'];
@@ -107,8 +130,23 @@ if (!function_exists('register_user')) {
         $email    = trim($email);
         $phone    = trim($phone);
 
-        if (empty($username) || empty($password)) {
-            return ['status' => false, 'message' => 'Username dan Password wajib diisi!'];
+        if (empty($fullname)) {
+            return ['status' => false, 'message' => 'Nama lengkap wajib diisi!', 'field' => 'fullname'];
+        }
+        if (empty($username)) {
+            return ['status' => false, 'message' => 'Username wajib diisi!', 'field' => 'username'];
+        }
+        if (empty($email)) {
+            return ['status' => false, 'message' => 'Email wajib diisi!', 'field' => 'email'];
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['status' => false, 'message' => 'Format email tidak valid! Silakan masukkan email yang benar.', 'field' => 'email'];
+        }
+        if (empty($phone)) {
+            return ['status' => false, 'message' => 'Nomor HP / WhatsApp wajib diisi!', 'field' => 'phone'];
+        }
+        if (empty($password)) {
+            return ['status' => false, 'message' => 'Password wajib diisi!', 'field' => 'password'];
         }
 
         $val = validate_account_creation($fullname, $username, $password, $email);
@@ -135,6 +173,15 @@ if (!function_exists('register_user')) {
             }
             return ['status' => false, 'message' => 'Terjadi kesalahan sistem saat mendaftar.'];
         } catch (PDOException $e) {
+            // Tangani duplicate entry constraint jika ada
+            if ($e->getCode() == 23000 || str_contains($e->getMessage(), 'Duplicate entry')) {
+                if (str_contains(strtolower($e->getMessage()), 'username')) {
+                    return ['status' => false, 'message' => 'Username sudah digunakan, silakan gunakan username lain.', 'field' => 'username'];
+                }
+                if (str_contains(strtolower($e->getMessage()), 'email')) {
+                    return ['status' => false, 'message' => "Email '{$email}' sudah terdaftar! Gunakan email lain.", 'field' => 'email'];
+                }
+            }
             return ['status' => false, 'message' => 'Error Database: ' . $e->getMessage()];
         }
     }

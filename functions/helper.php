@@ -50,6 +50,45 @@ function redirect($url) {
     header("Location: " . $url);
     exit;
 }
+
+// Simpan Data Form Lama ke Session Temporary (Old Input)
+// Menghapus otomatis field sensitif demi alasan keamanan (password, token, dll)
+if (!function_exists('set_old_input')) {
+    function set_old_input(array $data) {
+        $sensitive_fields = [
+            'password',
+            'confirm_password',
+            'current_password',
+            'new_password',
+            'password_lama',
+            'password_baru',
+            'konfirmasi_password'
+        ];
+        foreach ($sensitive_fields as $field) {
+            unset($data[$field]);
+        }
+        $_SESSION['old_input'] = $data;
+    }
+}
+
+// Ambil Nilai Input Lama dari Session Temporary atau POST
+if (!function_exists('old')) {
+    function old($key, $default = '', $escape = true) {
+        $val = $_SESSION['old_input'][$key] ?? ($_POST[$key] ?? $default);
+        if ($escape && is_string($val)) {
+            return htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
+        }
+        return $val;
+    }
+}
+
+// Bersihkan Session Temporary Old Input
+if (!function_exists('clear_old_input')) {
+    function clear_old_input() {
+        unset($_SESSION['old_input']);
+    }
+}
+
 // Touch User Last Active Timestamp & Multi-Device Active Session Tracker
 function touch_user_activity() {
     if (isset($_SESSION['user_id'])) {
