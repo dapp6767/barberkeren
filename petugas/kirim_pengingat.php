@@ -43,7 +43,7 @@ if ($id_antrean <= 0) {
 
 // 3. Fungsi cURL Pemanggilan API Fonnte
 if (!function_exists('kirim_whatsapp_fonnte')) {
-    function kirim_whatsapp_fonnte($target, $pesan, $token = 'MASUKKAN_TOKEN_FONNTE_KAMU') {
+    function kirim_whatsapp_fonnte($target, $pesan, $token = 'LDAFSAcZLAzMRvUhkJmJ') {
         // Bersihkan nomor target dari spasi, tanda hubung, atau karakter selain angka
         $target_clean = preg_replace('/[^0-9]/', '', $target);
 
@@ -178,7 +178,8 @@ try {
            . "Kursi cukur sebentar lagi siap (estimasi ~10 menit lagi). Silakan segera merapat ke barbershop agar giliranmu tidak terlewat. Ditunggu ya!";
 
     // 6. Token API Fonnte
-    // Menggunakan helper env_val() terpusat (mendukung getenv(), $_ENV, dan $_SERVER dari file .env)
+    // Prioritas: nilai dari .env (FONNTE_TOKEN) -> fallback langsung ke token aktif akun Anda
+    $default_token = 'LDAFSAcZLAzMRvUhkJmJ';
     $token_fonnte = '';
     if (function_exists('env_val')) {
         $token_fonnte = env_val('FONNTE_TOKEN', '');
@@ -187,6 +188,10 @@ try {
         $token_fonnte = getenv('FONNTE_TOKEN') ?: ($_ENV['FONNTE_TOKEN'] ?? ($_SERVER['FONNTE_TOKEN'] ?? ''));
     }
     $token_fonnte = trim((string)$token_fonnte);
+
+    if (empty($token_fonnte) || $token_fonnte === 'MASUKKAN_TOKEN_FONNTE_KAMU') {
+        $token_fonnte = $default_token;
+    }
 
     // 7. Eksekusi Pengiriman Pesan via cURL Fonnte
     $hasil = kirim_whatsapp_fonnte($no_wa, $pesan, $token_fonnte);
