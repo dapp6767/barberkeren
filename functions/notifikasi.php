@@ -14,19 +14,27 @@ if (!function_exists('create_admin_notification')) {
         $pdo = get_koneksi();
         if (isset($pdo)) {
             try {
-                $pdo->exec("CREATE TABLE IF NOT EXISTS notifikasi (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    type VARCHAR(50) NOT NULL,
-                    title VARCHAR(255) NOT NULL,
-                    message TEXT NOT NULL,
-                    link VARCHAR(255) DEFAULT '',
-                    is_read TINYINT(1) DEFAULT 0,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+                // Jangan jalankan DDL (CREATE/ALTER TABLE) jika sedang di dalam transaksi aktif
+                // karena di MySQL DDL memicu IMPLICIT COMMIT otomatis
+                if (!$pdo->inTransaction()) {
+                    static $tbl_ensured = false;
+                    if (!$tbl_ensured) {
+                        $pdo->exec("CREATE TABLE IF NOT EXISTS notifikasi (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            type VARCHAR(50) NOT NULL,
+                            title VARCHAR(255) NOT NULL,
+                            message TEXT NOT NULL,
+                            link VARCHAR(255) DEFAULT '',
+                            is_read TINYINT(1) DEFAULT 0,
+                            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-                $chkUserCol = $pdo->query("SHOW COLUMNS FROM users LIKE 'created_at'");
-                if (!$chkUserCol || $chkUserCol->rowCount() === 0) {
-                    $pdo->exec("ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+                        $chkUserCol = $pdo->query("SHOW COLUMNS FROM users LIKE 'created_at'");
+                        if (!$chkUserCol || $chkUserCol->rowCount() === 0) {
+                            $pdo->exec("ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+                        }
+                        $tbl_ensured = true;
+                    }
                 }
 
                 $stmt = $pdo->prepare("INSERT INTO notifikasi (type, title, message, link, is_read, created_at) VALUES (?, ?, ?, ?, 0, NOW())");

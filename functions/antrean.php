@@ -175,27 +175,47 @@ if (!function_exists('handle_antrean_actions')) {
             $barber = $stmt_b->fetch(PDO::FETCH_ASSOC);
             $barber_id = $barber['id'] ?? null;
 
-            $pdo->beginTransaction();
-            $stmt = $pdo->prepare("UPDATE antrian SET status_antrean = 'skipped' WHERE id = ?");
-            $stmt->execute([$antrian_id]);
-            $stmtNext = $pdo->prepare("SELECT id FROM antrian WHERE status_antrean = 'waiting' AND DATE(waktu_dibuat) = CURDATE() AND (barber_id = ? OR barber_id IS NULL) ORDER BY id ASC LIMIT 1");
-            $stmtNext->execute([$barber_id]);
-            $nextQueue = $stmtNext->fetch(PDO::FETCH_ASSOC);
-            if ($nextQueue) {
-                $stmtCall = $pdo->prepare("UPDATE antrian SET status_antrean = 'serving', barber_id = ?, served_by_user_id = ? WHERE id = ?");
-                $stmtCall->execute([$barber_id, $user_id, $nextQueue['id']]);
-                set_flash('warning', 'Antrean dilewati. Antrean berikutnya otomatis dipanggil.');
-            } else {
-                set_flash('warning', 'Antrean berhasil dilewati (Skip). Tidak ada antrean berikutnya.');
+            try {
+                $pdo->beginTransaction();
+                $stmt = $pdo->prepare("UPDATE antrian SET status_antrean = 'skipped' WHERE id = ?");
+                $stmt->execute([$antrian_id]);
+                $stmtNext = $pdo->prepare("SELECT id FROM antrian WHERE status_antrean = 'waiting' AND DATE(waktu_dibuat) = CURDATE() AND (barber_id = ? OR barber_id IS NULL) ORDER BY id ASC LIMIT 1");
+                $stmtNext->execute([$barber_id]);
+                $nextQueue = $stmtNext->fetch(PDO::FETCH_ASSOC);
+                if ($nextQueue) {
+                    $stmtCall = $pdo->prepare("UPDATE antrian SET status_antrean = 'serving', barber_id = ?, served_by_user_id = ? WHERE id = ?");
+                    $stmtCall->execute([$barber_id, $user_id, $nextQueue['id']]);
+                    set_flash('warning', 'Antrean dilewati. Antrean berikutnya otomatis dipanggil.');
+                } else {
+                    set_flash('warning', 'Antrean berhasil dilewati (Skip). Tidak ada antrean berikutnya.');
+                }
+                if ($pdo->inTransaction()) {
+                    $pdo->commit();
+                }
+            } catch (Exception $e) {
+                if ($pdo && $pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                error_log("Error in skip action: " . $e->getMessage());
+                set_flash('danger', 'Gagal melewati antrean: ' . $e->getMessage());
             }
-            $pdo->commit();
         }
         elseif ($action === 'finish_service' && $antrian_id > 0) {
-            $pdo->beginTransaction();
-            $stmt1 = $pdo->prepare("UPDATE antrian SET status_antrean = 'payment' WHERE id = ?");
-            $stmt1->execute([$antrian_id]);
-            $pdo->commit();
-            set_flash('success', 'Layanan selesai! Menunggu pelanggan memilih metode pembayaran.');
+            try {
+                $pdo->beginTransaction();
+                $stmt1 = $pdo->prepare("UPDATE antrian SET status_antrean = 'payment' WHERE id = ?");
+                $stmt1->execute([$antrian_id]);
+                if ($pdo->inTransaction()) {
+                    $pdo->commit();
+                }
+                set_flash('success', 'Layanan selesai! Menunggu pelanggan memilih metode pembayaran.');
+            } catch (Exception $e) {
+                if ($pdo && $pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                error_log("Error in finish_service action: " . $e->getMessage());
+                set_flash('danger', 'Gagal menyelesaikan layanan: ' . $e->getMessage());
+            }
         }
         elseif ($action === 'delete_antrian' && $antrian_id > 0) {
             try {
